@@ -7,7 +7,8 @@ build/
 
 ## properties
 application-db.properties
-application-test.properties
+application-test*.properties
+
 
 ### STS ###
 .apt_generated
