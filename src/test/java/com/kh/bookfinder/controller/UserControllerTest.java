@@ -28,6 +28,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Transactional
 public class UserControllerTest {
 
+  /* TODO: 이메일 인증, 이메일 중복확인, 닉네임 중복확인 API 추가되면 Signup 테스트도 수정되어야 함
+           주소에 대한 유효성 검사 생각해 봐야함
+           데이터베이스를 모킹해야하는가?에 대해 생각해 봐야함
+   */
+
   @Autowired
   private ObjectMapper objectMapper;
   @Autowired
@@ -56,6 +61,131 @@ public class UserControllerTest {
     // And: 데이터베이스에 해당 User 정보가 저장된다.
     User actual = userRepository.findByEmail(validSignUpDto.getEmail()).orElse(null);
     assertThat(actual).isNotNull();
+  }
+
+  @Test
+  @DisplayName("SignUpDto의 email이 유효하지 않은 경우")
+  public void signUpFailTest1() throws Exception {
+    // Given: 유효하지 않은 SignUpDto가 주어진다. (email)
+    SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
+    invalidUserSignUpDto.setEmail("jinhokhkr");
+    String requestBody = objectMapper.writeValueAsString(invalidUserSignUpDto);
+
+    // When: SignUp API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders
+            .post("/api/v1/signup")
+            .content(requestBody)
+            .contentType("application/json")
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
+        // And: details는 {"email": "유효하지 않은 이메일 형식입니다."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
+    // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
+    assertThat(userRepository.findAll()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("SignUpDto의 password가 유효하지 않은 경우")
+  public void signUpFailTest2() throws Exception {
+    // Given: 유효하지 않은 SignUpDto가 주어진다. (password)
+    SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
+    invalidUserSignUpDto.setPassword("1234");
+    String requestBody = objectMapper.writeValueAsString(invalidUserSignUpDto);
+
+    // When: SignUp API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders
+            .post("/api/v1/signup")
+            .content(requestBody)
+            .contentType("application/json")
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
+        // And: details는 {"password": "영문, 숫자, 특수문자를 포함하여 8자 이상 20자 이하로 입력해주세요."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.password", is(Message.INVALID_PASSWORD)));
+    // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
+    assertThat(userRepository.findAll()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("SignUpDto의 password와 passwordConfirm이 일치하지 않는 경우")
+  public void signUpFailTest3() throws Exception {
+    // Given: 유효하지 않은 SignUpDto가 주어진다. (password)
+    SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
+    invalidUserSignUpDto.setPasswordConfirm("q1w2e3r42@");
+    String requestBody = objectMapper.writeValueAsString(invalidUserSignUpDto);
+
+    // When: SignUp API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders
+            .post("/api/v1/signup")
+            .content(requestBody)
+            .contentType("application/json")
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
+        // And: details는 {"password": "비밀번호와 비밀번호 확인이 일치하지 않습니다."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.password", is(Message.INVALID_PASSWORD_CONFIRM)));
+    // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
+    assertThat(userRepository.findAll()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("SignUpDto의 nickname이 유효하지 않은 경우")
+  public void signUpFailTest4() throws Exception {
+    // Given: 유효하지 않은 SignUpDto가 주어진다. (nickname)
+    SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
+    invalidUserSignUpDto.setNickname("ㅂㅈㄷㄱ");
+    String requestBody = objectMapper.writeValueAsString(invalidUserSignUpDto);
+
+    // When: SignUp API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders
+            .post("/api/v1/signup")
+            .content(requestBody)
+            .contentType("application/json")
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
+        // And: details는 {"nickname": "영문, 유효한 한글, 숫자를 이용하여 3자 이상 10자 이하로 입력해주세요."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.INVALID_NICKNAME)));
+    // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
+    assertThat(userRepository.findAll()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("SignUpDto의 phone이 유효하지 않은 경우")
+  public void signUpFailTest5() throws Exception {
+    // Given: 유효하지 않은 SignUpDto가 주어진다. (phone)
+    SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
+    invalidUserSignUpDto.setPhone("12345678912345");
+    String requestBody = objectMapper.writeValueAsString(invalidUserSignUpDto);
+
+    // When: SignUp API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders
+            .post("/api/v1/signup")
+            .content(requestBody)
+            .contentType("application/json")
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
+        // And: details는 {"phone": "유효하지 않은 휴대폰 번호 형식입니다."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.phone", is(Message.INVALID_PHONE)));
+    // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
+    assertThat(userRepository.findAll()).isEmpty();
   }
 
   private SignUpDto buildValidSignUpDto() {
