@@ -2,6 +2,7 @@ package com.kh.bookfinder.service;
 
 import com.kh.bookfinder.entity.BookTrade;
 import com.kh.bookfinder.repository.BookTradeRepository;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,10 @@ public class BookTradeService {
 
   @Autowired
   BookTradeRepository bookTradeRepository;
+
+  public ArrayList<BookTrade> getBookTrades(Long boroughId) {
+    return bookTradeRepository.findByBoroughId(boroughId);
+  }
 
   @Transactional
   public void createBookTrade(BookTrade bookTrade) {

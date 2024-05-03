@@ -6,8 +6,11 @@ import com.kh.bookfinder.entity.BookTrade;
 import com.kh.bookfinder.entity.TradeType;
 import com.kh.bookfinder.service.BookService;
 import com.kh.bookfinder.service.BookTradeService;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,14 @@ public class BookTradeController {
   BookTradeService bookTradeService;
   @Autowired
   BookService bookService;
+
+  @GetMapping("/{boroughId}")
+  public ResponseEntity<ArrayList<BookTrade>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
+    ArrayList<BookTrade> bookTradeList = new ArrayList<>();
+    bookTradeList = bookTradeService.getBookTrades(boroughId);
+
+    return ResponseEntity.ok().body(bookTradeList);
+  }
 
   @PostMapping
   public ResponseEntity<BookTrade> createBookTrade(@RequestBody BookTradeDTO tradeDTO) {
