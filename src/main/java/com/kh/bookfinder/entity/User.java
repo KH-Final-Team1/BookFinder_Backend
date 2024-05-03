@@ -2,15 +2,19 @@ package com.kh.bookfinder.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Data
@@ -30,9 +34,13 @@ public class User {
   private String phone;
   @Column(unique = true, nullable = false)
   private String nickname;
-  @OneToOne
-  @JoinColumn(name = "ADDRESS_ID")
-  private Address address;
-  private UserStatus status;
+  private String address;
+  @Enumerated(EnumType.STRING)
+  private UserRole role;
+  private String socialId;
+  @Temporal(TemporalType.DATE)
+  @Column(updatable = false)
+  @CreationTimestamp
+  private Date createDate;
 
 }
