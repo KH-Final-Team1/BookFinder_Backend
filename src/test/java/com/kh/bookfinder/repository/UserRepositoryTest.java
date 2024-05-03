@@ -3,11 +3,9 @@ package com.kh.bookfinder.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.kh.bookfinder.entity.Address;
 import com.kh.bookfinder.entity.User;
-import com.kh.bookfinder.entity.UserStatus;
+import com.kh.bookfinder.entity.UserRole;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,19 +27,6 @@ public class UserRepositoryTest {
   @Autowired
   EntityManager entityManager;
 
-  Address givenAddress;
-
-  @BeforeEach
-  public void setup() {
-    givenAddress = Address.builder()
-        .si("서울특별시")
-        .gu("강남구")
-        .dong("역삼동")
-        .roadFullAddress("서울 강남구 테헤란로 10길 9")
-        .build();
-    entityManager.persist(givenAddress);
-  }
-
   @Test
   public void userInsertTest1() {
     // Given: User가 주어진다.
@@ -50,8 +35,8 @@ public class UserRepositoryTest {
         .password("password")
         .phone("010-1234-5678")
         .nickname("nickname")
-        .status(UserStatus.ADMIN)
-        .address(givenAddress)
+        .role(UserRole.ROLE_ADMIN)
+        .address("서울시 테헤란로 10길")
         .build();
 
     // When: save() 메서드를 호출하여 User를 저장한다.
@@ -71,16 +56,16 @@ public class UserRepositoryTest {
         .password("password")
         .phone("010-1234-5678")
         .nickname("nickname")
-        .status(UserStatus.ADMIN)
-        .address(givenAddress)
+        .role(UserRole.ROLE_ADMIN)
+        .address("서울시 테헤란로 10길")
         .build();
     User givenUser2 = User.builder()
         .email("user@kh.kr")
         .password("password2")
         .phone("010-5678-1234")
         .nickname("nickname2")
-        .status(UserStatus.ADMIN)
-        .address(givenAddress)
+        .role(UserRole.ROLE_ADMIN)
+        .address("서울시 테헤란로 10길")
         .build();
 
     // When: save() 메서드를 호출하여 givenUser1를 저장한다.
@@ -101,16 +86,16 @@ public class UserRepositoryTest {
         .password("password")
         .phone("010-1234-5678")
         .nickname("nickname")
-        .status(UserStatus.ADMIN)
-        .address(givenAddress)
+        .role(UserRole.ROLE_ADMIN)
+        .address("서울시 테헤란로 10길")
         .build();
     User givenUser2 = User.builder()
         .email("user2@kh.kr")
         .password("password2")
         .phone("010-5678-1234")
         .nickname("nickname")
-        .status(UserStatus.ADMIN)
-        .address(givenAddress)
+        .role(UserRole.ROLE_ADMIN)
+        .address("서울시 테헤란로 10길")
         .build();
 
     // When: save() 메서드를 호출하여 givenUser1를 저장한다.
