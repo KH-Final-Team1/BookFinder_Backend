@@ -10,12 +10,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookTrade {
 
   @Id
@@ -34,14 +40,16 @@ public class BookTrade {
   @Enumerated(EnumType.STRING)
   private TradeType tradeType;
   @Column(nullable = false)
-  private int amount;
+  private int rentalCost;
   private String content;
   private float latitude;
   private float longitude;
   private Date limitedDate;
   @Enumerated(EnumType.STRING)
-  private Status status = Status.N;
+  @Builder.Default
+  private Status tradeYn = Status.N;
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   private Status deleteYn = Status.N;
   @CreationTimestamp
   private Date createDate;
