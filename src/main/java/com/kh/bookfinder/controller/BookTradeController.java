@@ -25,17 +25,15 @@ public class BookTradeController {
   BookService bookService;
 
   @PostMapping
-  public ResponseEntity<BookTrade> createBookTrade(@RequestBody BookTradeDTO tradeDTO) {
+  public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Validated BookTradeDTO tradeDTO) {
     Long isbn = Long.valueOf(tradeDTO.getIsbn());
 
     Book book = bookService.findBook(isbn)
-        .orElseThrow(() -> new IllegalArgumentException("Book not found for ISBN: " + tradeDTO.getIsbn()));
-
-    TradeType tradeType = TradeType.fromString(tradeDTO.getTradeType());
+        .orElseThrow(() -> new IllegalArgumentException(Message.INVALID_ISBN));
 
     BookTrade bookTrade = BookTrade.builder()
         .book(book)
-        .tradeType(tradeType)
+        .tradeType(tradeDTO.getTradeType())
         .rentalCost(tradeDTO.getRentalCost())
         .limitedDate(tradeDTO.getLimitedDate())
         .content(tradeDTO.getContent())

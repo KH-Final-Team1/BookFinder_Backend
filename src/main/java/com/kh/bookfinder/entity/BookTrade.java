@@ -46,8 +46,10 @@ public class BookTrade {
   private float longitude;
   private Date limitedDate;
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   private Status tradeYn = Status.N;
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   private Status deleteYn = Status.N;
   @CreationTimestamp
   private Date createDate;
