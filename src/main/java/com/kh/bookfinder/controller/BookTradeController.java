@@ -1,5 +1,6 @@
 package com.kh.bookfinder.controller;
 
+import com.kh.bookfinder.constants.Message;
 import com.kh.bookfinder.dto.BookTradeDTO;
 import com.kh.bookfinder.entity.Book;
 import com.kh.bookfinder.entity.BookTrade;
@@ -8,6 +9,7 @@ import com.kh.bookfinder.service.BookService;
 import com.kh.bookfinder.service.BookTradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,15 +33,15 @@ public class BookTradeController {
 
     TradeType tradeType = TradeType.fromString(tradeDTO.getTradeType());
 
-    BookTrade bookTrade = new BookTrade();
-
-    bookTrade.setBook(book);
-    bookTrade.setTradeType(tradeType);
-    bookTrade.setAmount(tradeDTO.getAmount());
-    bookTrade.setLimitedDate(tradeDTO.getLimitedDate());
-    bookTrade.setContent(tradeDTO.getContent());
-    bookTrade.setLatitude(tradeDTO.getLatitude());
-    bookTrade.setLongitude(tradeDTO.getLongitude());
+    BookTrade bookTrade = BookTrade.builder()
+        .book(book)
+        .tradeType(tradeType)
+        .rentalCost(tradeDTO.getRentalCost())
+        .limitedDate(tradeDTO.getLimitedDate())
+        .content(tradeDTO.getContent())
+        .latitude(tradeDTO.getLatitude())
+        .longitude(tradeDTO.getLongitude())
+        .build();
 
     bookTradeService.createBookTrade(bookTrade);
     return ResponseEntity.ok().body(bookTrade);

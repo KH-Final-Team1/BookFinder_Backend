@@ -8,7 +8,7 @@ public class BookTradeDTO {
 
   private String isbn;
   private String tradeType;
-  private int amount;
+  private Integer rentalCost;
   private Date limitedDate;
   private String content;
   private float latitude;
