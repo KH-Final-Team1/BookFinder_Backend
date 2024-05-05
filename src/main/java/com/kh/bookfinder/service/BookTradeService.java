@@ -1,6 +1,7 @@
 package com.kh.bookfinder.service;
 
 import com.kh.bookfinder.entity.BookTrade;
+import com.kh.bookfinder.entity.Status;
 import com.kh.bookfinder.repository.BookTradeRepository;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ public class BookTradeService {
   BookTradeRepository bookTradeRepository;
 
   public ArrayList<BookTrade> getBookTrades(Long boroughId) {
-    return bookTradeRepository.findByBoroughId(boroughId);
+    return bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N);
   }
 
   @Transactional
