@@ -38,7 +38,7 @@ public class UserController {
   @GetMapping(value = "/signup/duplicate", produces = "application/json;charset=UTF-8")
   public ResponseEntity<String> checkDuplicate(@Valid DuplicateCheckDto duplicateCheckDto)
       throws JSONException {
-    userService.findBy(duplicateCheckDto);
+    userService.checkDuplicate(duplicateCheckDto);
     JSONObject responseBody = new JSONObject();
 
     responseBody.put("message", Message.VALID_EMAIL);
