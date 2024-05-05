@@ -1,6 +1,7 @@
 package com.kh.bookfinder.service;
 
 import com.kh.bookfinder.constants.Message;
+import com.kh.bookfinder.dto.DuplicateCheckDto;
 import com.kh.bookfinder.dto.SignUpDto;
 import com.kh.bookfinder.entity.User;
 import com.kh.bookfinder.exception.InvalidFieldException;
@@ -22,5 +23,9 @@ public class UserService {
     }
     User user = signUpDto.toEntity(passwordEncoder);
     this.userRepository.save(user);
+  }
+
+  public User findBy(DuplicateCheckDto duplicateCheckDto) {
+    return this.userRepository.findByEmail(duplicateCheckDto.getValue()).orElse(null);
   }
 }

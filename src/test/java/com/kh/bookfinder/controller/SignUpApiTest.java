@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
 @Transactional
-public class UserControllerTest {
+public class SignUpApiTest {
 
   /* TODO: 이메일 인증, 이메일 중복확인, 닉네임 중복확인 API 추가되면 Signup 테스트도 수정되어야 함
            주소에 대한 유효성 검사 생각해 봐야함
