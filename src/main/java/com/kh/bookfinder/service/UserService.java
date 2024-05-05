@@ -25,7 +25,10 @@ public class UserService {
     this.userRepository.save(user);
   }
 
-  public User findBy(DuplicateCheckDto duplicateCheckDto) {
-    return this.userRepository.findByEmail(duplicateCheckDto.getValue()).orElse(null);
+  public void checkDuplicate(DuplicateCheckDto duplicateCheckDto) {
+    this.userRepository.findByEmail(duplicateCheckDto.getValue())
+        .ifPresent((value) -> {
+          throw new InvalidFieldException("email", Message.DUPLICATE_EMAIL);
+        });
   }
 }
