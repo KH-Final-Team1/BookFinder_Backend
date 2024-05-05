@@ -28,8 +28,9 @@ public class BookTradeController {
 
   @GetMapping("/{boroughId}")
   public ResponseEntity<ArrayList<BookTrade>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
-    ArrayList<BookTrade> bookTradeList = new ArrayList<>();
-    bookTradeList = bookTradeService.getBookTrades(boroughId);
+    if (boroughId < 1 || boroughId > 25) throw new IllegalArgumentException(Message.INVALID_BOROUGH);
+
+    ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
 
     return ResponseEntity.ok().body(bookTradeList);
   }

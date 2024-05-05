@@ -17,4 +17,5 @@ public interface Message {
   String INVALID_ISBN = "유효하지 않은 ISBN 번호 입니다.";
   String INVALID_COST = "금액은 0부터 100000까지의 정수값만 입력 가능합니다.";
   String NULLABLE_COST = "금액은 빈값일 수 없습니다.";
+  String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
 }
