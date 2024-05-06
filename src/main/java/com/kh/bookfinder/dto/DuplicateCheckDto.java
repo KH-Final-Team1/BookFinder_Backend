@@ -4,6 +4,7 @@ import com.kh.bookfinder.constants.Message;
 import com.kh.bookfinder.constants.Regexp;
 import com.kh.bookfinder.exception.InvalidFieldException;
 import jakarta.validation.constraints.AssertTrue;
+import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,11 +21,14 @@ public class DuplicateCheckDto {
 
   @AssertTrue
   public boolean isValid() {
-    if (!field.equals("email")) {
+    if (!Arrays.asList("nickname", "email").contains(field)) {
       throw new InvalidFieldException("field", Message.INVALID_FIELD);
     }
-    if (!isValidEmail()) {
+    if (field.equals("email") && !isValidEmail()) {
       throw new InvalidFieldException("email", Message.INVALID_EMAIL);
+    }
+    if (field.equals("nickname") && !isValidNickname()) {
+      throw new InvalidFieldException("nickname", Message.INVALID_NICKNAME);
     }
 
     return true;
@@ -32,5 +36,9 @@ public class DuplicateCheckDto {
 
   public boolean isValidEmail() {
     return this.value.matches(Regexp.EMAIL);
+  }
+
+  public boolean isValidNickname() {
+    return this.value.matches(Regexp.NICKNAME);
   }
 }
