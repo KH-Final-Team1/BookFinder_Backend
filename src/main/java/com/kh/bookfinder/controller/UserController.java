@@ -41,7 +41,7 @@ public class UserController {
     userService.checkDuplicate(duplicateCheckDto);
     JSONObject responseBody = new JSONObject();
 
-    responseBody.put("message", Message.VALID_EMAIL);
+    responseBody.put("message", Message.getSuccessMessageBy(duplicateCheckDto.getField()));
     return ResponseEntity
         .ok()
         .body(responseBody.toString());

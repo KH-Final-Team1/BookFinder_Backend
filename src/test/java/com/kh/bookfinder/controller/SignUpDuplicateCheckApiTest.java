@@ -40,7 +40,7 @@ public class SignUpDuplicateCheckApiTest {
   private UserRepository userRepository;
 
   @Test
-  @DisplayName("유효한 DuplicateCheckDto가 주어지는 경우")
+  @DisplayName("유효한 email이 주어지는 경우")
   public void emailDuplicateCheckSuccessTest() throws Exception {
     // Given: field=email, value=jinho@kh.kr인 DuplicateCheckDto가 주어진다
     DuplicateCheckDto validDuplicateCheckDto = DuplicateCheckDto
@@ -58,7 +58,7 @@ public class SignUpDuplicateCheckApiTest {
         // Then: Status는 200 Ok이다.
         // And: message는 "가입이 가능한 이메일입니다."이다.
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is("가입이 가능한 이메일입니다.")));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.VALID_EMAIL)));
   }
 
   @Test
@@ -86,33 +86,9 @@ public class SignUpDuplicateCheckApiTest {
   }
 
   @Test
-  @DisplayName("field가 email이 아닌 경우")
-  public void emailDuplicateCheckFailTest2() throws Exception {
-    // Given: field=invalid, value=jinho@kh.kr인 DuplicateCheckDto가 주어진다
-    DuplicateCheckDto invalidDuplicateCheckDto = DuplicateCheckDto
-        .builder()
-        .field("invalid")
-        .value("jinho@kh.kr")
-        .build();
-
-    // When: Duplicate Check API를 호출한다.
-    this.mockMvc
-        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
-            .param("field", invalidDuplicateCheckDto.getField())
-            .param("value", invalidDuplicateCheckDto.getValue())
-        )
-        // Then: Status는 400 Bad Request 이다.
-        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
-        // And: details는 {"field": "field는 email만 가능합니다."}이다.
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.details.field", is(Message.INVALID_FIELD)));
-  }
-
-  @Test
   @DisplayName("이미 가입한 email인 경우")
   @Sql("classpath:oneUserInsert.sql")
-  public void emailDuplicateCheckFailTest3() throws Exception {
+  public void emailDuplicateCheckFailTest2() throws Exception {
     // Given: email이 jinho@kh.kr인 User를 데이터베이스에 추가한다.
     assertThat(this.userRepository.findByEmail("jinho@kh.kr").orElse(null)).isNotNull();
     // And: field=email, value=jinho@kh.kr인 DuplicateCheckDto가 주어진다
@@ -134,5 +110,102 @@ public class SignUpDuplicateCheckApiTest {
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.DUPLICATE_EMAIL)));
+  }
+
+  @Test
+  @DisplayName("유효한 nickname이 주어지는 경우")
+  public void nicknameDuplicateCheckSuccessTest() throws Exception {
+    // Given: field=nickname, value=testNickname인 DuplicateCheckDto가 주어진다
+    DuplicateCheckDto validDuplicateCheckDto = DuplicateCheckDto
+        .builder()
+        .field("nickname")
+        .value("testNickname")
+        .build();
+
+    // When: Duplicate Check API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
+            .param("field", validDuplicateCheckDto.getField())
+            .param("value", validDuplicateCheckDto.getValue())
+        )
+        // Then: Status는 200 Ok이다.
+        // And: message는 "가입이 가능한 닉네임입니다."이다.
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.VALID_NICKNAME)));
+  }
+
+  @Test
+  @DisplayName("nickname 형식이 유효하지 않은 경우")
+  public void nicknameDuplicateCheckFailTest1() throws Exception {
+    // Given: field=nickname, value=ㅂㅈㄷㅁㅋ인 DuplicateCheckDto가 주어진다
+    DuplicateCheckDto invalidDuplicateCheckDto = DuplicateCheckDto
+        .builder()
+        .field("nickname")
+        .value("ㅂㅈㄷㅁㅋ")
+        .build();
+
+    // When: Duplicate Check API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
+            .param("field", invalidDuplicateCheckDto.getField())
+            .param("value", invalidDuplicateCheckDto.getValue())
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
+        // And: details는 {"nickname": "영문, 유효한 한글, 숫자를 이용하여 3자 이상 10자 이하로 입력해주세요."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.INVALID_NICKNAME)));
+  }
+
+  @Test
+  @DisplayName("이미 가입한 닉네임인 경우")
+  @Sql("classpath:oneUserInsert.sql")
+  public void nicknameDuplicateCheckFailTest2() throws Exception {
+    // Given: nickname이 nickname인 User를 데이터베이스에 추가한다.
+    assertThat(userRepository.findByNickname("nickname").orElse(null)).isNotNull();
+    // And: field=nickname, value=nickname인 DuplicateCheckDto가 주어진다
+    DuplicateCheckDto validDuplicateCheckDto = DuplicateCheckDto
+        .builder()
+        .field("nickname")
+        .value("nickname")
+        .build();
+
+    // When: Duplicate Check API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
+            .param("field", validDuplicateCheckDto.getField())
+            .param("value", validDuplicateCheckDto.getValue())
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
+        // And: details는 {"nickname": "이미 가입된 닉네임입니다."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.DUPLICATE_NICKNAME)));
+  }
+
+  @Test
+  @DisplayName("field가 email이나 nickname이 아닌 경우")
+  public void duplicateCheckFailForDtoFieldTest() throws Exception {
+    // Given: field=invalid, value=jinho@kh.kr인 DuplicateCheckDto가 주어진다
+    DuplicateCheckDto invalidDuplicateCheckDto = DuplicateCheckDto
+        .builder()
+        .field("invalid")
+        .value("jinho@kh.kr")
+        .build();
+
+    // When: Duplicate Check API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
+            .param("field", invalidDuplicateCheckDto.getField())
+            .param("value", invalidDuplicateCheckDto.getValue())
+        )
+        // Then: Status는 400 Bad Request 이다.
+        // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
+        // And: details는 {"field": "field는 email이나 nickname만 가능합니다."}이다.
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.details.field", is(Message.INVALID_FIELD)));
   }
 }
