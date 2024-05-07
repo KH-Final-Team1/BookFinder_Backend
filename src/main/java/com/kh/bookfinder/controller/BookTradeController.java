@@ -6,13 +6,16 @@ import com.kh.bookfinder.entity.Book;
 import com.kh.bookfinder.entity.BookTrade;
 import com.kh.bookfinder.service.BookService;
 import com.kh.bookfinder.service.BookTradeService;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +39,7 @@ public class BookTradeController {
   }
 
   @PostMapping
-  public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Validated BookTradeDTO tradeDTO) {
+  public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeDTO tradeDTO) {
     Long isbn = Long.valueOf(tradeDTO.getIsbn());
 
     Book book = bookService.findBook(isbn)
@@ -52,8 +55,33 @@ public class BookTradeController {
         .longitude(tradeDTO.getLongitude())
         .build();
 
-    bookTradeService.createBookTrade(bookTrade);
+    bookTradeService.saveBookTrade(bookTrade);
     return ResponseEntity.ok().body(bookTrade);
+  }
+
+  @PutMapping("/{tradeId}")
+  public ResponseEntity<Object> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
+                                                @RequestBody @Valid BookTradeDTO tradeDTO) {
+    BookTrade bookTrade = bookTradeService.findTrade(tradeId)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
+
+    Book book = bookService.findBook(Long.valueOf(tradeDTO.getIsbn()))
+        .orElseThrow(() -> new IllegalArgumentException(Message.INVALID_ISBN));
+
+    bookTrade = BookTrade.builder()
+        .id(bookTrade.getId())
+        .book(book)
+        .tradeType(tradeDTO.getTradeType())
+        .rentalCost(tradeDTO.getRentalCost())
+        .limitedDate(tradeDTO.getLimitedDate())
+        .content(tradeDTO.getContent())
+        .latitude(tradeDTO.getLatitude())
+        .longitude(tradeDTO.getLongitude())
+        .createDate(bookTrade.getCreateDate())
+        .build();
+
+    bookTradeService.saveBookTrade(bookTrade);
+    return ResponseEntity.ok().body(Map.of("message","게시글을 성공적으로 수정했습니다."));
   }
 
 }

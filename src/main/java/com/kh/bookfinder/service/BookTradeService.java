@@ -4,6 +4,7 @@ import com.kh.bookfinder.entity.BookTrade;
 import com.kh.bookfinder.entity.Status;
 import com.kh.bookfinder.repository.BookTradeRepository;
 import java.util.ArrayList;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,12 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void createBookTrade(BookTrade bookTrade) {
+  public void saveBookTrade(BookTrade bookTrade) {
     bookTradeRepository.save(bookTrade);
+  }
+
+  public Optional<BookTrade> findTrade(Long tradeId) {
+    return bookTradeRepository.findById(tradeId);
   }
 
 }
