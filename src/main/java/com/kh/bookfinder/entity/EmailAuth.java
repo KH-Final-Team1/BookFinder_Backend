@@ -34,7 +34,7 @@ public class EmailAuth implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long auth_id;
   @Default
   private String authCode = generateAuthCode();
   private String email;
