@@ -81,7 +81,7 @@ public class BookTradeController {
         .build();
 
     bookTradeService.saveBookTrade(bookTrade);
-    return ResponseEntity.ok().body(Map.of("message","게시글을 성공적으로 수정했습니다."));
+    return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 
 }

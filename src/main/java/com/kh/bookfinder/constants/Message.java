@@ -19,4 +19,5 @@ public interface Message {
   String NULLABLE_COST = "금액은 빈값일 수 없습니다.";
   String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
   String INVALID_TRADE = "유효하지 않은 거래 번호 입니다.";
+  String SUCCESS_UPDATE = "게시글을 성공적으로 수정했습니다.";
 }
