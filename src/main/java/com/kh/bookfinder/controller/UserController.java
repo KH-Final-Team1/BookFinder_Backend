@@ -2,7 +2,10 @@ package com.kh.bookfinder.controller;
 
 import com.kh.bookfinder.constants.Message;
 import com.kh.bookfinder.dto.DuplicateCheckDto;
+import com.kh.bookfinder.dto.SendingEmailAuthDto;
 import com.kh.bookfinder.dto.SignUpDto;
+import com.kh.bookfinder.entity.EmailAuth;
+import com.kh.bookfinder.service.EmailAuthService;
 import com.kh.bookfinder.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/signup")
 public class UserController {
 
   private final UserService userService;
+  private final EmailAuthService emailAuthService;
 
-  @PostMapping(value = "/signup", produces = "application/json;charset=UTF-8")
+  @PostMapping(value = "/", produces = "application/json;charset=UTF-8")
   public ResponseEntity<String> signUp(@RequestBody @Valid SignUpDto signUpDto)
       throws JSONException {
     userService.save(signUpDto);
@@ -35,13 +39,27 @@ public class UserController {
         .body(responseBody.toString());
   }
 
-  @GetMapping(value = "/signup/duplicate", produces = "application/json;charset=UTF-8")
+  @GetMapping(value = "/duplicate", produces = "application/json;charset=UTF-8")
   public ResponseEntity<String> checkDuplicate(@Valid DuplicateCheckDto duplicateCheckDto)
       throws JSONException {
     userService.checkDuplicate(duplicateCheckDto);
     JSONObject responseBody = new JSONObject();
 
     responseBody.put("message", Message.getSuccessMessageBy(duplicateCheckDto.getField()));
+    return ResponseEntity
+        .ok()
+        .body(responseBody.toString());
+  }
+
+  @PostMapping(value = "/email", produces = "application/json;charset=UTF-8")
+  public ResponseEntity<String> sendAuthEmail(@Valid @RequestBody SendingEmailAuthDto requestBody)
+      throws JSONException {
+    EmailAuth emailAuth = this.emailAuthService.sendAuthCodeTo(requestBody.getEmail());
+    String signingToken = emailAuth.generateSigningToken();
+
+    JSONObject responseBody = new JSONObject();
+    responseBody.put("signingToken", signingToken);
+
     return ResponseEntity
         .ok()
         .body(responseBody.toString());
