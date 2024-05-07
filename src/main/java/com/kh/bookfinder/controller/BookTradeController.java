@@ -1,5 +1,6 @@
 package com.kh.bookfinder.controller;
 
+import com.kh.bookfinder.constants.Borough;
 import com.kh.bookfinder.constants.Message;
 import com.kh.bookfinder.dto.BookTradeDTO;
 import com.kh.bookfinder.entity.Book;
@@ -34,7 +35,7 @@ public class BookTradeController {
 
   @GetMapping("list/{boroughId}")
   public ResponseEntity<ArrayList<BookTrade>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
-    if (boroughId < 1 || boroughId > 25) {
+    if (boroughId < Borough.MIN_BOROUGH || boroughId > Borough.MAX_BOROUGH) {
       throw new InvalidFieldException("지역 번호 오류", Message.INVALID_BOROUGH);
     }
     ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
@@ -67,7 +68,7 @@ public class BookTradeController {
   }
 
   @PutMapping("/{tradeId}")
-  public ResponseEntity<Object> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
+  public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
                                                 @RequestBody @Valid BookTradeDTO tradeDTO) {
     BookTrade bookTrade = bookTradeService.findTrade(tradeId)
         .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
@@ -92,7 +93,7 @@ public class BookTradeController {
   }
 
   @DeleteMapping("/{tradeId}")
-  public ResponseEntity<Object> deleteBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
+  public ResponseEntity<Map<String, String>> deleteBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
     bookTradeService.deleteTrade(tradeId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
   }
