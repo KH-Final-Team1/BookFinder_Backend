@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 public class BookTradeDTO {
 
-  private String isbn;
+  private Long isbn;
   private TradeType tradeType;
   @NotNull(message = Message.NULLABLE_COST)
   @Min(value = 0, message = Message.INVALID_COST)

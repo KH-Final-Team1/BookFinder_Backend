@@ -40,9 +40,7 @@ public class BookTradeController {
 
   @PostMapping
   public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeDTO tradeDTO) {
-    Long isbn = Long.valueOf(tradeDTO.getIsbn());
-
-    Book book = bookService.findBook(isbn)
+    Book book = bookService.findBook(tradeDTO.getIsbn())
         .orElseThrow(() -> new IllegalArgumentException(Message.INVALID_ISBN));
 
     BookTrade bookTrade = BookTrade.builder()
@@ -65,7 +63,7 @@ public class BookTradeController {
     BookTrade bookTrade = bookTradeService.findTrade(tradeId)
         .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
 
-    Book book = bookService.findBook(Long.valueOf(tradeDTO.getIsbn()))
+    Book book = bookService.findBook(tradeDTO.getIsbn())
         .orElseThrow(() -> new IllegalArgumentException(Message.INVALID_ISBN));
 
     bookTrade = BookTrade.builder()
