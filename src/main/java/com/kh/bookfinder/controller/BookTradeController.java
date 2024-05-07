@@ -4,6 +4,7 @@ import com.kh.bookfinder.constants.Message;
 import com.kh.bookfinder.dto.BookTradeDTO;
 import com.kh.bookfinder.entity.Book;
 import com.kh.bookfinder.entity.BookTrade;
+import com.kh.bookfinder.exception.InvalidFieldException;
 import com.kh.bookfinder.service.BookService;
 import com.kh.bookfinder.service.BookTradeService;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +43,7 @@ public class BookTradeController {
   @PostMapping
   public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeDTO tradeDTO) {
     Book book = bookService.findBook(tradeDTO.getIsbn())
-        .orElseThrow(() -> new IllegalArgumentException(Message.INVALID_ISBN));
+        .orElseThrow(() -> new InvalidFieldException("ISBN", Message.INVALID_ISBN));
 
     BookTrade bookTrade = BookTrade.builder()
         .book(book)
@@ -54,7 +56,7 @@ public class BookTradeController {
         .build();
 
     bookTradeService.saveBookTrade(bookTrade);
-    return ResponseEntity.ok().body(bookTrade);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping("/{tradeId}")
@@ -64,7 +66,7 @@ public class BookTradeController {
         .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
 
     Book book = bookService.findBook(tradeDTO.getIsbn())
-        .orElseThrow(() -> new IllegalArgumentException(Message.INVALID_ISBN));
+        .orElseThrow(() -> new InvalidFieldException("ISBN", Message.INVALID_ISBN));
 
     bookTrade = BookTrade.builder()
         .id(bookTrade.getId())

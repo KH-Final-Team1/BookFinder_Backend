@@ -14,6 +14,7 @@ public interface Message {
   String INVALID_NICKNAME = "영문, 유효한 한글, 숫자를 이용하여 3자 이상 10자 이하로 입력해주세요.";
   String INVALID_PHONE = "유효하지 않은 휴대폰 번호 형식입니다.";
 
+  String INVALID_ISBN_DIGITS = "ISBN 번호는 13자리의 숫자만 입력 가능합니다.";
   String INVALID_ISBN = "유효하지 않은 ISBN 번호 입니다.";
   String INVALID_COST = "금액은 0부터 100000까지의 정수값만 입력 가능합니다.";
   String NULLABLE_COST = "금액은 빈값일 수 없습니다.";

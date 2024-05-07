@@ -12,6 +12,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 public class BookTradeDTO {
 
+  @Min(value = 1000000000000L, message = Message.INVALID_ISBN_DIGITS)
+  @Max(value = 9999999999999L, message = Message.INVALID_ISBN_DIGITS)
   private Long isbn;
   private TradeType tradeType;
   @NotNull(message = Message.NULLABLE_COST)
