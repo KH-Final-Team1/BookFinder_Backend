@@ -21,4 +21,5 @@ public interface Message {
   String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
   String INVALID_TRADE = "유효하지 않은 거래 번호 입니다.";
   String SUCCESS_UPDATE = "게시글을 성공적으로 수정했습니다.";
+  String SUCCESS_DELETE = "게시글을 성공적으로 삭제했습니다.";
 }

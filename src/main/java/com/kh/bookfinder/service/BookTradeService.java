@@ -1,11 +1,13 @@
 package com.kh.bookfinder.service;
 
+import com.kh.bookfinder.constants.Message;
 import com.kh.bookfinder.entity.BookTrade;
 import com.kh.bookfinder.entity.Status;
 import com.kh.bookfinder.repository.BookTradeRepository;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,13 @@ public class BookTradeService {
 
   public Optional<BookTrade> findTrade(Long tradeId) {
     return bookTradeRepository.findById(tradeId);
+  }
+
+  public void deleteTrade(Long tradeId) {
+    BookTrade bookTrade = findTrade(tradeId)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
+    bookTrade.setDeleteYn(Status.Y);
+    bookTradeRepository.save(bookTrade);
   }
 
 }
