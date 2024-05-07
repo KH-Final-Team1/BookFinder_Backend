@@ -30,6 +30,9 @@ public interface Message {
   String SUCCESS_UPDATE = "게시글을 성공적으로 수정했습니다.";
   String SUCCESS_DELETE = "게시글을 성공적으로 삭제했습니다.";
 
+  String DUPLICATE_ISBN = "이미 등록되어 있는 도서 입니다. 다른 도서로 입력해주세요.";
+  String SUCCESS_ISBN = "요청 가능한 도서입니다.";
+
   static String getSuccessMessageBy(String field) {
     return field.equals("email") ? VALID_EMAIL : VALID_NICKNAME;
   }
