@@ -17,6 +17,20 @@ public class BookTradeService {
   @Autowired
   BookTradeRepository bookTradeRepository;
 
+  public Optional<BookTrade> findTrade(Long tradeId) {
+    return bookTradeRepository.findById(tradeId);
+  }
+
+  public BookTrade getBookTrade(Long tradeId) {
+    BookTrade bookTrade = bookTradeRepository.findById(tradeId)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
+    if (bookTrade.getDeleteYn().equals(Status.Y)) {
+      throw new ResourceNotFoundException(Message.DELETED_TRADE);
+    }
+
+    return bookTrade;
+  }
+
   public ArrayList<BookTrade> getBookTrades(Long boroughId) {
     return bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N);
   }
@@ -24,10 +38,6 @@ public class BookTradeService {
   @Transactional
   public void saveBookTrade(BookTrade bookTrade) {
     bookTradeRepository.save(bookTrade);
-  }
-
-  public Optional<BookTrade> findTrade(Long tradeId) {
-    return bookTradeRepository.findById(tradeId);
   }
 
   public void deleteTrade(Long tradeId) {

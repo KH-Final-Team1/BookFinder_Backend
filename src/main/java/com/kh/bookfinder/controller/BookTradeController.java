@@ -32,13 +32,19 @@ public class BookTradeController {
   @Autowired
   BookService bookService;
 
-  @GetMapping("/{boroughId}")
+  @GetMapping("list/{boroughId}")
   public ResponseEntity<ArrayList<BookTrade>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
-    if (boroughId < 1 || boroughId > 25) throw new IllegalArgumentException(Message.INVALID_BOROUGH);
-
+    if (boroughId < 1 || boroughId > 25) {
+      throw new InvalidFieldException("지역 번호 오류", Message.INVALID_BOROUGH);
+    }
     ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
-
     return ResponseEntity.ok().body(bookTradeList);
+  }
+
+  @GetMapping("/{tradeId}")
+  public ResponseEntity<BookTrade> getBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
+    BookTrade bookTrade = bookTradeService.getBookTrade(tradeId);
+    return ResponseEntity.ok().body(bookTrade);
   }
 
   @PostMapping
