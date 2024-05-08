@@ -1,6 +1,7 @@
 package com.kh.bookfinder.controller;
 
 import com.kh.bookfinder.constants.Message;
+import com.kh.bookfinder.dto.CheckingVerificationDto;
 import com.kh.bookfinder.dto.DuplicateCheckDto;
 import com.kh.bookfinder.dto.SendingEmailAuthDto;
 import com.kh.bookfinder.dto.SignUpDto;
@@ -59,6 +60,18 @@ public class UserController {
 
     JSONObject responseBody = new JSONObject();
     responseBody.put("signingToken", signingToken);
+
+    return ResponseEntity
+        .ok()
+        .body(responseBody.toString());
+  }
+
+  @PostMapping(value = "/verification-code", produces = "application/json;charset=UTF-8")
+  public ResponseEntity<String> checkVerification(@Valid @RequestBody CheckingVerificationDto requestBody)
+      throws JSONException {
+    String singingToken = this.emailAuthService.checkVerification(requestBody);
+    JSONObject responseBody = new JSONObject();
+    responseBody.put("signingToken", singingToken);
 
     return ResponseEntity
         .ok()
