@@ -3,6 +3,7 @@ package com.kh.bookfinder.controller;
 import com.kh.bookfinder.dto.SearchDto;
 import com.kh.bookfinder.entity.Book;
 import com.kh.bookfinder.service.BookService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class BookController {
   private BookService bookService;
 
   @GetMapping("/search")
-  public ResponseEntity<List<Book>> selectList(SearchDto requestParam) {
-    List<Book> bList = bookService.selectList(requestParam.getFilter(), requestParam.getKeyword());
-    return ResponseEntity.ok().body(bList);
+  public ResponseEntity<List<Book>> selectList(@Valid SearchDto requestParam) {
+    List<Book> bookList = bookService.selectList(requestParam);
+    return ResponseEntity.ok().body(bookList);
   }
 }

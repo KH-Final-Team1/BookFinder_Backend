@@ -30,6 +30,8 @@ public interface Message {
   String SUCCESS_UPDATE = "게시글을 성공적으로 수정했습니다.";
   String SUCCESS_DELETE = "게시글을 성공적으로 삭제했습니다.";
 
+  String INVALID_FILTER = "filter는 name이나 authors나 publisher만 가능합니다.";
+
   static String getSuccessMessageBy(String field) {
     return field.equals("email") ? VALID_EMAIL : VALID_NICKNAME;
   }
