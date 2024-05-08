@@ -22,4 +22,17 @@ public class CheckingVerificationDto {
   @Pattern(regexp = Regexp.AUTH_CODE, message = Message.INVALID_AUTH_CODE)
   private String authCode;
   private String signingToken;
+
+  @AssertTrue(message = Message.INVALID_SIGNING_TOKEN)
+  private boolean isSigningToken() {
+    String decoded = new String(Base64.getDecoder().decode(signingToken), StandardCharsets.UTF_8);
+    try {
+      JSONObject result = new JSONObject(decoded);
+      result.get("email");
+      result.get("code");
+      return true;
+    } catch (JSONException e) {
+      return false;
+    }
+  }
 }

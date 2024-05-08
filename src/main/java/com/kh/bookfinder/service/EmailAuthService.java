@@ -59,16 +59,8 @@ public class EmailAuthService {
     return target.generateSigningToken();
   }
 
-  private JSONObject decode(String signingToken) {
+  private JSONObject decode(String signingToken) throws JSONException {
     String decoded = new String(Base64.getDecoder().decode(signingToken), StandardCharsets.UTF_8);
-    try {
-      JSONObject result = new JSONObject(decoded);
-      result.get("email");
-      result.get("code");
-
-      return result;
-    } catch (JSONException e) {
-      throw new InvalidFieldException("signingToken", "signing Token이 유효하지 않습니다.");
-    }
+    return new JSONObject(decoded);
   }
 }
