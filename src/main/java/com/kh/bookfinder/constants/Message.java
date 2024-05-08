@@ -11,6 +11,7 @@ public interface Message {
 
   String VALID_EMAIL = "가입이 가능한 이메일입니다.";
   String INVALID_EMAIL = "유효하지 않은 이메일 형식입니다.";
+  String MAIL_SUBJECT = "북적북적에서 보내는 이메일 인증 코드입니다.";
   String DUPLICATE_EMAIL = "이미 가입된 이메일입니다.";
   String INVALID_FIELD = "field는 email이나 nickname만 가능합니다.";
   String INVALID_PASSWORD = "영문, 숫자, 특수기호를 포함하여 8자 이상 20자 이하로 입력해주세요.";
@@ -19,6 +20,9 @@ public interface Message {
   String VALID_NICKNAME = "가입이 가능한 닉네임입니다.";
   String DUPLICATE_NICKNAME = "이미 가입된 닉네임입니다.";
   String INVALID_PHONE = "유효하지 않은 휴대폰 번호 형식입니다.";
+  String INVALID_AUTH_CODE = "유효하지 않은 인증 코드입니다.";
+  String EXPIRED_AUTH_CODE = "인증 코드가 만료되었습니다.";
+  String INVALID_SIGNING_TOKEN = "유효하지 않은 토큰입니다.";
 
   String INVALID_ISBN_DIGITS = "ISBN 번호는 13자리의 숫자만 입력 가능합니다.";
   String INVALID_ISBN = "유효하지 않은 ISBN 번호 입니다.";

@@ -6,4 +6,5 @@ public interface Regexp {
   String PASSWORD = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()-_=+]).{8,20}$";
   String NICKNAME = "^[가-힣a-zA-Z0-9]{3,20}$";
   String PHONE = "^01[0-9][0-9]{3,4}[0-9]{4}$";
+  String AUTH_CODE = "^[a-zA-Z0-9]{8}$";
 }
