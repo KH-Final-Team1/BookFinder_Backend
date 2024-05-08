@@ -17,17 +17,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class BookController {
 
     @Autowired
-    private BookService bSerivce;
+    private BookService bookService;
 
     @ResponseBody
     @GetMapping(value = "api/v1/request/check/isbn", produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> selectBookRequestIsbn(@RequestParam @Valid BookRequestDTO bookRequestDTO)
             throws JSONException{
-        bSerivce.IsbnDuplicate(bookRequestDTO);
+        bookService.IsbnDuplicate(bookRequestDTO);
         JSONObject responseBody = new JSONObject();
         responseBody.put("message", Message.SUCCESS_ISBN);
         return ResponseEntity.ok().body(responseBody.toString());
-
-
     }
 }
