@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,8 +43,10 @@ public class BookTrade {
   @Column(nullable = false)
   private int rentalCost;
   private String content;
-  private float latitude;
-  private float longitude;
+  @Column(precision = 10, scale = 8)
+  private BigDecimal latitude;
+  @Column(precision = 11, scale = 8)
+  private BigDecimal longitude;
   private Date limitedDate;
   @Enumerated(EnumType.STRING)
   @Builder.Default
