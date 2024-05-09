@@ -30,4 +30,5 @@ public class Book {
   private String className;
   private String description;
   private String imageUrl;
+  private String approvalStatus;
 }

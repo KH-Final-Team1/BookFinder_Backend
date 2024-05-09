@@ -32,4 +32,25 @@ public class BookService {
     }
     return bookRepository.findByPublisherContaining(requestParam.getKeyword());
   }
+
+  public List<Book> selectListWait(SearchDto requestParam) {
+    List<Book> bookList;
+    if (requestParam.getFilter().equals("name")) {
+      bookList = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(), "WAIT");
+    } else {
+      bookList = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(), "WAIT");
+    }
+    if (bookList.isEmpty()) {
+      throw new ResourceNotFoundException(Message.NOT_FOUND_WAIT);
+    }
+    return bookList;
+  }
+
+  public List<Book> findAllByApprovalStatus(String approvalStatus) {
+    List<Book> bookList = bookRepository.findAllByApprovalStatus(approvalStatus);
+    if (bookList.isEmpty()) {
+      throw new ResourceNotFoundException(Message.NOT_FOUND_WAIT);
+    }
+    return bookList;
+  }
 }

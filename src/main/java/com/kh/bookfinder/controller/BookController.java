@@ -37,4 +37,14 @@ public class BookController {
     Optional<Book> book = bookService.findBook(isbn);
     return ResponseEntity.ok().body(book);
   }
+
+  @GetMapping("/api/v1/request/list")
+  public ResponseEntity<List<Book>> selectBookRequestList(@Valid SearchDto requestParam) {
+    if (!requestParam.getKeyword().isEmpty()) {
+      List<Book> bookList = bookService.selectListWait(requestParam);
+      return ResponseEntity.ok().body(bookList);
+    }
+    List<Book> bookList = bookService.findAllByApprovalStatus("WAIT");
+    return ResponseEntity.ok().body(bookList);
+  }
 }
