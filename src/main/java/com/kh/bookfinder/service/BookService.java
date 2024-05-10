@@ -5,20 +5,20 @@ import com.kh.bookfinder.entity.Book;
 import com.kh.bookfinder.repository.BookRepository;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
-  @Autowired
-  BookRepository bookRepository;
+  private final BookRepository bookRepository;
 
   public Optional<Book> findBook(Long isbn) {
     return bookRepository.findByIsbn(isbn);
   }
 
-  public List<Book> selectList(SearchDto requestParam) {
+  public List<Book> getBooks(SearchDto requestParam) {
     if (requestParam.getFilter().equals("name")) {
       return bookRepository.findByNameContaining(requestParam.getKeyword());
     } else if (requestParam.getFilter().equals("authors")) {
