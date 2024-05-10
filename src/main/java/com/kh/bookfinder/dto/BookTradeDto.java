@@ -5,6 +5,7 @@ import com.kh.bookfinder.entity.TradeType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
 
@@ -21,7 +22,7 @@ public class BookTradeDto {
   private Integer rentalCost;
   private Date limitedDate;
   private String content;
-  private float latitude;
-  private float longitude;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
 
 }
