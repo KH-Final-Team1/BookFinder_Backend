@@ -5,9 +5,7 @@ import com.kh.bookfinder.dto.SearchDto;
 import com.kh.bookfinder.entity.Book;
 import com.kh.bookfinder.repository.BookRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +15,9 @@ public class BookService {
 
   private final BookRepository bookRepository;
 
-  public Optional<Book> findBook(Long isbn) {
-    Optional<Book> book = bookRepository.findByIsbn(isbn);
-    if (book.isEmpty()) {
-      throw new ResourceNotFoundException(Message.NOT_FOUND_ISBN);
-    }
-    return book;
+  public Book findBook(Long isbn) {
+    return bookRepository.findByIsbn(isbn)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.UNSAVED_ISBN));
   }
 
   public List<Book> getBooks(SearchDto requestParam) {

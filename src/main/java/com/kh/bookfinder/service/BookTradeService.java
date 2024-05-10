@@ -5,29 +5,27 @@ import com.kh.bookfinder.entity.BookTrade;
 import com.kh.bookfinder.entity.Status;
 import com.kh.bookfinder.repository.BookTradeRepository;
 import java.util.ArrayList;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class BookTradeService {
 
-  @Autowired
-  BookTradeRepository bookTradeRepository;
+  private final BookTradeRepository bookTradeRepository;
 
-  public Optional<BookTrade> findTrade(Long tradeId) {
-    return bookTradeRepository.findById(tradeId);
+  public BookTrade findTrade(Long tradeId) {
+    return bookTradeRepository.findById(tradeId)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_TRADE));
   }
 
   public BookTrade getBookTrade(Long tradeId) {
-    BookTrade bookTrade = bookTradeRepository.findById(tradeId)
-        .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
+    BookTrade bookTrade = findTrade(tradeId);
     if (bookTrade.getDeleteYn().equals(Status.Y)) {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
-
     return bookTrade;
   }
 
@@ -40,11 +38,10 @@ public class BookTradeService {
     bookTradeRepository.save(bookTrade);
   }
 
+  @Transactional
   public void deleteTrade(Long tradeId) {
-    BookTrade bookTrade = findTrade(tradeId)
-        .orElseThrow(() -> new ResourceNotFoundException(Message.INVALID_TRADE));
+    BookTrade bookTrade = findTrade(tradeId);
     bookTrade.setDeleteYn(Status.Y);
-    bookTradeRepository.save(bookTrade);
   }
 
 }
