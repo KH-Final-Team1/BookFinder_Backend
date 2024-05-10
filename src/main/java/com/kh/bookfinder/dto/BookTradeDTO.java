@@ -5,6 +5,7 @@ import com.kh.bookfinder.entity.TradeType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,7 +24,7 @@ public class BookTradeDTO {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private Date limitedDate;
   private String content;
-  private float latitude;
-  private float longitude;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
 
 }
