@@ -28,7 +28,7 @@ public class UserController {
   private final UserService userService;
   private final EmailAuthService emailAuthService;
 
-  @PostMapping(value = "/", produces = "application/json;charset=UTF-8")
+  @PostMapping(value = "", produces = "application/json;charset=UTF-8")
   public ResponseEntity<String> signUp(@RequestBody @Valid SignUpDto signUpDto)
       throws JSONException {
     userService.save(signUpDto);
