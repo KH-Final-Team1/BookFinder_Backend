@@ -9,15 +9,15 @@ public interface Message {
       """;
   String BAD_REQUEST = "요청이 유효하지 않습니다. 다시 한번 확인해주세요.";
 
-  String VALID_EMAIL = "가입이 가능한 이메일입니다.";
+  String VALID_EMAIL = "가입이 가능한 이메일입니다.\n사용하시겠습니까?";
   String INVALID_EMAIL = "유효하지 않은 이메일 형식입니다.";
   String MAIL_SUBJECT = "북적북적에서 보내는 이메일 인증 코드입니다.";
   String DUPLICATE_EMAIL = "이미 가입된 이메일입니다.";
   String INVALID_FIELD = "field는 email이나 nickname만 가능합니다.";
   String INVALID_PASSWORD = "영문, 숫자, 특수기호를 포함하여 8자 이상 20자 이하로 입력해주세요.";
   String INVALID_PASSWORD_CONFIRM = "비밀번호와 비밀번호 확인이 일치하지 않습니다.";
-  String INVALID_NICKNAME = "영문, 유효한 한글, 숫자를 이용하여 3자 이상 10자 이하로 입력해주세요.";
-  String VALID_NICKNAME = "가입이 가능한 닉네임입니다.";
+  String INVALID_NICKNAME = "영문, 유효한 한글, 숫자를 이용하여 3자 이상 20자 이하로 입력해주세요.";
+  String VALID_NICKNAME = "가입이 가능한 닉네임입니다.\n사용하시겠습니까?";
   String DUPLICATE_NICKNAME = "이미 가입된 닉네임입니다.";
   String INVALID_PHONE = "유효하지 않은 휴대폰 번호 형식입니다.";
   String INVALID_AUTH_CODE = "유효하지 않은 인증 코드입니다.";
