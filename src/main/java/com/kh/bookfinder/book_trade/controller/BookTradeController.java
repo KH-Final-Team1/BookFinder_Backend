@@ -1,16 +1,19 @@
 package com.kh.bookfinder.book_trade.controller;
 
+import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.service.BookService;
+import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
+import com.kh.bookfinder.book_trade.dto.BookTradeResponseDto;
+import com.kh.bookfinder.book_trade.entity.BookTrade;
+import com.kh.bookfinder.book_trade.service.BookTradeService;
 import com.kh.bookfinder.global.constants.Borough;
 import com.kh.bookfinder.global.constants.Message;
-import com.kh.bookfinder.book_trade.dto.BookTradeDto;
-import com.kh.bookfinder.book.entity.Book;
-import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
-import com.kh.bookfinder.book.service.BookService;
-import com.kh.bookfinder.book_trade.service.BookTradeService;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +34,18 @@ public class BookTradeController {
   private final BookTradeService bookTradeService;
   private final BookService bookService;
 
-  @GetMapping("list/{boroughId}")
-  public ResponseEntity<ArrayList<BookTrade>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
-    if (boroughId < Borough.MIN_BOROUGH || boroughId > Borough.MAX_BOROUGH) {
-      throw new InvalidFieldException("borough Id", Message.INVALID_BOROUGH);
+  @GetMapping(value = "list/{boroughId}", produces = "application/json;charset=UTF-8")
+  public ResponseEntity<List<BookTradeResponseDto>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
+    if (!isValidBoroughId(boroughId)) {
+      throw new InvalidFieldException("boroughId", Message.INVALID_BOROUGH);
     }
     ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
-    return ResponseEntity.ok().body(bookTradeList);
+
+    List<BookTradeResponseDto> response = bookTradeList.stream().map(
+        BookTrade::toResponseDto
+    ).collect(Collectors.toList());
+
+    return ResponseEntity.ok().body(response);
   }
 
   @GetMapping("/{tradeId}")
@@ -47,18 +55,9 @@ public class BookTradeController {
   }
 
   @PostMapping
-  public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeDto tradeDto) {
+  public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
     Book book = bookService.findBook(tradeDto.getIsbn());
-
-    BookTrade bookTrade = BookTrade.builder()
-        .book(book)
-        .tradeType(tradeDto.getTradeType())
-        .rentalCost(tradeDto.getRentalCost())
-        .limitedDate(tradeDto.getLimitedDate())
-        .content(tradeDto.getContent())
-        .latitude(tradeDto.getLatitude())
-        .longitude(tradeDto.getLongitude())
-        .build();
+    BookTrade bookTrade = tradeDto.toEntity(book);
 
     bookTradeService.saveBookTrade(bookTrade);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -66,7 +65,7 @@ public class BookTradeController {
 
   @PutMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
-      @RequestBody @Valid BookTradeDto tradeDto) {
+      @RequestBody @Valid BookTradeRequestDto tradeDto) {
     BookTrade bookTrade = bookTradeService.findTrade(tradeId);
     Book book = bookService.findBook(tradeDto.getIsbn());
 
@@ -90,6 +89,10 @@ public class BookTradeController {
   public ResponseEntity<Map<String, String>> deleteBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
     bookTradeService.deleteTrade(tradeId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
+  }
+
+  private boolean isValidBoroughId(Long boroughId) {
+    return boroughId >= Borough.MIN_BOROUGH && boroughId <= Borough.MAX_BOROUGH;
   }
 
 }

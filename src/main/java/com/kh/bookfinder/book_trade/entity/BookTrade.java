@@ -1,6 +1,7 @@
 package com.kh.bookfinder.book_trade.entity;
 
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book_trade.dto.BookTradeResponseDto;
 import com.kh.bookfinder.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,4 +62,19 @@ public class BookTrade {
   @UpdateTimestamp
   private Date updateDate;
 
+  public BookTradeResponseDto toResponseDto() {
+    return BookTradeResponseDto.builder()
+        .id(this.id)
+        .tradeType(this.tradeType)
+        .tradeYn(this.tradeYn)
+        .rentalCost(this.rentalCost)
+        .createdDate(this.createDate)
+        .bookName(this.book.getName())
+        .bookAuthors(this.book.getAuthors())
+        .bookPublicationYear(this.book.getPublicationYear())
+        .bookImageUrl(this.book.getImageUrl())
+        .userNickname(this.user.getNickname())
+        .boroughName(this.borough.getName())
+        .build();
+  }
 }
