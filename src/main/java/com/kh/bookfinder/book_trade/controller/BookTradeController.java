@@ -5,8 +5,8 @@ import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
+import com.kh.bookfinder.book_trade.entity.Borough;
 import com.kh.bookfinder.book_trade.service.BookTradeService;
-import com.kh.bookfinder.global.constants.Borough;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
 import jakarta.validation.Valid;
@@ -36,7 +36,7 @@ public class BookTradeController {
 
   @GetMapping(value = "list/{boroughId}", produces = "application/json;charset=UTF-8")
   public ResponseEntity<List<BookTradeResponseDto>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
-    if (!isValidBoroughId(boroughId)) {
+    if (!Borough.isValid(boroughId)) {
       throw new InvalidFieldException("boroughId", Message.INVALID_BOROUGH);
     }
     ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
@@ -90,9 +90,4 @@ public class BookTradeController {
     bookTradeService.deleteTrade(tradeId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
   }
-
-  private boolean isValidBoroughId(Long boroughId) {
-    return boroughId >= Borough.MIN_BOROUGH && boroughId <= Borough.MAX_BOROUGH;
-  }
-
 }
