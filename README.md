@@ -43,9 +43,14 @@ request body (application/json)
     }
     ```
 
+---
+
 ## BookTrade
+
 ### Create BookTrade API
+
 **Request**
+
 ```
 POST: {BASE_URL}/api/v1/trades
 
@@ -163,3 +168,52 @@ GET: {BASE_URL}/api/v1/trades/list/{boroughId}
         }
     }
     ```
+
+### Get BookTrade API
+
+**Request**
+
+```
+GET: {BASE_URL}/api/v1/trades/{tradeId}
+```
+
+**Response**
+
+- 200 Ok
+    ```
+    {
+        "id": 1,
+        "tradeType": "BORROW",
+        "tradeYn": "N",
+        "content": "책 빌려주세요.",
+        "rentalCost": 10000,
+        "longitude": 18.12342,
+        "latitude": 19.12115,
+        "createdDate": "2024-05-15"
+        "book": {
+            "name": "test book name1",
+            "authors": "test book authors1 etc..",
+            "publisher": "test publisher1",
+            "publicationYear": 2024
+            "imageUrl": "test url3"
+            "description": "test description"
+        }
+        "user": {
+            "nickname": "고소하게"
+        }
+    }
+    ```
+
+- 404 Not Found
+    - boroughId에 대한 튜플이 DB에 없는 경우
+      ```
+      {
+          "message": "거래 번호를 찾을 수 없습니다."
+      }
+      ```
+    - boroughId에 대한 튜플의 상태가 Delete인 경우
+      ```
+      {
+          "message": "삭제된 게시물 입니다."
+      }
+      ```
