@@ -3,14 +3,14 @@ package com.kh.bookfinder.book_trade.api;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
+import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.helper.MockBookTrade;
-import com.kh.bookfinder.book_trade.service.BookTradeService;
+import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class ListBookTradeApiTest {
   @Autowired
   private MockMvc mockMvc;
   @MockBean
-  private BookTradeService bookTradeService;
+  private BookTradeRepository bookTradeRepository;
 
   @Test
   @DisplayName("DB에 저장된 BookTrade 튜플이 없는 경우")
@@ -66,9 +66,9 @@ public class ListBookTradeApiTest {
   public void listBookTradeSuccessOnExistBookTradeList() throws Exception {
     // Given: 유효한 Borough ID가 주어진다
     // And: Mock BookTrade List가 주어진다.
-    int boroughId = 1;
+    Long boroughId = 1L;
     ArrayList<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeList(10);
-    when(this.bookTradeService.getBookTrades(any()))
+    when(this.bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N))
         .thenReturn(mockBookTrades);
 
     // When: List BookTrade API를 호출한다.
