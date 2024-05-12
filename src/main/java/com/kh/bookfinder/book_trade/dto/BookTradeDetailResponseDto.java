@@ -1,0 +1,52 @@
+package com.kh.bookfinder.book_trade.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.kh.bookfinder.book_trade.entity.Status;
+import com.kh.bookfinder.book_trade.entity.TradeType;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+public class BookTradeDetailResponseDto {
+
+  private Long id;
+  private Integer rentalCost;
+  private String content;
+  private BigDecimal longitude;
+  private BigDecimal latitude;
+  private TradeType tradeType;
+  private Status tradeYn;
+  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
+  private Date createdDate;
+  private Map<String, Object> user = new HashMap<>();
+  private Map<String, Object> book = new HashMap<>();
+
+  @Builder
+  public BookTradeDetailResponseDto(Long id, TradeType tradeType, Status tradeYn, String content,
+      Integer rentalCost, BigDecimal longitude, BigDecimal latitude, Date createdDate,
+      String bookName, String bookAuthors, String bookPublisher, String bookImageUrl, String bookDescription,
+      Integer bookPublicationYear, String userNickname) {
+    this.id = id;
+    this.tradeType = tradeType;
+    this.tradeYn = tradeYn;
+    this.content = content;
+    this.rentalCost = rentalCost;
+    this.longitude = longitude;
+    this.latitude = latitude;
+    this.createdDate = createdDate;
+
+    this.book.put("name", bookName);
+    this.book.put("authors", bookAuthors);
+    this.book.put("publisher", bookPublisher);
+    this.book.put("publicationYear", bookPublicationYear);
+    this.book.put("imageUrl", bookImageUrl);
+    this.book.put("description", bookDescription);
+
+    this.user.put("nickname", userNickname);
+  }
+}

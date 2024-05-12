@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.helper.MockBookTrade;
 import com.kh.bookfinder.book_trade.service.BookTradeService;
@@ -83,7 +84,7 @@ public class ListBookTradeApiTest {
     String expected = objectMapper.writeValueAsString(
         mockBookTrades
             .stream()
-            .map(BookTrade::toResponseDto)
+            .map(x -> x.toResponse(BookTradeListResponseDto.class))
             .collect(Collectors.toList())
     );
     resultActions.andExpect(MockMvcResultMatchers.content().json(expected));

@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class BookTradeResponseDto {
+public class BookTradeListResponseDto {
 
   private Long id;
   private TradeType tradeType;
@@ -24,7 +24,7 @@ public class BookTradeResponseDto {
   private Map<String, Object> borough = new HashMap<>();
 
   @Builder
-  public BookTradeResponseDto(Long id, TradeType tradeType, Status tradeYn, Integer rentalCost, Date createdDate,
+  public BookTradeListResponseDto(Long id, TradeType tradeType, Status tradeYn, Integer rentalCost, Date createdDate,
       String bookName, String bookAuthors, Integer bookPublicationYear, String bookImageUrl,
       String userNickname,
       String boroughName) {

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 
 public class MockBookTrade {
 
+  public static BookTrade getMockBookTrade() {
+    return getMockBookTradeList(1).get(0);
+  }
+
   public static ArrayList<BookTrade> getMockBookTradeList(int count) {
     ArrayList<BookTrade> result = new ArrayList<>();
     User user = User.builder()
@@ -27,9 +31,10 @@ public class MockBookTrade {
         .createDate(Date.valueOf(LocalDate.now()))
         .build();
     Book book = Book.builder()
-        .isbn(123456789012L)
+        .isbn(1234567890123L)
         .name("test book name")
         .authors("test book authors")
+        .publisher("test book publisher")
         .publicationYear(2024)
         .description("test book description")
         .imageUrl("test book image url")

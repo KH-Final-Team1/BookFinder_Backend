@@ -2,8 +2,9 @@ package com.kh.bookfinder.book_trade.controller;
 
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.service.BookService;
+import com.kh.bookfinder.book_trade.dto.BookTradeDetailResponseDto;
+import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
-import com.kh.bookfinder.book_trade.dto.BookTradeResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Borough;
 import com.kh.bookfinder.book_trade.service.BookTradeService;
@@ -35,23 +36,24 @@ public class BookTradeController {
   private final BookService bookService;
 
   @GetMapping(value = "list/{boroughId}", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<List<BookTradeResponseDto>> getBookTrades(@PathVariable(name = "boroughId") Long boroughId) {
+  public ResponseEntity<List<BookTradeListResponseDto>> getBookTrades(
+      @PathVariable(name = "boroughId") Long boroughId) {
     if (!Borough.isValid(boroughId)) {
       throw new InvalidFieldException("boroughId", Message.INVALID_BOROUGH);
     }
     ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
 
-    List<BookTradeResponseDto> response = bookTradeList.stream().map(
-        BookTrade::toResponseDto
+    List<BookTradeListResponseDto> response = bookTradeList.stream().map(
+        x -> x.toResponse(BookTradeListResponseDto.class)
     ).collect(Collectors.toList());
 
     return ResponseEntity.ok().body(response);
   }
 
   @GetMapping("/{tradeId}")
-  public ResponseEntity<BookTrade> getBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
+  public ResponseEntity<BookTradeDetailResponseDto> getBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
     BookTrade bookTrade = bookTradeService.getBookTrade(tradeId);
-    return ResponseEntity.ok().body(bookTrade);
+    return ResponseEntity.ok().body(bookTrade.toResponse(BookTradeDetailResponseDto.class));
   }
 
   @PostMapping
