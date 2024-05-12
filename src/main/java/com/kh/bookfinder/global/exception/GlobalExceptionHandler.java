@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(InvalidFieldException.class)
-  public ResponseEntity<Object> handleInvalidField(InvalidFieldException e) {
+  public ResponseEntity<ErrorResponseBody> handleInvalidField(InvalidFieldException e) {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
         .message(Message.BAD_REQUEST)
         .details(extractDetailsForField(e))
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException e) {
+  public ResponseEntity<ErrorResponseBody> handleResourceNotFound(ResourceNotFoundException e) {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
         .message(e.getLocalizedMessage())
         .build();
