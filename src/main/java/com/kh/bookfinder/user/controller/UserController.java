@@ -9,9 +9,9 @@ import com.kh.bookfinder.user.entity.EmailAuth;
 import com.kh.bookfinder.user.service.EmailAuthService;
 import com.kh.bookfinder.user.service.UserService;
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,52 +29,41 @@ public class UserController {
   private final EmailAuthService emailAuthService;
 
   @PostMapping(value = "", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<String> signUp(@RequestBody @Valid SignUpDto signUpDto)
-      throws JSONException {
+  public ResponseEntity<Map<String, String>> signUp(@RequestBody @Valid SignUpDto signUpDto) {
     userService.save(signUpDto);
-    JSONObject responseBody = new JSONObject();
-    responseBody.put("message", Message.SIGNUP_SUCCESS);
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(responseBody.toString());
+        .body(Map.of("message", Message.SIGNUP_SUCCESS));
   }
 
   @GetMapping(value = "/duplicate", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<String> checkDuplicate(@Valid DuplicateCheckDto duplicateCheckDto)
-      throws JSONException {
+  public ResponseEntity<Map<String, String>> checkDuplicate(@Valid DuplicateCheckDto duplicateCheckDto) {
     userService.checkDuplicate(duplicateCheckDto);
-    JSONObject responseBody = new JSONObject();
 
-    responseBody.put("message", Message.getSuccessMessageBy(duplicateCheckDto.getField()));
     return ResponseEntity
         .ok()
-        .body(responseBody.toString());
+        .body(Map.of("message", Message.getSuccessMessageBy(duplicateCheckDto.getField())));
   }
 
   @PostMapping(value = "/email", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<String> sendAuthEmail(@Valid @RequestBody SendingEmailAuthDto requestBody)
+  public ResponseEntity<Map<String, String>> sendAuthEmail(@Valid @RequestBody SendingEmailAuthDto requestBody)
       throws JSONException {
     EmailAuth emailAuth = this.emailAuthService.sendAuthCodeTo(requestBody.getEmail());
     String signingToken = emailAuth.generateSigningToken();
 
-    JSONObject responseBody = new JSONObject();
-    responseBody.put("signingToken", signingToken);
-
     return ResponseEntity
         .ok()
-        .body(responseBody.toString());
+        .body(Map.of("signingToken", signingToken));
   }
 
   @PostMapping(value = "/verification-code", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<String> checkVerification(@Valid @RequestBody CheckingVerificationDto requestBody)
+  public ResponseEntity<Map<String, String>> checkVerification(@Valid @RequestBody CheckingVerificationDto requestBody)
       throws JSONException {
     String singingToken = this.emailAuthService.checkVerification(requestBody);
-    JSONObject responseBody = new JSONObject();
-    responseBody.put("signingToken", singingToken);
 
     return ResponseEntity
         .ok()
-        .body(responseBody.toString());
+        .body(Map.of("signingToken", singingToken));
   }
 }
