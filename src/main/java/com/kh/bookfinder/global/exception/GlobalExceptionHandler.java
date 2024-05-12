@@ -4,7 +4,9 @@ import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.dto.ErrorResponseBody;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -37,6 +39,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         .build();
     return ResponseEntity
         .badRequest()
+        .body(errorResponseBody);
+  }
+
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException e) {
+    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
+        .message(e.getLocalizedMessage())
+        .build();
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
         .body(errorResponseBody);
   }
 

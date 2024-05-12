@@ -1,12 +1,15 @@
 package com.kh.bookfinder.book_trade.api;
 
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.book_trade.dto.BookTradeDetailResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
+import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.helper.MockBookTrade;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
+import com.kh.bookfinder.global.constants.Message;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,6 +61,45 @@ public class GetBookTradeOneApiTest {
     String expected = objectMapper.writeValueAsString(mockBookTrade.toResponse(BookTradeDetailResponseDto.class));
     resultActions.andExpect(MockMvcResultMatchers.content().json(expected));
     checkDetailResponseDto(resultActions);
+  }
+
+  @Test
+  @DisplayName("DB에 존재하지 않은 BookTrade Id가 주어졌을 때")
+  public void getBookTradeOneFailOnIdNotExistInDb() throws Exception {
+    // Given: 유효하지 않은 BookTrade Id가 주어진다.
+    long invalidTradeId = 123;
+
+    // When: Get BookTrade API를 호출한다.
+    ResultActions resultActions = mockMvc
+        .perform(MockMvcRequestBuilders
+            .get("/api/v1/trades/{tradeId}", invalidTradeId));
+
+    // Then: Status는 404 Not Found이다.
+    resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
+    // And: Response Body로 message를 반환한다.
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.NOT_FOUND_TRADE)));
+  }
+
+  @Test
+  @DisplayName("상태가 delete인 BookTrade Id가 주어졌을 때")
+  public void getBookTradeOneFailOnIdStatusIsDelete() throws Exception {
+    // Given: 유효한 BookTrade Id가 주어진다.
+    long tradeId = 1;
+    // And: Mock BookTrade가 주어진다.
+    BookTrade mockBookTrade = MockBookTrade.getMockBookTrade();
+    mockBookTrade.setDeleteYn(Status.Y);
+    when(bookTradeRepository.findById(tradeId))
+        .thenReturn(Optional.of(mockBookTrade));
+
+    // When: Get BookTrade API를 호출한다.
+    ResultActions resultActions = mockMvc
+        .perform(MockMvcRequestBuilders
+            .get("/api/v1/trades/{tradeId}", tradeId));
+
+    // Then: Status는 404 Not Found이다.
+    resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
+    // And: Response Body로 message를 반환한다.
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.DELETED_TRADE)));
   }
 
   private void checkDetailResponseDto(ResultActions resultActions) throws Exception {
