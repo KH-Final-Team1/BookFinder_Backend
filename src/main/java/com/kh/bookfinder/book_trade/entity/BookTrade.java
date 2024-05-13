@@ -1,6 +1,8 @@
 package com.kh.bookfinder.book_trade.entity;
 
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book_trade.dto.BookTradeDetailResponseDto;
+import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
 import com.kh.bookfinder.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,4 +63,51 @@ public class BookTrade {
   @UpdateTimestamp
   private Date updateDate;
 
+
+  public <T> T toResponse(Class<T> responseType) {
+    if (responseType == BookTradeListResponseDto.class) {
+      return (T) this.toListResponseDto();
+    } else if (responseType == BookTradeDetailResponseDto.class) {
+      return (T) this.toDetailResponseDto();
+    }
+    return null;
+  }
+
+  private BookTradeDetailResponseDto toDetailResponseDto() {
+    return BookTradeDetailResponseDto.builder()
+        .id(this.id)
+        .tradeType(this.tradeType)
+        .tradeYn(this.tradeYn)
+        .content(this.content)
+        .rentalCost(this.rentalCost)
+        .longitude(this.longitude)
+        .latitude(this.latitude)
+        .createdDate(this.createDate)
+
+        .bookName(this.book.getName())
+        .bookAuthors(this.book.getAuthors())
+        .bookPublisher(this.book.getPublisher())
+        .bookPublicationYear(this.book.getPublicationYear())
+        .bookImageUrl(this.book.getImageUrl())
+        .bookDescription(this.book.getDescription())
+
+        .userNickname(this.user.getNickname())
+        .build();
+  }
+
+  private BookTradeListResponseDto toListResponseDto() {
+    return BookTradeListResponseDto.builder()
+        .id(this.id)
+        .tradeType(this.tradeType)
+        .tradeYn(this.tradeYn)
+        .rentalCost(this.rentalCost)
+        .createdDate(this.createDate)
+        .bookName(this.book.getName())
+        .bookAuthors(this.book.getAuthors())
+        .bookPublicationYear(this.book.getPublicationYear())
+        .bookImageUrl(this.book.getImageUrl())
+        .userNickname(this.user.getNickname())
+        .boroughName(this.borough.getName())
+        .build();
+  }
 }
