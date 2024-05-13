@@ -36,6 +36,8 @@ public interface Message {
 
   String INVALID_FILTER = "filter는 name이나 authors나 publisher만 가능합니다.";
   String NOT_FOUND_ISBN = "해당 도서는 북적북적 사이트에 없는 도서이거나 존재하지 않는 도서입니다.";
+  String SUCCESS_APPROVE_STATUS = "상태가 변경되었습니다";
+  String NOT_FOUND_WAIT = "요청이 들어온 도서가 없습니다.";
 
   static String getSuccessMessageBy(String field) {
     return field.equals("email") ? VALID_EMAIL : VALID_NICKNAME;
