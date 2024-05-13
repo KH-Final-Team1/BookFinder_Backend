@@ -1,9 +1,10 @@
 package com.kh.bookfinder.book.controller;
 
-import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.book.dto.ApprovalStatusDto;
 import com.kh.bookfinder.book.dto.SearchDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.service.BookService;
+import com.kh.bookfinder.global.constants.Message;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,13 +41,10 @@ public class BookController {
     return ResponseEntity.ok().body(book);
   }
 
-  @GetMapping("/api/v1/request/list")
-  public ResponseEntity<List<Book>> selectBookRequestList(@Valid SearchDto requestParam) {
-    if (!requestParam.getKeyword().isEmpty()) {
-      List<Book> bookList = bookService.selectListWait(requestParam);
-      return ResponseEntity.ok().body(bookList);
-    }
-    List<Book> bookList = bookService.findAllByApprovalStatus("WAIT");
-    return ResponseEntity.ok().body(bookList);
+  @PatchMapping("/{isbn}")
+  public ResponseEntity<Map<String, String>> updateBookStatus(@PathVariable(name = "isbn") Long isbn,
+      ApprovalStatusDto requestParam) {
+    bookService.updateStatus(isbn, requestParam.getApprovalStatus());
+    return ResponseEntity.ok().body(Map.of("message", Message.UPDATE_APPROVAL_STATUS));
   }
 }

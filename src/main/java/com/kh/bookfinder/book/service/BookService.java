@@ -4,6 +4,7 @@ import com.kh.bookfinder.book.dto.SearchDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -42,11 +43,9 @@ public class BookService {
     return bookList;
   }
 
-  public List<Book> findAllByApprovalStatus(String approvalStatus) {
-    List<Book> bookList = bookRepository.findAllByApprovalStatus(approvalStatus);
-    if (bookList.isEmpty()) {
-      throw new ResourceNotFoundException(Message.NOT_FOUND_WAIT);
-    }
-    return bookList;
+  @Transactional
+  public void updateStatus(Long isbn, String approvalStatus) {
+    Book book = findBook(isbn);
+    book.setApprovalStatus(approvalStatus);
   }
 }
