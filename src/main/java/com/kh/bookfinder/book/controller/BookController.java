@@ -5,11 +5,11 @@ import com.kh.bookfinder.book.dto.SearchDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.global.exception.InvalidFieldException;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,27 +18,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/books")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/books")
 public class BookController {
 
   private final BookService bookService;
+  private static final int ISBN_DIGITS = 13;
 
   @GetMapping("/list")
   public ResponseEntity<List<Book>> getBooks(@Valid SearchDto requestParam) {
-    List<Book> bookList = bookService.getBooks(requestParam);
-    return ResponseEntity.ok().body(bookList);
+    List<Book> books = bookService.getBooks(requestParam);
+    return ResponseEntity.ok().body(books);
   }
 
-  @GetMapping(value = "api/v1/books/{isbn}", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<Object> selectBookRequestIsbn(@PathVariable(name = "isbn") Long isbn) throws JSONException {
-    if ((long) (Math.log10(isbn) + 2) == 13) {
-      JSONObject responseBody = new JSONObject();
-      responseBody.put("message", Message.INVALID_ISBN_DIGITS);
-      return ResponseEntity.badRequest().body(responseBody.toString());
+  @GetMapping("/{isbn}")
+  public ResponseEntity<Map<String, Object>> getBook(@PathVariable(name = "isbn") Long isbn) {
+    if ((long) (Math.log10(isbn) + 1) != ISBN_DIGITS) {
+      throw new InvalidFieldException("message", Message.INVALID_ISBN_DIGITS);
     }
     Book book = bookService.findBook(isbn);
-    return ResponseEntity.ok().body(book);
+    return ResponseEntity.ok().body(Map.of("book", book));
   }
 
   @PatchMapping("/{isbn}")

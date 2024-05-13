@@ -22,25 +22,21 @@ public class BookService {
   }
 
   public List<Book> getBooks(SearchDto requestParam) {
+    List<Book> books;
     if (requestParam.getFilter().equals("name")) {
-      return bookRepository.findByNameContaining(requestParam.getKeyword());
+      books = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(),
+          requestParam.getApprovalStatus());
     } else if (requestParam.getFilter().equals("authors")) {
-      return bookRepository.findByAuthorsContaining(requestParam.getKeyword());
-    }
-    return bookRepository.findByPublisherContaining(requestParam.getKeyword());
-  }
-
-  public List<Book> selectListWait(SearchDto requestParam) {
-    List<Book> bookList;
-    if (requestParam.getFilter().equals("name")) {
-      bookList = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(), "WAIT");
+      books = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(),
+          requestParam.getApprovalStatus());
     } else {
-      bookList = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(), "WAIT");
+      books = bookRepository.findByPublisherContainingAndApprovalStatus(requestParam.getKeyword(),
+          requestParam.getApprovalStatus());
     }
-    if (bookList.isEmpty()) {
-      throw new ResourceNotFoundException(Message.NOT_FOUND_WAIT);
+    if (books.isEmpty()) {
+      throw new ResourceNotFoundException(Message.NOT_FOUND_BOOK);
     }
-    return bookList;
+    return books;
   }
 
   @Transactional

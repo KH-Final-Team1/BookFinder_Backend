@@ -17,6 +17,7 @@ public class SearchDto {
   private String filter;
   @NotNull
   private String keyword;
+  private String approvalStatus;
 
   @AssertTrue(message = Message.INVALID_FILTER)
   public boolean isFilter() {
