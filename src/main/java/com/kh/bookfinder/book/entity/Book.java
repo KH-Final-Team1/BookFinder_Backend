@@ -1,6 +1,8 @@
 package com.kh.bookfinder.book.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -30,5 +32,8 @@ public class Book {
   private String className;
   private String description;
   private String imageUrl;
-  private String approvalStatus;
+  @Enumerated(EnumType.STRING)
+  @Builder.Default
+  private ApprovalStatus approvalStatus = ApprovalStatus.WAIT;
+
 }

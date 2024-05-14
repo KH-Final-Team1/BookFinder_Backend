@@ -1,6 +1,7 @@
 package com.kh.bookfinder.book.service;
 
 import com.kh.bookfinder.book.dto.SearchDto;
+import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
@@ -40,7 +41,7 @@ public class BookService {
   }
 
   @Transactional
-  public void updateStatus(Long isbn, String approvalStatus) {
+  public void updateStatus(Long isbn, ApprovalStatus approvalStatus) {
     Book book = findBook(isbn);
     book.setApprovalStatus(approvalStatus);
   }
