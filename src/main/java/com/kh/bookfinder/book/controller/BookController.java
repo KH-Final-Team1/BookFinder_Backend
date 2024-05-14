@@ -42,7 +42,7 @@ public class BookController {
 
   @PatchMapping("/{isbn}")
   public ResponseEntity<Map<String, String>> updateBookStatus(@PathVariable(name = "isbn") Long isbn,
-      ApprovalStatusDto requestParam) {
+      @Valid ApprovalStatusDto requestParam) {
     bookService.updateStatus(isbn, requestParam.getApprovalStatus());
     return ResponseEntity.ok().body(Map.of("message", Message.UPDATE_APPROVAL_STATUS));
   }
