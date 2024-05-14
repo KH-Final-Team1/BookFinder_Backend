@@ -44,4 +44,9 @@ public class BookService {
     Book book = findBook(isbn);
     book.setApprovalStatus(approvalStatus);
   }
+
+  @Transactional
+  public void saveBook(Book book) {
+    bookRepository.save(book);
+  }
 }
