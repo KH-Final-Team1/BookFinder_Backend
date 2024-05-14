@@ -16,6 +16,4 @@ public interface BookRepository extends JpaRepository<Book, Long> {
   List<Book> findByNameContainingAndApprovalStatus(String keyword, String approvalStatus);
 
   List<Book> findByAuthorsContainingAndApprovalStatus(String keyword, String approvalStatus);
-
-  List<Book> findAllByApprovalStatus(String approvalStatus);
 }
