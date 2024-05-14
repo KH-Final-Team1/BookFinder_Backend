@@ -4,6 +4,7 @@ import com.kh.bookfinder.book.dto.SearchDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -21,32 +22,26 @@ public class BookService {
   }
 
   public List<Book> getBooks(SearchDto requestParam) {
+    List<Book> books;
     if (requestParam.getFilter().equals("name")) {
-      return bookRepository.findByNameContaining(requestParam.getKeyword());
+      books = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(),
+          requestParam.getApprovalStatus());
     } else if (requestParam.getFilter().equals("authors")) {
-      return bookRepository.findByAuthorsContaining(requestParam.getKeyword());
-    }
-    return bookRepository.findByPublisherContaining(requestParam.getKeyword());
-  }
-
-  public List<Book> selectListWait(SearchDto requestParam) {
-    List<Book> bookList;
-    if (requestParam.getFilter().equals("name")) {
-      bookList = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(), "WAIT");
+      books = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(),
+          requestParam.getApprovalStatus());
     } else {
-      bookList = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(), "WAIT");
+      books = bookRepository.findByPublisherContainingAndApprovalStatus(requestParam.getKeyword(),
+          requestParam.getApprovalStatus());
     }
-    if (bookList.isEmpty()) {
-      throw new ResourceNotFoundException(Message.NOT_FOUND_WAIT);
+    if (books.isEmpty()) {
+      throw new ResourceNotFoundException(Message.NOT_FOUND_BOOK);
     }
-    return bookList;
+    return books;
   }
 
-  public List<Book> findAllByApprovalStatus(String approvalStatus) {
-    List<Book> bookList = bookRepository.findAllByApprovalStatus(approvalStatus);
-    if (bookList.isEmpty()) {
-      throw new ResourceNotFoundException(Message.NOT_FOUND_WAIT);
-    }
-    return bookList;
+  @Transactional
+  public void updateStatus(Long isbn, String approvalStatus) {
+    Book book = findBook(isbn);
+    book.setApprovalStatus(approvalStatus);
   }
 }

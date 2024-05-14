@@ -57,7 +57,7 @@ POST: {BASE_URL}/api/v1/trades
 request body (application/json)
 {
   "isbn": "9788965402602",
-  "tradeType": "rent",
+  "tradeType": "LEND",
   "rentalCost": "3000",
   "limitedDate": "2024-09-10",
   "content": "책 빌려드립니다",
@@ -114,7 +114,7 @@ GET: {BASE_URL}/api/v1/trades/list/{boroughId}
             },
                 {
                 "id": 2,
-                "tradeType": "RENT",
+                "tradeType": "LEND",
                 "tradeYn": "N",
                 "rentalCost": 13000,
                 "createdDate": "2024-05-02",
