@@ -9,6 +9,7 @@ build/
 application-db.properties
 application-test*.properties
 application-mail.yml
+application-jwt.yml
 
 
 ### STS ###
