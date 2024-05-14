@@ -2,7 +2,6 @@ package com.kh.bookfinder.book.dto;
 
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,20 +11,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchDto {
+public class ApprovalStatusDto {
 
-  private String filter;
-  @NotNull
-  private String keyword;
   private String approvalStatus;
 
-  @AssertTrue(message = Message.INVALID_FILTER)
-  public boolean isFilter() {
-    if (filter == null) {
+  @AssertTrue(message = Message.INVALID_APPROVAL_STATUS)
+  public boolean isApprovalStatus() {
+    if (approvalStatus == null) {
       return false;
     }
-    return filter.equals("name")
-        || filter.equals("authors")
-        || filter.equals("publisher");
+    return approvalStatus.equals("APPROVE")
+        || approvalStatus.equals("WAIT")
+        || approvalStatus.equals("REJECTED");
+
   }
 }
