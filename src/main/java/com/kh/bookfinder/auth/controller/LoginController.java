@@ -1,11 +1,14 @@
 package com.kh.bookfinder.auth.controller;
 
+import com.kh.bookfinder.auth.dto.AccessTokenDto;
 import com.kh.bookfinder.auth.dto.LoginDto;
+import com.kh.bookfinder.auth.service.JwtProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,13 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LoginController {
 
+  private final JwtProvider jwtProvider;
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
   @PostMapping(value = "/login", produces = "application/json;charset=UTF-8")
-  public ResponseEntity<String> login(@RequestBody @Valid LoginDto loginDto) {
-    authenticationManagerBuilder.getObject().authenticate(
+  public ResponseEntity<AccessTokenDto> login(@RequestBody @Valid LoginDto loginDto) {
+    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(
         new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
     );
-    return ResponseEntity.ok("login!");
+
+    AccessTokenDto responseBody = AccessTokenDto
+        .builder()
+        .accessToken(jwtProvider.createAccessToken(authentication))
+        .build();
+    return ResponseEntity.ok(responseBody);
   }
 }
