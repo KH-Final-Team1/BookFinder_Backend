@@ -12,5 +12,7 @@ public class ErrorResponseBody {
 
   private String message;
   @JsonInclude(Include.NON_EMPTY)
+  private String detail;
+  @JsonInclude(Include.NON_EMPTY)
   private Map<String, String> details;
 }

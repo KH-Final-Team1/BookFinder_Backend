@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
-import com.kh.bookfinder.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -6,9 +6,10 @@ build/
 !**/src/test/**/build/
 
 ## properties
-application-db.properties
+application-db.yml
 application-test*.properties
 application-mail.yml
+application-jwt.yml
 
 
 ### STS ###

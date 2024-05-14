@@ -1,10 +1,10 @@
 package com.kh.bookfinder.user.service;
 
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.dto.DuplicateCheckDto;
 import com.kh.bookfinder.user.dto.SignUpDto;
 import com.kh.bookfinder.user.entity.User;
-import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

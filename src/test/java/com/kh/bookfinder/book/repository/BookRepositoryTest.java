@@ -3,7 +3,6 @@ package com.kh.bookfinder.book.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.kh.bookfinder.book.entity.Book;
-import com.kh.bookfinder.book.repository.BookRepository;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;

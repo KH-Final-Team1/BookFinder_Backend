@@ -1,9 +1,9 @@
 package com.kh.bookfinder.user.service;
 
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.dto.CheckingVerificationDto;
 import com.kh.bookfinder.user.entity.EmailAuth;
-import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.repository.EmailAuthRepository;
 import jakarta.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
