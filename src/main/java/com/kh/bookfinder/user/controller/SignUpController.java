@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/signup")
-public class UserController {
+public class SignUpController {
 
   private final UserService userService;
   private final EmailAuthService emailAuthService;
