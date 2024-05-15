@@ -32,12 +32,12 @@ public class BookController {
   }
 
   @GetMapping("/{isbn}")
-  public ResponseEntity<Map<String, Object>> getBook(@PathVariable(name = "isbn") Long isbn) {
+  public ResponseEntity<Book> getBook(@PathVariable(name = "isbn") Long isbn) {
     if ((long) (Math.log10(isbn) + 1) != ISBN_DIGITS) {
       throw new InvalidFieldException("message", Message.INVALID_ISBN_DIGITS);
     }
     Book book = bookService.findBook(isbn);
-    return ResponseEntity.ok().body(Map.of("book", book));
+    return ResponseEntity.ok().body(book);
   }
 
   @PatchMapping("/{isbn}")
