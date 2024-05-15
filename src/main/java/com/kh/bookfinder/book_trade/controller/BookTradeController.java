@@ -58,7 +58,7 @@ public class BookTradeController {
 
   @PostMapping
   public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
-    Book book = bookService.findBook(tradeDto.getIsbn());
+    Book book = bookService.findApprovedBook(tradeDto.getIsbn());
     BookTrade bookTrade = tradeDto.toEntity(book);
 
     bookTradeService.saveBookTrade(bookTrade);
@@ -69,7 +69,7 @@ public class BookTradeController {
   public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody @Valid BookTradeRequestDto tradeDto) {
     BookTrade bookTrade = bookTradeService.findTrade(tradeId);
-    Book book = bookService.findBook(tradeDto.getIsbn());
+    Book book = bookService.findApprovedBook(tradeDto.getIsbn());
 
     bookTrade = BookTrade.builder()
         .id(bookTrade.getId())

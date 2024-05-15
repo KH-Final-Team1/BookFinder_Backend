@@ -19,7 +19,12 @@ public class BookService {
 
   public Book findBook(Long isbn) {
     return bookRepository.findByIsbn(isbn)
-        .orElseThrow(() -> new ResourceNotFoundException(Message.UNSAVED_ISBN));
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
+  }
+
+  public Book findApprovedBook(Long isbn) {
+    return bookRepository.findByIsbnAndApprovalStatus(isbn, ApprovalStatus.APPROVE)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
   }
 
   public List<Book> getBooks(SearchDto requestParam) {
