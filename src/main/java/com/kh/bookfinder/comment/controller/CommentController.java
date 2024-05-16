@@ -32,6 +32,7 @@ public class CommentController {
 
   @GetMapping("/{tradeId}")
   public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable(name = "tradeId") Long tradeId) {
+    bookTradeService.findTrade(tradeId);
     ArrayList<Comment> commentList = commentService.getComments(tradeId);
 
     List<CommentResponseDto> response = commentList.stream().map(
