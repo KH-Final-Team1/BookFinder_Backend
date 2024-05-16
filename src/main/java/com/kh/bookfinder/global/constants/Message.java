@@ -37,8 +37,6 @@ public interface Message {
   String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
   String NOT_FOUND_TRADE = "거래 번호를 찾을 수 없습니다.";
   String DELETED_TRADE = "삭제된 게시물 입니다.";
-  String SUCCESS_UPDATE = "게시글을 성공적으로 수정했습니다.";
-  String SUCCESS_DELETE = "게시글을 성공적으로 삭제했습니다.";
   String SUCCESS_UPDATE = "수정을 성공했습니다.";
   String SUCCESS_DELETE = "삭제를 성공했습니다.";
 
@@ -47,6 +45,9 @@ public interface Message {
   String UPDATE_APPROVAL_STATUS = "승인 여부가 변경되었습니다.";
   String INVALID_APPROVAL_STATUS = "approvalStatus는 APPROVE나 WAIT나 REJECT만 가능합니다";
 
+  String NOT_FOUND_COMMENT = "존재하지 않는 댓글 입니다.";
+  String CONTENT_REQUIRED = "내용은 빈값일 수 없습니다.";
+  String SECRET_REQUIRED = "비밀댓글 여부를 설정해주세요.";
 
   static String getSuccessMessageBy(String field) {
     return field.equals("email") ? VALID_EMAIL : VALID_NICKNAME;

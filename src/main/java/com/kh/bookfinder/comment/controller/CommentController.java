@@ -6,10 +6,13 @@ import com.kh.bookfinder.comment.dto.CommentRequestDto;
 import com.kh.bookfinder.comment.dto.CommentResponseDto;
 import com.kh.bookfinder.comment.entity.Comment;
 import com.kh.bookfinder.comment.service.CommentService;
+import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.service.UserService;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,12 +48,19 @@ public class CommentController {
 
   @PostMapping("/{tradeId}")
   public ResponseEntity<Comment> createComment(@PathVariable(name = "tradeId") Long tradeId,
-      @RequestBody CommentRequestDto commentDto) {
+      @RequestBody @Valid CommentRequestDto commentDto) {
     BookTrade bookTrade = bookTradeService.findTrade(tradeId);
     User user = userService.findUser(commentDto.getUserId());
     Comment comment = commentDto.toEntity(bookTrade, user);
 
     commentService.saveComment(comment);
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  @PutMapping("/{commentId}")
+  public ResponseEntity<Map<String, String>> updateComment(@PathVariable(name = "commentId") Long commentId,
+      @RequestBody @Valid CommentRequestDto commentDto) {
+    commentService.updateComment(commentId, commentDto);
+    return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 }
