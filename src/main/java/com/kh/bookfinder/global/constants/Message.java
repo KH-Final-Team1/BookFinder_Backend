@@ -43,7 +43,8 @@ public interface Message {
   String NOT_FOUND_BOOK = "해당 도서는 북적북적 사이트에 없는 도서이거나 존재하지 않는 도서입니다.";
   String UPDATE_APPROVAL_STATUS = "승인 여부가 변경되었습니다.";
   String INVALID_APPROVAL_STATUS = "approvalStatus는 APPROVE나 WAIT나 REJECT만 가능합니다";
-  String SUCCESS_BOOK_CREATE = "성공적으로 등록되었습니다.";
+  String DUPLUCATE_BOOK = "이미 등록되어 있거나 요청되어 있는 도서입니다.";
+  String SUCCESS_REQUEST = "도서가 성공적으로 요청되었습니다.";
 
 
   static String getSuccessMessageBy(String field) {
