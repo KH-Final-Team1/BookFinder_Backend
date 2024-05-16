@@ -1,11 +1,14 @@
 package com.kh.bookfinder.book.dto;
 
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.global.constants.Message;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class BookRequestDto {
 
+  @NotNull(message = Message.UNSAVED_ISBN)
   private Long isbn;
   private String name;
   private String authors;
