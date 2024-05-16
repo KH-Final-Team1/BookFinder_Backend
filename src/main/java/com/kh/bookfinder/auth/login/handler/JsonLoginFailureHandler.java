@@ -19,11 +19,23 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException exception) throws IOException {
     response.setContentType("application/json;charset=UTF-8");
-    if (isDtoException(exception)) {
+    if (isContentTypeException(exception)) {
+      sendUnsupportedMediaType(response, exception);
+    } else if (isDtoException(exception)) {
       sendBadRequest(response, exception);
     } else {
       sendUnauthorized(response, exception);
     }
+  }
+
+  private void sendUnsupportedMediaType(HttpServletResponse response, AuthenticationException exception)
+      throws IOException {
+    response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+    ErrorResponseBody responseBody = ErrorResponseBody
+        .builder()
+        .message(exception.getLocalizedMessage())
+        .build();
+    new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
 
   private void sendUnauthorized(HttpServletResponse response, AuthenticationException exception) throws IOException {
@@ -48,6 +60,10 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
         .details(objectMapper.readValue(exception.getLocalizedMessage(), Map.class))
         .build();
     objectMapper.writeValue(response.getWriter(), responseBody);
+  }
+
+  private boolean isContentTypeException(AuthenticationException exception) {
+    return exception.getMessage().contains(Message.INVALID_CONTENT_TYPE);
   }
 
   private boolean isDtoException(AuthenticationException exception) {

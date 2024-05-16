@@ -2,6 +2,7 @@ package com.kh.bookfinder.auth.login.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.login.dto.LoginDto;
+import com.kh.bookfinder.global.constants.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,7 +39,7 @@ public class JsonLoginFilter extends AbstractAuthenticationProcessingFilter {
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException, IOException {
     if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
-      throw new AuthenticationServiceException("유효하지 않은 Content-Type 입니다.");
+      throw new RuntimeException(Message.INVALID_CONTENT_TYPE);
     }
     LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
     Set<ConstraintViolation<LoginDto>> violations = validator.validate(loginDto);
