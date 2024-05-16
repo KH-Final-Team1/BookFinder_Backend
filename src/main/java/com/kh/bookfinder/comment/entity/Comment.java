@@ -2,6 +2,7 @@ package com.kh.bookfinder.comment.entity;
 
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
+import com.kh.bookfinder.comment.dto.CommentResponseDto;
 import com.kh.bookfinder.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,4 +50,17 @@ public class Comment {
   @UpdateTimestamp
   private Date updateDate;
 
+  public <T> T toResponse(Class<T> responseType) {
+    return (T) this.toResponseDto();
+  }
+
+  private CommentResponseDto toResponseDto() {
+    return CommentResponseDto.builder()
+        .id(this.id)
+        .content(this.content)
+        .secretYn(this.secretYn)
+        .createDate(this.createDate)
+        .nickname(this.user.getNickname())
+        .build();
+  }
 }
