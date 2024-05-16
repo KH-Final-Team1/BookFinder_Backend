@@ -17,6 +17,11 @@ public class CommentService {
 
   private final CommentRepository commentRepository;
 
+  public Comment findComment(Long commentId) {
+    return commentRepository.findById(commentId)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_COMMENT));
+  }
+
   public Comment findValidComment(Long commentId) {
     return commentRepository.findByIdAndDeleteYn(commentId, Status.N)
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_COMMENT));
@@ -37,6 +42,12 @@ public class CommentService {
     comment.setContent(commentDto.getContent());
     comment.setSecretYn(commentDto.getSecretYn());
     commentRepository.save(comment);
+  }
+
+  @Transactional
+  public void deleteComment(Long commentId) {
+    Comment comment = findComment(commentId);
+    comment.setDeleteYn(Status.Y);
   }
 
 }
