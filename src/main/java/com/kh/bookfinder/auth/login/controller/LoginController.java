@@ -1,7 +1,7 @@
 package com.kh.bookfinder.auth.login.controller;
 
 import com.kh.bookfinder.auth.jwt.dto.AccessTokenDto;
-import com.kh.bookfinder.auth.jwt.service.JwtProvider;
+import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.auth.login.dto.LoginDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LoginController {
 
-  private final JwtProvider jwtProvider;
+  private final JwtService jwtService;
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
   @PostMapping(value = "/login", produces = "application/json;charset=UTF-8")
@@ -30,7 +30,7 @@ public class LoginController {
 
     AccessTokenDto responseBody = AccessTokenDto
         .builder()
-        .accessToken(jwtProvider.createAccessToken(authentication))
+        .accessToken(jwtService.createAccessToken(authentication))
         .build();
     return ResponseEntity.ok(responseBody);
   }

@@ -11,12 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @Slf4j
 @RequiredArgsConstructor
-public class JwtProvider {
+public class JwtService {
 
   public static final String CLAIM_AUTHORITIES = "auth";
   private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
@@ -42,5 +42,4 @@ public class JwtProvider {
         .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
         .compact();
   }
-
 }
