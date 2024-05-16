@@ -10,6 +10,7 @@ public class BookRequestDto {
 
   @NotNull(message = Message.UNSAVED_ISBN)
   private Long isbn;
+  private String imageUrl;
   private String name;
   private String authors;
   private String publisher;
@@ -18,6 +19,7 @@ public class BookRequestDto {
   public Book toEntity() {
     return Book.builder()
         .isbn(this.isbn)
+        .imageUrl(this.imageUrl)
         .name(this.name)
         .authors(this.authors)
         .publisher(this.publisher)
