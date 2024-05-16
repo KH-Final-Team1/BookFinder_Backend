@@ -11,14 +11,14 @@ public class CommentRequestDto {
 
   private Long userId;
   private String content;
-  private Status secreteYn;
+  private Status secretYn;
 
   public Comment toEntity(BookTrade bookTrade, User user) {
     return Comment.builder()
         .bookTrade(bookTrade)
         .user(user)
         .content(this.content)
-        .secreteYn(this.secreteYn)
+        .secretYn(this.secretYn)
         .build();
   }
 }

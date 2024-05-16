@@ -40,7 +40,7 @@ public class Comment {
   private String content;
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private Status secreteYn;
+  private Status secretYn;
   @Enumerated(EnumType.STRING)
   @Builder.Default
   private Status deleteYn = Status.N;
