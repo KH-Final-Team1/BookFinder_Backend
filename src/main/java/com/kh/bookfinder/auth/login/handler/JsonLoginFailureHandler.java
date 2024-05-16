@@ -24,7 +24,7 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     } else if (isDtoException(exception)) {
       sendBadRequest(response, exception);
     } else {
-      sendUnauthorized(response, exception);
+      sendUnauthorized(response);
     }
   }
 
@@ -38,16 +38,15 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
 
-  private void sendUnauthorized(HttpServletResponse response, AuthenticationException exception) throws IOException {
+  private void sendUnauthorized(HttpServletResponse response) throws IOException {
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
         .message(Message.UNAUTHORIZED)
-        .detail(exception.getLocalizedMessage())
+        .detail(Message.FAIL_LOGIN)
         .build();
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
-
 
   @SuppressWarnings("unchecked")
   private void sendBadRequest(HttpServletResponse response, AuthenticationException exception)
