@@ -41,8 +41,15 @@ public class JsonLoginFilter extends AbstractAuthenticationProcessingFilter {
     if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
       throw new AuthenticationServiceException(Message.INVALID_CONTENT_TYPE);
     }
+    if (existsAuthorization(request)) {
+      throw new AuthenticationServiceException(Message.INVALID_LOGIN_WITH_AUTHORIZATION);
+    }
     LoginDto loginDto = parseDto(request);
     return getAuthentication(loginDto);
+  }
+
+  private boolean existsAuthorization(HttpServletRequest request) {
+    return request.getHeader("Authorization") != null;
   }
 
   private Authentication getAuthentication(LoginDto loginDto) {

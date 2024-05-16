@@ -49,10 +49,10 @@ public class LoginApiTest {
         .build();
   }
 
-  private ResultActions callLoginApi(LoginDto invalidLoginDto) throws Exception {
+  private ResultActions callLoginApi(LoginDto loginDto) throws Exception {
     return mockMvc.perform(MockMvcRequestBuilders
         .post("/api/v1/login")
-        .content(objectMapper.writeValueAsString(invalidLoginDto))
+        .content(objectMapper.writeValueAsString(loginDto))
         .contentType(MediaType.APPLICATION_JSON));
   }
 
@@ -155,5 +155,25 @@ public class LoginApiTest {
     // And: Response Body로 message와 details가 반환된다.
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.FAIL_LOGIN)));
+  }
+
+  @Test
+  @DisplayName("Header에 Authorization을 포함한 경우")
+  public void loginFailOnExistsAuthorizationInHeaderTest() throws Exception {
+    // Given: 로그인 정보가 주어진다.
+    LoginDto loginDto = getBaseLoginDto();
+
+    // When: Header에 "Authorization"을 추가하여 Login API를 호출한다.
+    ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+        .post("/api/v1/login")
+        .content(objectMapper.writeValueAsString(loginDto))
+        .contentType(MediaType.APPLICATION_JSON)
+        .header("Authorization", "testAccessToken"));
+
+    // Then: Status는 403 Forbidden이다.
+    resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
+    // And: Response Body로 message와 details가 반환된다.
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.INVALID_LOGIN_WITH_AUTHORIZATION)));
   }
 }

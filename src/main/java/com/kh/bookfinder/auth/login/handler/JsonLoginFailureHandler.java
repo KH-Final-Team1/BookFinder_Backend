@@ -23,6 +23,8 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
       sendUnsupportedMediaType(response, exception);
     } else if (isDtoException(exception)) {
       sendBadRequest(response, exception);
+    } else if (existsAuthorization(exception)) {
+      sendForbidden(response, exception);
     } else {
       sendUnauthorized(response);
     }
@@ -34,6 +36,16 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
         .message(exception.getLocalizedMessage())
+        .build();
+    new ObjectMapper().writeValue(response.getWriter(), responseBody);
+  }
+
+  private void sendForbidden(HttpServletResponse response, AuthenticationException exception) throws IOException {
+    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    ErrorResponseBody responseBody = ErrorResponseBody
+        .builder()
+        .message(Message.FORBIDDEN)
+        .detail(exception.getLocalizedMessage())
         .build();
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
@@ -68,5 +80,9 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
   private boolean isDtoException(AuthenticationException exception) {
     String message = exception.getLocalizedMessage();
     return message.contains(DTO_EMAIL) || message.contains(DTO_PASSWORD);
+  }
+
+  private boolean existsAuthorization(AuthenticationException exception) {
+    return exception.getMessage().contains(Message.INVALID_LOGIN_WITH_AUTHORIZATION);
   }
 }
