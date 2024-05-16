@@ -4,7 +4,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.auth.dto.LoginDto;
+import com.kh.bookfinder.auth.login.dto.LoginDto;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;

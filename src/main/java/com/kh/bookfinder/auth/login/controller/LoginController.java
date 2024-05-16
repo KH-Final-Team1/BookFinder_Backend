@@ -1,8 +1,8 @@
-package com.kh.bookfinder.auth.controller;
+package com.kh.bookfinder.auth.login.controller;
 
-import com.kh.bookfinder.auth.dto.AccessTokenDto;
-import com.kh.bookfinder.auth.dto.LoginDto;
-import com.kh.bookfinder.auth.service.JwtProvider;
+import com.kh.bookfinder.auth.jwt.dto.AccessTokenDto;
+import com.kh.bookfinder.auth.jwt.service.JwtProvider;
+import com.kh.bookfinder.auth.login.dto.LoginDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

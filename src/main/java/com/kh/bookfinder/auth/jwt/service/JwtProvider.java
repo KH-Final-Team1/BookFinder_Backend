@@ -1,6 +1,6 @@
-package com.kh.bookfinder.auth.service;
+package com.kh.bookfinder.auth.jwt.service;
 
-import com.kh.bookfinder.auth.dto.SecurityUserDetails;
+import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
