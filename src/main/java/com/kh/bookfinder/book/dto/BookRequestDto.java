@@ -15,6 +15,9 @@ public class BookRequestDto {
   private String authors;
   private String publisher;
   private int publicationYear;
+  private String classNo;
+  private String className;
+  private String description;
 
   public Book toEntity() {
     return Book.builder()
@@ -24,6 +27,9 @@ public class BookRequestDto {
         .authors(this.authors)
         .publisher(this.publisher)
         .publicationYear(this.publicationYear)
+        .classNo(this.classNo)
+        .className(this.className)
+        .description(this.description)
         .approvalStatus("WAIT")
         .build();
   }
