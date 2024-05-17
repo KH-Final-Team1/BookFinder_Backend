@@ -50,8 +50,4 @@ public class BookService {
   public void saveBook(Book book) {
     bookRepository.save(book);
   }
-
-  public Optional<Book> findIsbn(Long isbn) {
-    return bookRepository.findByIsbn(isbn);
-  }
 }
