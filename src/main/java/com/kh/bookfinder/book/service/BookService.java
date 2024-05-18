@@ -1,6 +1,7 @@
 package com.kh.bookfinder.book.service;
 
 import com.kh.bookfinder.book.dto.SearchDto;
+import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
@@ -18,7 +19,12 @@ public class BookService {
 
   public Book findBook(Long isbn) {
     return bookRepository.findByIsbn(isbn)
-        .orElseThrow(() -> new ResourceNotFoundException(Message.UNSAVED_ISBN));
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
+  }
+
+  public Book findApprovedBook(Long isbn) {
+    return bookRepository.findByIsbnAndApprovalStatus(isbn, ApprovalStatus.APPROVE)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
   }
 
   public List<Book> getBooks(SearchDto requestParam) {
@@ -40,7 +46,7 @@ public class BookService {
   }
 
   @Transactional
-  public void updateStatus(Long isbn, String approvalStatus) {
+  public void updateStatus(Long isbn, ApprovalStatus approvalStatus) {
     Book book = findBook(isbn);
     book.setApprovalStatus(approvalStatus);
   }
