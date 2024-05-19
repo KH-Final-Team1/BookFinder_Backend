@@ -38,6 +38,7 @@ public interface Message {
   String DELETED_TRADE = "삭제된 게시물 입니다.";
   String SUCCESS_UPDATE = "게시글을 성공적으로 수정했습니다.";
   String SUCCESS_DELETE = "게시글을 성공적으로 삭제했습니다.";
+  String SUCCESS_CHANGE = "거래 상태가 변경되었습니다.";
 
   String INVALID_FILTER = "filter는 name이나 authors나 publisher만 가능합니다.";
   String NOT_FOUND_BOOK = "해당 도서는 북적북적 사이트에 없는 도서이거나 존재하지 않는 도서입니다.";
