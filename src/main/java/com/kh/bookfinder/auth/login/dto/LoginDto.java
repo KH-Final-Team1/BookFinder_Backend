@@ -1,4 +1,4 @@
-package com.kh.bookfinder.auth.dto;
+package com.kh.bookfinder.auth.login.dto;
 
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.constants.Regexp;

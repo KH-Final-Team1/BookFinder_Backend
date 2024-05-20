@@ -1,6 +1,7 @@
 package com.kh.bookfinder.book.controller;
 
 import com.kh.bookfinder.book.dto.ApprovalStatusDto;
+import com.kh.bookfinder.book.dto.BookRequestDto;
 import com.kh.bookfinder.book.dto.SearchDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.service.BookService;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,5 +48,11 @@ public class BookController {
       @Valid ApprovalStatusDto requestParam) {
     bookService.updateStatus(isbn, requestParam.getApprovalStatus());
     return ResponseEntity.ok().body(Map.of("message", Message.UPDATE_APPROVAL_STATUS));
+  }
+
+  @PostMapping("/request")
+  public ResponseEntity<Map<String, String>> createBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
+    bookService.requestBook(bookRequestDto);
+    return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_REQUEST));
   }
 }

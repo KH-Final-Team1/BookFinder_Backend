@@ -1,6 +1,6 @@
-package com.kh.bookfinder.auth.service;
+package com.kh.bookfinder.auth.login.service;
 
-import com.kh.bookfinder.auth.dto.SecurityUserDetails;
+import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.repository.UserRepository;
