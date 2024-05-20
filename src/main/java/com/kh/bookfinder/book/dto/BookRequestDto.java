@@ -1,5 +1,6 @@
 package com.kh.bookfinder.book.dto;
 
+import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +31,7 @@ public class BookRequestDto {
         .classNo(this.classNo)
         .className(this.className)
         .description(this.description)
-        .approvalStatus("WAIT")
+        .approvalStatus(ApprovalStatus.WAIT)
         .build();
   }
 }
