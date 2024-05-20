@@ -7,6 +7,7 @@ import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -49,5 +50,10 @@ public class BookService {
   public void updateStatus(Long isbn, ApprovalStatus approvalStatus) {
     Book book = findBook(isbn);
     book.setApprovalStatus(approvalStatus);
+  }
+
+  @Transactional
+  public void saveBook(Book book) {
+    bookRepository.save(book);
   }
 }
