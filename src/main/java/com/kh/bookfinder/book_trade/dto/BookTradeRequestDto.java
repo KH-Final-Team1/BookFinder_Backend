@@ -18,7 +18,7 @@ public class BookTradeRequestDto {
   @Max(value = 9999999999999L, message = Message.INVALID_ISBN_DIGITS)
   private Long isbn;
   private TradeType tradeType;
-  @NotNull(message = Message.NULLABLE_COST)
+  @NotNull(message = Message.COST_REQUIRED)
   @Min(value = 0, message = Message.INVALID_COST)
   @Max(value = 100000, message = Message.INVALID_COST)
   private Integer rentalCost;

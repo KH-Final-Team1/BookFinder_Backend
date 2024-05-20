@@ -27,17 +27,18 @@ public interface Message {
   String EXPIRED_AUTH_CODE = "인증 코드가 만료되었습니다.";
   String INVALID_SIGNING_TOKEN = "유효하지 않은 토큰입니다.";
   String FAIL_LOGIN = "이메일 또는 비밀번호가 올바르지 않습니다.";
+  String NOT_FOUND_USER = "요청하신 사용자를 찾을 수 없습니다.";
 
 
   String INVALID_ISBN_DIGITS = "ISBN 번호는 13자리의 숫자만 입력 가능합니다.";
   String UNSAVED_ISBN = "유효하지 않은 ISBN 번호 입니다.";
   String INVALID_COST = "금액은 0부터 100000까지의 정수값만 입력 가능합니다.";
-  String NULLABLE_COST = "금액은 빈값일 수 없습니다.";
+  String COST_REQUIRED = "금액은 빈값일 수 없습니다.";
   String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
   String NOT_FOUND_TRADE = "거래 번호를 찾을 수 없습니다.";
   String DELETED_TRADE = "삭제된 게시물 입니다.";
-  String SUCCESS_UPDATE = "게시글을 성공적으로 수정했습니다.";
-  String SUCCESS_DELETE = "게시글을 성공적으로 삭제했습니다.";
+  String SUCCESS_UPDATE = "수정을 성공했습니다.";
+  String SUCCESS_DELETE = "삭제를 성공했습니다.";
 
   String INVALID_FILTER = "filter는 name이나 authors나 publisher만 가능합니다.";
   String NOT_FOUND_BOOK = "해당 도서는 북적북적 사이트에 없는 도서이거나 존재하지 않는 도서입니다.";
@@ -47,6 +48,9 @@ public interface Message {
   String DUPLICATE_BOOK_WAIT = "이미 요청되어 있는 도서입니다.";
   String SUCCESS_REQUEST = "도서가 성공적으로 요청되었습니다.";
 
+  String NOT_FOUND_COMMENT = "존재하지 않는 댓글 입니다.";
+  String CONTENT_REQUIRED = "내용은 빈값일 수 없습니다.";
+  String SECRET_REQUIRED = "비밀댓글 여부를 설정해주세요.";
 
   static String getSuccessMessageBy(String field) {
     return field.equals("email") ? VALID_EMAIL : VALID_NICKNAME;
