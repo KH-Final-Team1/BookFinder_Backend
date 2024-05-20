@@ -60,4 +60,15 @@ public class BookService {
     }
     bookRepository.save(bookRequestDto.toEntity());
   }
+  public void requestBook(@Valid BookRequestDto bookRequestDto) {
+    Optional<Book> book = bookRepository.findByIsbn(bookRequestDto.getIsbn());
+    if (book.isPresent()) {
+      if (book.get().getApprovalStatus().equals("APPROVE")) {
+        throw new ResourceNotFoundException(Message.DUPLICATE_BOOK_APPROVE);
+      } else if (book.get().getApprovalStatus().equals("WAIT")) {
+        throw new ResourceNotFoundException(Message.DUPLICATE_BOOK_WAIT);
+      }
+    }
+    bookRepository.save(bookRequestDto.toEntity());
+  }
 }
