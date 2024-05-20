@@ -1,4 +1,4 @@
-package com.kh.bookfinder.auth.dto;
+package com.kh.bookfinder.auth.jwt.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

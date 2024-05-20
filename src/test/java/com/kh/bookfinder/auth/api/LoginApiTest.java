@@ -4,7 +4,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.auth.dto.LoginDto;
+import com.kh.bookfinder.auth.login.dto.LoginDto;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
@@ -124,10 +124,10 @@ public class LoginApiTest {
     // When: Login API를 호출한다.
     ResultActions resultActions = callLoginApi(loginDto);
 
-    // Then: Status는 404 Not Found이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
+    // Then: Status는 401 Unauthorized이다.
+    resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.NOT_FOUND)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.FAIL_LOGIN)));
   }
 
@@ -154,6 +154,6 @@ public class LoginApiTest {
     resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
     // And: Response Body로 message와 details가 반환된다.
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is("Bad credentials")));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.FAIL_LOGIN)));
   }
 }
