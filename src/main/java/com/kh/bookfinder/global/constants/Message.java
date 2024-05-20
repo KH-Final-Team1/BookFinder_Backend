@@ -37,6 +37,7 @@ public interface Message {
   String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
   String NOT_FOUND_TRADE = "거래 번호를 찾을 수 없습니다.";
   String DELETED_TRADE = "삭제된 게시물 입니다.";
+  String SUCCESS_CHANGE = "거래 상태가 변경되었습니다.";
   String SUCCESS_UPDATE = "수정을 성공했습니다.";
   String SUCCESS_DELETE = "삭제를 성공했습니다.";
 

@@ -44,4 +44,9 @@ public class BookTradeService {
     bookTrade.setDeleteYn(Status.Y);
   }
 
+  @Transactional
+  public void changeTrade(Long tradeId, Status tradeYn) {
+    BookTrade bookTrade = findTrade(tradeId);
+    bookTrade.setTradeYn(tradeYn);
+  }
 }
