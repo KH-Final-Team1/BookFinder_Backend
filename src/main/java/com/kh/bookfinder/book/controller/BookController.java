@@ -50,7 +50,7 @@ public class BookController {
     return ResponseEntity.ok().body(Map.of("message", Message.UPDATE_APPROVAL_STATUS));
   }
 
-  @PostMapping("/request")
+  @PostMapping
   public ResponseEntity<Map<String, String>> createBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
     bookService.requestBook(bookRequestDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_REQUEST));
