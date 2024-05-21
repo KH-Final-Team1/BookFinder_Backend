@@ -7,6 +7,7 @@ import com.kh.bookfinder.user.dto.SignUpDto;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +51,10 @@ public class UserService {
           });
     }
 
+  }
+
+  public User findUser(Long userId) {
+    return this.userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_USER));
   }
 }

@@ -1,5 +1,6 @@
 package com.kh.bookfinder.book.dto;
 
+import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +18,7 @@ public class SearchDto {
   private String filter;
   @NotNull
   private String keyword;
-  private String approvalStatus;
+  private ApprovalStatus approvalStatus;
 
   @AssertTrue(message = Message.INVALID_FILTER)
   public boolean isFilter() {
