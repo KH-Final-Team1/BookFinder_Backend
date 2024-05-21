@@ -84,11 +84,13 @@ public class BookTrade {
         .latitude(this.latitude)
         .createdDate(this.createDate)
 
+        .isbn(this.book.getIsbn())
         .bookName(this.book.getName())
         .bookAuthors(this.book.getAuthors())
         .bookPublisher(this.book.getPublisher())
         .bookPublicationYear(this.book.getPublicationYear())
         .bookImageUrl(this.book.getImageUrl())
+        .bookClassName(this.book.getClassName())
         .bookDescription(this.book.getDescription())
 
         .userNickname(this.user.getNickname())
