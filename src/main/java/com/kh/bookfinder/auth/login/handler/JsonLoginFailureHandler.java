@@ -23,8 +23,10 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
       sendUnsupportedMediaType(response, exception);
     } else if (isDtoException(exception)) {
       sendBadRequest(response, exception);
+    } else if (existsAuthorization(exception)) {
+      sendForbidden(response, exception);
     } else {
-      sendUnauthorized(response, exception);
+      sendUnauthorized(response);
     }
   }
 
@@ -38,16 +40,25 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
 
-  private void sendUnauthorized(HttpServletResponse response, AuthenticationException exception) throws IOException {
-    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  private void sendForbidden(HttpServletResponse response, AuthenticationException exception) throws IOException {
+    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
-        .message(Message.UNAUTHORIZED)
+        .message(Message.FORBIDDEN)
         .detail(exception.getLocalizedMessage())
         .build();
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
 
+  private void sendUnauthorized(HttpServletResponse response) throws IOException {
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    ErrorResponseBody responseBody = ErrorResponseBody
+        .builder()
+        .message(Message.UNAUTHORIZED)
+        .detail(Message.FAIL_LOGIN)
+        .build();
+    new ObjectMapper().writeValue(response.getWriter(), responseBody);
+  }
 
   @SuppressWarnings("unchecked")
   private void sendBadRequest(HttpServletResponse response, AuthenticationException exception)
@@ -69,5 +80,9 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
   private boolean isDtoException(AuthenticationException exception) {
     String message = exception.getLocalizedMessage();
     return message.contains(DTO_EMAIL) || message.contains(DTO_PASSWORD);
+  }
+
+  private boolean existsAuthorization(AuthenticationException exception) {
+    return exception.getMessage().contains(Message.INVALID_LOGIN_WITH_AUTHORIZATION);
   }
 }

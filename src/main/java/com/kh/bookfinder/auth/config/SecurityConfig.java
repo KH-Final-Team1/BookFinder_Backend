@@ -1,12 +1,16 @@
 package com.kh.bookfinder.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.bookfinder.auth.jwt.filter.JwtAuthenticationFilter;
+import com.kh.bookfinder.auth.jwt.handler.JwtForbiddenHandler;
+import com.kh.bookfinder.auth.jwt.handler.JwtUnauthorizedHandler;
 import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.auth.login.filter.JsonLoginFilter;
 import com.kh.bookfinder.auth.login.handler.JsonLoginFailureHandler;
 import com.kh.bookfinder.auth.login.handler.JsonLoginSuccessHandler;
 import com.kh.bookfinder.auth.login.service.SecurityUserService;
 import jakarta.validation.Validator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +25,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +36,8 @@ public class SecurityConfig {
 
   private final JwtService jwtService;
   private final SecurityUserService securityUserService;
+  private final JwtUnauthorizedHandler jwtUnauthorizedHandler;
+  private final JwtForbiddenHandler jwtForbiddenHandler;
   private final ObjectMapper objectMapper;
   private final Validator validator;
 
@@ -41,15 +50,37 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity
         .csrf(AbstractHttpConfigurer::disable)
+        .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
         .httpBasic(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorize -> authorize
-            .anyRequest().permitAll())
-        .addFilterAfter(jsonLoginFilter(), LogoutFilter.class);
-
+            .requestMatchers("/api/v1/login", "/api/v1/signup/**").anonymous())
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/api/v1/books/list", "/api/v1/books/{isbn}").permitAll())
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/api/v1/trades/**").authenticated());
+    httpSecurity.addFilterAfter(jsonLoginFilter(), LogoutFilter.class);
+    httpSecurity.addFilterBefore(jwtAuthenticationFilter(), JsonLoginFilter.class)
+        .exceptionHandling(handler -> handler
+            .authenticationEntryPoint(jwtUnauthorizedHandler)
+            .accessDeniedHandler(jwtForbiddenHandler));
     return httpSecurity.build();
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration corsConfiguration = new CorsConfiguration();
+    corsConfiguration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"));
+    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "..."));
+    corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+    corsConfiguration.setExposedHeaders(List.of("Authorization"));
+    corsConfiguration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", corsConfiguration);
+    return source;
   }
 
   @Bean
@@ -77,5 +108,10 @@ public class SecurityConfig {
     jsonLoginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
     jsonLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
     return jsonLoginFilter;
+  }
+
+  @Bean
+  public JwtAuthenticationFilter jwtAuthenticationFilter() {
+    return new JwtAuthenticationFilter(jwtService);
   }
 }

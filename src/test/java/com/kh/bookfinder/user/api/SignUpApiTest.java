@@ -2,13 +2,17 @@ package com.kh.bookfinder.user.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.bookfinder.auth.helper.MockToken;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.dto.SignUpDto;
-import com.kh.bookfinder.user.entity.User;
+import com.kh.bookfinder.user.helper.MockUser;
 import com.kh.bookfinder.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +20,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -29,21 +33,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Transactional
 public class SignUpApiTest {
 
-  /* TODO: 이메일 인증 API 추가되면 Signup 테스트도 수정되어야 함
-           주소에 대한 유효성 검사 생각해 봐야함
-           데이터베이스를 모킹해야하는가?에 대해 생각해 봐야함
+  /* TODO: 주소에 대한 유효성 검사 생각해 봐야함
    */
 
   @Autowired
   private ObjectMapper objectMapper;
   @Autowired
   private MockMvc mockMvc;
-  @Autowired
+  @MockBean
   private UserRepository userRepository;
 
   @Test
   @DisplayName("유효한 SignUpDto가 주어지는 경우")
-  public void signUpSuccessTest() throws Exception {
+  public void signUpSuccessTestOnValidSignupDto() throws Exception {
     // Given: 유효한 SignUpDto가 주어진다.
     SignUpDto validSignUpDto = this.buildValidSignUpDto();
     String requestBody = objectMapper.writeValueAsString(validSignUpDto);
@@ -59,14 +61,11 @@ public class SignUpApiTest {
         // And: message는 "가입이 완료되었습니다.\n환영합니다.\n로그인 후 이용해주세요."이다.
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.SIGNUP_SUCCESS)));
-    // And: 데이터베이스에 해당 User 정보가 저장된다.
-    User actual = userRepository.findByEmail(validSignUpDto.getEmail()).orElse(null);
-    assertThat(actual).isNotNull();
   }
 
   @Test
   @DisplayName("SignUpDto의 email이 유효하지 않은 경우")
-  public void signUpFailTest1() throws Exception {
+  public void signUpFailTestOnInvalidEmailInSignupDto() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (email)
     SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
     invalidUserSignUpDto.setEmail("jinhokhkr");
@@ -91,14 +90,14 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 email이 이미 가입한 email인 경우")
-  @Sql("classpath:oneUserInsert.sql")
-  public void signUpFailTest2() throws Exception {
-    // Given: email이 jinho@kh.kr인 User를 데이터베이스에 추가한다.
-    assertThat(userRepository.findByEmail("jinho@kh.kr").orElse(null)).isNotNull();
+  public void signUpFailTestOnDuplicateEmailInSignupDto() throws Exception {
     // Given: email이 jinho@kh.kr인 SignUpDto가 주어진다.
     SignUpDto validUserSignUpDto = this.buildValidSignUpDto();
     validUserSignUpDto.setEmail("jinho@kh.kr");
     String requestBody = objectMapper.writeValueAsString(validUserSignUpDto);
+    // And: UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(validUserSignUpDto.getEmail()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: SignUp API를 호출한다.
     this.mockMvc
@@ -114,12 +113,12 @@ public class SignUpApiTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.DUPLICATE_EMAIL)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
-    assertThat(userRepository.findAll()).hasSize(1);
+    assertThat(userRepository.findAll()).isEmpty();
   }
 
   @Test
   @DisplayName("SignUpDto의 password가 유효하지 않은 경우")
-  public void signUpFailTest3() throws Exception {
+  public void signUpFailTestOnInvalidPasswordInSignupDto() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (password)
     SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
     invalidUserSignUpDto.setPassword("1234");
@@ -144,7 +143,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 password와 passwordConfirm이 일치하지 않는 경우")
-  public void signUpFailTest4() throws Exception {
+  public void signUpFailTestOnNotEqualPasswordWithPasswordConfirmInSignupDto() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (password)
     SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
     invalidUserSignUpDto.setPasswordConfirm("q1w2e3r42@");
@@ -169,7 +168,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 nickname이 유효하지 않은 경우")
-  public void signUpFailTest5() throws Exception {
+  public void signUpFailTestOnInvalidNicknameInSignupDto() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (nickname)
     SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
     invalidUserSignUpDto.setNickname("ㅂㅈㄷㄱ");
@@ -194,15 +193,14 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 nickname이 이미 가입한 nickname인 경우")
-  @Sql("classpath:oneUserInsert.sql")
-  public void signUpFailTest6() throws Exception {
-    // Given: nickname이 nickname인 User를 데이터베이스에 추가한다.
-    assertThat(userRepository.findByNickname("nickname").orElse(null)).isNotNull();
-    // And: nickname이 nickname인 SignUpDto가 주어진다.
+  public void signUpFailTestOnDuplicateNicknameInSignupDto() throws Exception {
+    // Given: nickname이 nickname인 SignUpDto가 주어진다.
     SignUpDto validUserSignUpDto = this.buildValidSignUpDto();
     validUserSignUpDto.setNickname("nickname");
-    validUserSignUpDto.setEmail("jinho2@kh.kr");
     String requestBody = objectMapper.writeValueAsString(validUserSignUpDto);
+    // And: UserRepository를 Mocking한다.
+    when(userRepository.findByNickname(validUserSignUpDto.getNickname()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: SignUp API를 호출한다.
     this.mockMvc
@@ -218,12 +216,12 @@ public class SignUpApiTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.DUPLICATE_NICKNAME)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
-    assertThat(userRepository.findAll()).hasSize(1);
+    assertThat(userRepository.findAll()).isEmpty();
   }
 
   @Test
   @DisplayName("SignUpDto의 phone이 유효하지 않은 경우")
-  public void signUpFailTest7() throws Exception {
+  public void signUpFailTestOnInvalidPhoneInSignupDto() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (phone)
     SignUpDto invalidUserSignUpDto = this.buildValidSignUpDto();
     invalidUserSignUpDto.setPhone("12345678912345");
@@ -245,6 +243,34 @@ public class SignUpApiTest {
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
   }
+
+  @Test
+  @DisplayName("Header에 Authorization이 포함된 경우")
+  public void signUpFailTestOnAuthorizationInHeader() throws Exception {
+    // Given: 유효한 SignUpDto가 주어진다.
+    SignUpDto validSignUpDto = this.buildValidSignUpDto();
+    String requestBody = objectMapper.writeValueAsString(validSignUpDto);
+    // And: UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(any()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
+
+    // When: Header에 유효한 Authorization을 담아 SignUp API를 호출한다.
+    this.mockMvc
+        .perform(MockMvcRequestBuilders
+            .post("/api/v1/signup")
+            .content(requestBody)
+            .contentType("application/json")
+            .header("Authorization", MockToken.mockAccessToken)
+        )
+        // Then: Status는 403 Forbidden 이다.
+        .andExpect(MockMvcResultMatchers.status().isForbidden())
+        // And: Response Body로 message와 detail가 반환된다.
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.ALREADY_LOGIN)));
+    // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
+    assertThat(userRepository.findAll()).isEmpty();
+  }
+
 
   private SignUpDto buildValidSignUpDto() {
     return SignUpDto.builder()

@@ -6,26 +6,39 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.bookfinder.auth.helper.MockToken;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.dto.SendingEmailAuthDto;
 import com.kh.bookfinder.user.entity.EmailAuth;
+import com.kh.bookfinder.user.helper.MockUser;
+import com.kh.bookfinder.user.repository.UserRepository;
 import com.kh.bookfinder.user.service.EmailAuthService;
+import jakarta.transaction.Transactional;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+@ActiveProfiles("test")
+@Transactional
 public class SendAuthEmailApiTest {
 
+  /* TODO: 이미 가입된 이메일로 요청을 보낼 경우에 대한 테스트가 없음
+   */
   private static final String MOCK_SIGNING_TOKEN = "eyJlbWFpbCI6ImppbmhvNDc0NEBuYXZlci5jb20iLCJjb2RlIjoiZHdmOHlGclgifQ==";
   @Autowired
   private MockMvc mockMvc;
@@ -33,6 +46,8 @@ public class SendAuthEmailApiTest {
   private ObjectMapper objectMapper;
   @MockBean
   private EmailAuthService emailAuthService;
+  @MockBean
+  private UserRepository userRepository;
   private EmailAuth mockEmailAuth;
 
   @BeforeEach
@@ -86,5 +101,32 @@ public class SendAuthEmailApiTest {
         // And: Response Body로 message와 details가 반환된다.
         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
+  }
+
+  @Test
+  @DisplayName("Header에 Auhtorization이 포함된 경우")
+  public void sendAuthEmailFailOnAuthorizationInHeaderTest() throws Exception {
+    // Given: 유효한 SendingEmailAuthDto가 주어진다.
+    SendingEmailAuthDto requestDto = SendingEmailAuthDto
+        .builder()
+        .email("jinho6442@naver.com")
+        .build();
+    String requestBody = objectMapper.writeValueAsString(requestDto);
+    // When: UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(any()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
+
+    // When: Header에 유효한 Authorization을 담아 Sending Auth Code Email API를 호출한다.
+    mockMvc.perform(MockMvcRequestBuilders
+        .post("/api/v1/signup/email")
+        .content(requestBody)
+        .contentType(MediaType.APPLICATION_JSON)
+        .header("Authorization", MockToken.mockAccessToken)
+    )
+        // Then: Status는 403 Forbidden이다.
+        .andExpect(MockMvcResultMatchers.status().isForbidden())
+        // And: Response Body로 message와 detail가 반환된다.
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.ALREADY_LOGIN)));
   }
 }

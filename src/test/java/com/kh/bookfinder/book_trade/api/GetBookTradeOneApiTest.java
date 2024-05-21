@@ -1,15 +1,19 @@
 package com.kh.bookfinder.book_trade.api;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.bookfinder.auth.helper.MockToken;
 import com.kh.bookfinder.book_trade.dto.BookTradeDetailResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.helper.MockBookTrade;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.user.helper.MockUser;
+import com.kh.bookfinder.user.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +43,8 @@ public class GetBookTradeOneApiTest {
   private MockMvc mockMvc;
   @MockBean
   private BookTradeRepository bookTradeRepository;
+  @MockBean
+  private UserRepository userRepository;
 
   @Test
   @DisplayName("유효한 BookTrade Id가 주어졌을 때")
@@ -49,11 +55,15 @@ public class GetBookTradeOneApiTest {
     BookTrade mockBookTrade = MockBookTrade.getMockBookTrade();
     when(bookTradeRepository.findById(tradeId))
         .thenReturn(Optional.of(mockBookTrade));
+    // And: UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(any()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: Get BookTrade API를 호출한다.
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
-            .get("/api/v1/trades/{tradeId}", tradeId));
+            .get("/api/v1/trades/{tradeId}", tradeId)
+            .header("Authorization", MockToken.mockAccessToken));
 
     // Then: Status는 200 Ok이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isOk());
@@ -68,16 +78,21 @@ public class GetBookTradeOneApiTest {
   public void getBookTradeOneFailOnIdNotExistInDb() throws Exception {
     // Given: 유효하지 않은 BookTrade Id가 주어진다.
     long invalidTradeId = 123;
+    // And: UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(any()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: Get BookTrade API를 호출한다.
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
-            .get("/api/v1/trades/{tradeId}", invalidTradeId));
+            .get("/api/v1/trades/{tradeId}", invalidTradeId)
+            .header("Authorization", MockToken.mockAccessToken));
 
     // Then: Status는 404 Not Found이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
-    // And: Response Body로 message를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.NOT_FOUND_TRADE)));
+    // And: Response Body로 message와 detail을 반환한다.
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.NOT_FOUND)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.NOT_FOUND_TRADE)));
   }
 
   @Test
@@ -90,16 +105,43 @@ public class GetBookTradeOneApiTest {
     mockBookTrade.setDeleteYn(Status.Y);
     when(bookTradeRepository.findById(tradeId))
         .thenReturn(Optional.of(mockBookTrade));
+    // And: UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(any()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: Get BookTrade API를 호출한다.
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
-            .get("/api/v1/trades/{tradeId}", tradeId));
+            .get("/api/v1/trades/{tradeId}", tradeId)
+            .header("Authorization", MockToken.mockAccessToken));
 
     // Then: Status는 404 Not Found이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
-    // And: Response Body로 message를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.DELETED_TRADE)));
+    // And: Response Body로 message와 detail을 반환한다.
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.NOT_FOUND)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.DELETED_TRADE)));
+  }
+
+  @Test
+  @DisplayName("Header에 Authorization이 없는 경우")
+  public void getBookTradeOneFailTestOnNotExistAuthorizationInHeader() throws Exception {
+    // Given: 유효한 BookTrade Id가 주어진다.
+    long tradeId = 1;
+    // And: Mock BookTrade가 주어진다.
+    BookTrade mockBookTrade = MockBookTrade.getMockBookTrade();
+    when(bookTradeRepository.findById(tradeId))
+        .thenReturn(Optional.of(mockBookTrade));
+
+    // When: Header에 Authorization 없이 Get BookTrade API를 호출한다.
+    ResultActions resultActions = mockMvc
+        .perform(MockMvcRequestBuilders
+            .get("/api/v1/trades/{tradeId}", tradeId));
+
+    // Then: Status는 401 Unauthorized이다.
+    resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    // And: Response Body로 message와 detail을 반환한다.
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.NOT_LOGIN)));
   }
 
   private void checkDetailResponseDto(ResultActions resultActions) throws Exception {

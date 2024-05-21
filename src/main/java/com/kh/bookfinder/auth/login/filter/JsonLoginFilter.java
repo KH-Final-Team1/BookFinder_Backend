@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import java.io.IOException;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -39,10 +39,17 @@ public class JsonLoginFilter extends AbstractAuthenticationProcessingFilter {
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException, IOException {
     if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
-      throw new RuntimeException(Message.INVALID_CONTENT_TYPE);
+      throw new AuthenticationServiceException(Message.INVALID_CONTENT_TYPE);
+    }
+    if (existsAuthorization(request)) {
+      throw new AuthenticationServiceException(Message.INVALID_LOGIN_WITH_AUTHORIZATION);
     }
     LoginDto loginDto = parseDto(request);
     return getAuthentication(loginDto);
+  }
+
+  private boolean existsAuthorization(HttpServletRequest request) {
+    return request.getHeader("Authorization") != null;
   }
 
   private Authentication getAuthentication(LoginDto loginDto) {
@@ -58,7 +65,7 @@ public class JsonLoginFilter extends AbstractAuthenticationProcessingFilter {
       Map<String, String> errorMap = violations
           .stream()
           .collect(Collectors.toMap(k -> k.getPropertyPath().toString(), ConstraintViolation::getMessage));
-      throw new InvalidPropertiesFormatException(objectMapper.writeValueAsString(errorMap));
+      throw new AuthenticationServiceException(objectMapper.writeValueAsString(errorMap));
     }
     return loginDto;
   }
