@@ -1,0 +1,6 @@
+package com.kh.bookfinder.auth.helper;
+
+public interface MockToken {
+
+  String mockAccessToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImVtYWlsIjoiamluaG80NzQ0QG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX0FETUlOIiwiZXhwIjoxNzE2NTQ5NzI2fQ.Ys_2wvd-jgnxs648N_mBSEji-QAF0WCUQPk_aZ17fC-99kisHa7hBZL1WHLr3O-u11TAfDhtFJ8nwlOm2XNU1Q";
+}

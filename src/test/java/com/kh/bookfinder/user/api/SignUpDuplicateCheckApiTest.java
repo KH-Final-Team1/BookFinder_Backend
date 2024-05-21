@@ -1,13 +1,17 @@
 package com.kh.bookfinder.user.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.bookfinder.auth.helper.MockToken;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.dto.DuplicateCheckDto;
+import com.kh.bookfinder.user.helper.MockUser;
 import com.kh.bookfinder.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +19,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -28,15 +33,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Transactional
 public class SignUpDuplicateCheckApiTest {
 
-  /* TODO: 데이터베이스를 모킹해야할까? 아니면 실제 테스트이니 모킹할 필요 없나?
-           중복된 이메일인 경우, Bad Request가 나을까? 아니면 Conflict(409)가 나을까?
+  /* TODO: 중복된 이메일인 경우, Bad Request가 나을까? 아니면 Conflict(409)가 나을까?
    */
 
   @Autowired
   private MockMvc mockMvc;
   @Autowired
   private ObjectMapper objectMapper;
-  @Autowired
+  @MockBean
   private UserRepository userRepository;
 
   @Test
@@ -87,16 +91,16 @@ public class SignUpDuplicateCheckApiTest {
 
   @Test
   @DisplayName("이미 가입한 email인 경우")
-  @Sql("classpath:oneUserInsert.sql")
   public void emailDuplicateCheckFailTest2() throws Exception {
-    // Given: email이 jinho@kh.kr인 User를 데이터베이스에 추가한다.
-    assertThat(this.userRepository.findByEmail("jinho@kh.kr").orElse(null)).isNotNull();
-    // And: field=email, value=jinho@kh.kr인 DuplicateCheckDto가 주어진다
+    // Given: field=email, value=jinho@kh.kr인 DuplicateCheckDto가 주어진다
     DuplicateCheckDto validDuplicateCheckDto = DuplicateCheckDto
         .builder()
         .field("email")
         .value("jinho@kh.kr")
         .build();
+    // And: UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(validDuplicateCheckDto.getValue()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: Duplicate Check API를 호출한다.
     this.mockMvc
@@ -160,16 +164,16 @@ public class SignUpDuplicateCheckApiTest {
 
   @Test
   @DisplayName("이미 가입한 닉네임인 경우")
-  @Sql("classpath:oneUserInsert.sql")
   public void nicknameDuplicateCheckFailTest2() throws Exception {
-    // Given: nickname이 nickname인 User를 데이터베이스에 추가한다.
-    assertThat(userRepository.findByNickname("nickname").orElse(null)).isNotNull();
-    // And: field=nickname, value=nickname인 DuplicateCheckDto가 주어진다
+    // Given: field=nickname, value=nickname인 DuplicateCheckDto가 주어진다
     DuplicateCheckDto validDuplicateCheckDto = DuplicateCheckDto
         .builder()
         .field("nickname")
         .value("nickname")
         .build();
+    // And: UserRepository를 Mocking한다.
+    when(this.userRepository.findByNickname(validDuplicateCheckDto.getValue()))
+        .thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: Duplicate Check API를 호출한다.
     this.mockMvc
@@ -207,5 +211,32 @@ public class SignUpDuplicateCheckApiTest {
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.field", is(Message.INVALID_FIELD)));
+  }
+
+  @Test
+  @DisplayName("Header에 Authorization이 포함된 경우")
+  public void duplicateCheckFailOnAuthorizationInHeaderTest() throws Exception {
+    // Given: 유효한 DuplicateCheckDto가 주어진다.
+    DuplicateCheckDto duplicateCheckDto = DuplicateCheckDto
+        .builder()
+        .field("email")
+        .value("jinho@kh.kr")
+        .build();
+    // And: UserRepository를 Mocking 한다.
+    when(userRepository.findByEmail(any())).thenReturn(Optional.of(MockUser.getMockUser()));
+
+    // When: Header에 유효한 Authorization을 담아 Duplicate Check API를 호출한다.
+    ResultActions resultActions = this.mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
+            .param("field", duplicateCheckDto.getField())
+            .param("value", duplicateCheckDto.getValue())
+            .header("Authorization", MockToken.mockAccessToken)
+        );
+
+    // Then: Status는 403 Forbidden 이다.
+    resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
+    // And: Response Body로 message와 detail이 반환된다.
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.ALREADY_LOGIN)));
   }
 }

@@ -1,13 +1,14 @@
-package com.kh.bookfinder.auth.api;
+package com.kh.bookfinder.auth.login;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.login.dto.LoginDto;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.entity.User;
-import com.kh.bookfinder.user.entity.UserRole;
+import com.kh.bookfinder.user.helper.MockUser;
 import com.kh.bookfinder.user.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
-public class LoginApiTest {
+public class LoginFilterTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -62,17 +62,11 @@ public class LoginApiTest {
     // Given: 로그인 정보가 주어진다.
     LoginDto loginDto = getBaseLoginDto();
     // And: Repository가 Mock User객체를 리턴하도록 모킹한다.
-    User mockUser = User.builder()
-        .id(1L)
-        .email("jinho4744@naver.com")
-        .password(new BCryptPasswordEncoder().encode("test_password_123"))
-        .nickname("고소하게")
-        .role(UserRole.ROLE_ADMIN)
-        .build();
+    User mockUser = MockUser.getMockUser();
     when(userRepository.findByEmail(loginDto.getEmail())).thenReturn(Optional.of(mockUser));
 
     // When: Login API를 호출한다.
-    ResultActions resultActions = callLoginApi(loginDto);
+    ResultActions resultActions = callLoginApi(loginDto).andDo(print());
 
     // Then: Status는 200 Ok이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isOk());
@@ -138,13 +132,7 @@ public class LoginApiTest {
     LoginDto loginDto = getBaseLoginDto();
     loginDto.setPassword("test_password_1");
     // And: Repository가 Mock User객체를 리턴하도록 모킹한다.
-    User mockUser = User.builder()
-        .id(1L)
-        .email("jinho4744@naver.com")
-        .password(new BCryptPasswordEncoder().encode("test_password_123"))
-        .nickname("고소하게")
-        .role(UserRole.ROLE_ADMIN)
-        .build();
+    User mockUser = MockUser.getMockUser();
     when(userRepository.findByEmail(loginDto.getEmail())).thenReturn(Optional.of(mockUser));
 
     // When: Login API를 호출한다.
