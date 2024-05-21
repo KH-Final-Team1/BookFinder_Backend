@@ -47,6 +47,7 @@ public interface Message {
   String INVALID_APPROVAL_STATUS = "approvalStatus는 APPROVE나 WAIT나 REJECT만 가능합니다";
   String DUPLICATE_BOOK_APPROVE = "이미 등록되어 있는 도서입니다.";
   String DUPLICATE_BOOK_WAIT = "이미 요청되어 있는 도서입니다.";
+  String DUPLICATE_BOOK_REJECT = "해당 도서는 요청이 거절되어 있는 도서 입니다.";
   String SUCCESS_REQUEST = "도서가 성공적으로 요청되었습니다.";
 
   String NOT_FOUND_COMMENT = "존재하지 않는 댓글 입니다.";

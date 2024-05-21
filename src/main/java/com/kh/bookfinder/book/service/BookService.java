@@ -32,16 +32,27 @@ public class BookService {
 
   public List<Book> getBooks(SearchDto requestParam) {
     List<Book> books;
-    if (requestParam.getFilter().equals("name")) {
-      books = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(),
-          requestParam.getApprovalStatus());
-    } else if (requestParam.getFilter().equals("authors")) {
-      books = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(),
-          requestParam.getApprovalStatus());
+    if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
+      if (requestParam.getFilter().equals("name")) {
+        books = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(),
+            requestParam.getApprovalStatus());
+      } else if (requestParam.getFilter().equals("authors")) {
+        books = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(),
+            requestParam.getApprovalStatus());
+      } else {
+        books = bookRepository.findByPublisherContainingAndApprovalStatus(requestParam.getKeyword(),
+            requestParam.getApprovalStatus());
+      }
     } else {
-      books = bookRepository.findByPublisherContainingAndApprovalStatus(requestParam.getKeyword(),
-          requestParam.getApprovalStatus());
+      if (requestParam.getFilter().equals("name")) {
+        books = bookRepository.findByNameContaining(requestParam.getKeyword());
+      } else if (requestParam.getFilter().equals("authors")) {
+        books = bookRepository.findByAuthorsContaining(requestParam.getKeyword());
+      } else {
+        books = bookRepository.findByPublisherContaining(requestParam.getKeyword());
+      }
     }
+
     if (books.isEmpty()) {
       throw new ResourceNotFoundException(Message.NOT_FOUND_BOOK);
     }
@@ -58,10 +69,13 @@ public class BookService {
   public void requestBook(@Valid BookRequestDto bookRequestDto) {
     Optional<Book> book = bookRepository.findByIsbn(bookRequestDto.getIsbn());
     if (book.isPresent()) {
-      if (book.get().getApprovalStatus().equals(ApprovalStatus.APPROVE)) {
+      ApprovalStatus approvalStatus = book.get().getApprovalStatus();
+      if (approvalStatus.equals(ApprovalStatus.APPROVE)) {
         throw new ResourceNotFoundException(Message.DUPLICATE_BOOK_APPROVE);
-      } else if (book.get().getApprovalStatus().equals(ApprovalStatus.WAIT)) {
+      } else if (approvalStatus.equals(ApprovalStatus.WAIT)) {
         throw new ResourceNotFoundException(Message.DUPLICATE_BOOK_WAIT);
+      } else if (approvalStatus.equals(ApprovalStatus.REJECT)) {
+        throw new ResourceNotFoundException(Message.DUPLICATE_BOOK_REJECT);
       }
     }
     bookRepository.save(bookRequestDto.toEntity());
