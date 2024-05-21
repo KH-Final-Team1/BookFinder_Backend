@@ -70,22 +70,7 @@ public class BookTradeController {
   @PutMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody @Valid BookTradeRequestDto tradeDto) {
-    BookTrade bookTrade = bookTradeService.findTrade(tradeId);
-    Book book = bookService.findApprovedBook(tradeDto.getIsbn());
-
-    bookTrade = BookTrade.builder()
-        .id(bookTrade.getId())
-        .book(book)
-        .tradeType(tradeDto.getTradeType())
-        .rentalCost(tradeDto.getRentalCost())
-        .limitedDate(tradeDto.getLimitedDate())
-        .content(tradeDto.getContent())
-        .latitude(tradeDto.getLatitude())
-        .longitude(tradeDto.getLongitude())
-        .createDate(bookTrade.getCreateDate())
-        .build();
-
-    bookTradeService.saveBookTrade(bookTrade);
+    bookTradeService.updateBookTrade(tradeId, tradeDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 

@@ -1,5 +1,6 @@
 package com.kh.bookfinder.book_trade.service;
 
+import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
@@ -36,6 +37,16 @@ public class BookTradeService {
   @Transactional
   public void saveBookTrade(BookTrade bookTrade) {
     bookTradeRepository.save(bookTrade);
+  }
+
+  @Transactional
+  public void updateBookTrade(Long tradeId, BookTradeRequestDto tradeDto) {
+    BookTrade bookTrade = findTrade(tradeId);
+    bookTrade.setRentalCost(tradeDto.getRentalCost());
+    bookTrade.setLimitedDate(tradeDto.getLimitedDate());
+    bookTrade.setContent(tradeDto.getContent());
+    bookTrade.setLatitude(tradeDto.getLatitude());
+    bookTrade.setLongitude(tradeDto.getLongitude());
   }
 
   @Transactional
