@@ -39,7 +39,7 @@ public class BookController {
     if ((long) (Math.log10(isbn) + 1) != ISBN_DIGITS) {
       throw new InvalidFieldException("message", Message.INVALID_ISBN_DIGITS);
     }
-    Book book = bookService.findBook(isbn);
+    Book book = bookService.findApprovedBook(isbn);
     return ResponseEntity.ok().body(book);
   }
 

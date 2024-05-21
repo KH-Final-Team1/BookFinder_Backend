@@ -82,6 +82,7 @@ public class BookTrade {
         .rentalCost(this.rentalCost)
         .longitude(this.longitude)
         .latitude(this.latitude)
+        .limitedDate(this.limitedDate)
         .createdDate(this.createDate)
 
         .isbn(this.book.getIsbn())
