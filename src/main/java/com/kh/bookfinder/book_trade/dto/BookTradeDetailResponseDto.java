@@ -22,14 +22,17 @@ public class BookTradeDetailResponseDto {
   private TradeType tradeType;
   private Status tradeYn;
   @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
+  private Date limitedDate;
+  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
   private Date createdDate;
   private Map<String, Object> user = new HashMap<>();
   private Map<String, Object> book = new HashMap<>();
 
   @Builder
   public BookTradeDetailResponseDto(Long id, TradeType tradeType, Status tradeYn, String content,
-      Integer rentalCost, BigDecimal longitude, BigDecimal latitude, Date createdDate,
-      String bookName, String bookAuthors, String bookPublisher, String bookImageUrl, String bookDescription,
+      Integer rentalCost, BigDecimal longitude, BigDecimal latitude, Date createdDate, Date limitedDate,
+      Long isbn, String bookName, String bookAuthors, String bookPublisher, String bookImageUrl,
+      String bookDescription, String bookClassName,
       Integer bookPublicationYear, String userNickname) {
     this.id = id;
     this.tradeType = tradeType;
@@ -38,13 +41,16 @@ public class BookTradeDetailResponseDto {
     this.rentalCost = rentalCost;
     this.longitude = longitude;
     this.latitude = latitude;
+    this.limitedDate = limitedDate;
     this.createdDate = createdDate;
 
+    this.book.put("isbn", isbn);
     this.book.put("name", bookName);
     this.book.put("authors", bookAuthors);
     this.book.put("publisher", bookPublisher);
     this.book.put("publicationYear", bookPublicationYear);
     this.book.put("imageUrl", bookImageUrl);
+    this.book.put("className", bookClassName);
     this.book.put("description", bookDescription);
 
     this.user.put("nickname", userNickname);
