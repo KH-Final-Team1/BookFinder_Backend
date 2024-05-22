@@ -54,7 +54,6 @@ public class CommentController {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
     String email = principal.getUsername();
-
     commentService.saveComment(email, tradeId, commentDto);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -62,13 +61,19 @@ public class CommentController {
   @PutMapping("/{commentId}")
   public ResponseEntity<Map<String, String>> updateComment(@PathVariable(name = "commentId") Long commentId,
       @RequestBody @Valid CommentRequestDto commentDto) {
-    commentService.updateComment(commentId, commentDto);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
+    String email = principal.getUsername();
+    commentService.updateComment(email, commentId, commentDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 
   @DeleteMapping("{commentId}")
   public ResponseEntity<Map<String, String>> updateComment(@PathVariable(name = "commentId") Long commentId) {
-    commentService.deleteComment(commentId);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
+    String email = principal.getUsername();
+    commentService.deleteComment(email, commentId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
   }
 }
