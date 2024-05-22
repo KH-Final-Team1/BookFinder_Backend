@@ -1,10 +1,14 @@
 package com.kh.bookfinder.book_trade.service;
 
+import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.user.entity.User;
+import com.kh.bookfinder.user.service.UserService;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -16,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookTradeService {
 
   private final BookTradeRepository bookTradeRepository;
+  private final UserService userService;
+  private final BookService bookService;
 
   public BookTrade findTrade(Long tradeId) {
     return bookTradeRepository.findById(tradeId)
@@ -35,7 +41,11 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void saveBookTrade(BookTrade bookTrade) {
+  public void saveBookTrade(String email, BookTradeRequestDto tradeDto) {
+    User user = userService.findUser(email);
+    Book book = bookService.findApprovedBook(tradeDto.getIsbn());
+    BookTrade bookTrade = tradeDto.toEntity(book);
+    bookTrade.setUser(user);
     bookTradeRepository.save(bookTrade);
   }
 

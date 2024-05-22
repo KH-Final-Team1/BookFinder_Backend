@@ -60,7 +60,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/v1/books/list", "/api/v1/books/{isbn}").permitAll())
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/trades/**").authenticated());
+            .requestMatchers("/api/v1/trades/**", "/api/v1/comments/**").authenticated());
     httpSecurity.addFilterAfter(jsonLoginFilter(), LogoutFilter.class);
     httpSecurity.addFilterBefore(jwtAuthenticationFilter(), JsonLoginFilter.class)
         .exceptionHandling(handler -> handler
