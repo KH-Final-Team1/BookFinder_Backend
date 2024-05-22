@@ -71,20 +71,29 @@ public class BookTradeController {
   @PutMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody @Valid BookTradeRequestDto tradeDto) {
-    bookTradeService.updateBookTrade(tradeId, tradeDto);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
+    String email = principal.getUsername();
+    bookTradeService.updateBookTrade(email, tradeId, tradeDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 
   @DeleteMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> deleteBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
-    bookTradeService.deleteTrade(tradeId);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
+    String email = principal.getUsername();
+    bookTradeService.deleteTrade(email, tradeId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
   }
 
   @PatchMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> changeTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody BookTradeYnDto tradeYn) {
-    bookTradeService.changeTrade(tradeId, tradeYn.getTradeYn());
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
+    String email = principal.getUsername();
+    bookTradeService.changeTrade(email, tradeId, tradeYn.getTradeYn());
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_CHANGE));
   }
 }
