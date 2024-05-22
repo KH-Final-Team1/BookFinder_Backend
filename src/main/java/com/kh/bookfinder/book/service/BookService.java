@@ -35,13 +35,13 @@ public class BookService {
     if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
       if (requestParam.getFilter().equals("name")) {
         books = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(),
-            requestParam.getApprovalStatus());
+            ApprovalStatus.APPROVE);
       } else if (requestParam.getFilter().equals("authors")) {
         books = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(),
-            requestParam.getApprovalStatus());
+            ApprovalStatus.APPROVE);
       } else {
         books = bookRepository.findByPublisherContainingAndApprovalStatus(requestParam.getKeyword(),
-            requestParam.getApprovalStatus());
+            ApprovalStatus.APPROVE);
       }
     } else {
       if (requestParam.getFilter().equals("name")) {
@@ -51,10 +51,6 @@ public class BookService {
       } else {
         books = bookRepository.findByPublisherContaining(requestParam.getKeyword());
       }
-    }
-
-    if (books.isEmpty()) {
-      throw new ResourceNotFoundException(Message.NOT_FOUND_BOOK);
     }
     return books;
   }
