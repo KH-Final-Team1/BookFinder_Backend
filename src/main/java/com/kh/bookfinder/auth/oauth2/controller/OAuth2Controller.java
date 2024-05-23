@@ -1,5 +1,6 @@
 package com.kh.bookfinder.auth.oauth2.controller;
 
+import com.kh.bookfinder.auth.jwt.dto.AccessTokenDto;
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.auth.oauth2.dto.OAuth2SignUpDto;
 import com.kh.bookfinder.global.constants.Message;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,15 @@ public class OAuth2Controller {
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(Map.of("message", Message.SIGNUP_SUCCESS));
+  }
+
+  @GetMapping(value = "/accessToken", produces = "application/json;charset=UTF-8")
+  public ResponseEntity<AccessTokenDto> responseAccessTokenForOAuth2Login(
+      @CookieValue(name = "accessToken") String accessToken) {
+
+    return ResponseEntity
+        .ok()
+        .body(AccessTokenDto.builder().accessToken(accessToken).build());
   }
 
 }
