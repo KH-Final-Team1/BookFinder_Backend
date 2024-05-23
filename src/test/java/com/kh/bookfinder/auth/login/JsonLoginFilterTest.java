@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
-public class LoginFilterTest {
+public class JsonLoginFilterTest {
 
   @Autowired
   private MockMvc mockMvc;

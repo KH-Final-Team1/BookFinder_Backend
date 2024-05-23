@@ -10,6 +10,7 @@ application-db.yml
 application-test*.properties
 application-mail.yml
 application-jwt.yml
+application-oauth.yml
 
 
 ### STS ###

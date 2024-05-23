@@ -30,7 +30,7 @@ public class SignUpController {
 
   @PostMapping(value = "", produces = "application/json;charset=UTF-8")
   public ResponseEntity<Map<String, String>> signUp(@RequestBody @Valid SignUpDto signUpDto) {
-    userService.save(signUpDto);
+    userService.createNewUser(signUpDto);
 
     return ResponseEntity
         .status(HttpStatus.CREATED)

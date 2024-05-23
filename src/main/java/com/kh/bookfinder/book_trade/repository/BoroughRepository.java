@@ -10,4 +10,5 @@ public interface BoroughRepository extends JpaRepository<Borough, Long> {
 
   Optional<Borough> findById(Long id);
 
+  Optional<Borough> findByName(String name);
 }
