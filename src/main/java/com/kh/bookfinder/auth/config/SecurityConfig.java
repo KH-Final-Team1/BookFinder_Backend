@@ -9,6 +9,9 @@ import com.kh.bookfinder.auth.login.filter.JsonLoginFilter;
 import com.kh.bookfinder.auth.login.handler.JsonLoginFailureHandler;
 import com.kh.bookfinder.auth.login.handler.JsonLoginSuccessHandler;
 import com.kh.bookfinder.auth.login.service.SecurityUserService;
+import com.kh.bookfinder.auth.oauth2.handler.OAuth2LoginFailureHandler;
+import com.kh.bookfinder.auth.oauth2.handler.OAuth2LoginSuccessHandler;
+import com.kh.bookfinder.auth.oauth2.service.CustomOAuth2UserService;
 import jakarta.validation.Validator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +39,14 @@ public class SecurityConfig {
 
   private final JwtService jwtService;
   private final SecurityUserService securityUserService;
+  private final CustomOAuth2UserService customOAuth2UserService;
   private final JwtUnauthorizedHandler jwtUnauthorizedHandler;
   private final JwtForbiddenHandler jwtForbiddenHandler;
+  private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+  private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
   private final ObjectMapper objectMapper;
   private final Validator validator;
+
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -48,24 +55,40 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    // 클라이언트와 REST 통신을 위한 설정
     httpSecurity
         .csrf(AbstractHttpConfigurer::disable)
         .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
         .httpBasic(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+    // API들에 대한 권한 설정
+    httpSecurity
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/v1/login", "/api/v1/signup/**").anonymous())
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/v1/books/list", "/api/v1/books/{isbn}").permitAll())
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/trades/**").authenticated());
+            .requestMatchers("/api/v1/trades/**").authenticated())
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/api/v1/oauth2/signup").hasRole("SOCIAL_GUEST"))
+        .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
+
+    // OAuth2 로그인 설정
+    httpSecurity.oauth2Login(oauth2 -> oauth2
+        .successHandler(oAuth2LoginSuccessHandler)
+        .failureHandler(oAuth2LoginFailureHandler)
+        .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService)));
+
+    // Jwt Filter 설정
     httpSecurity.addFilterAfter(jsonLoginFilter(), LogoutFilter.class);
     httpSecurity.addFilterBefore(jwtAuthenticationFilter(), JsonLoginFilter.class)
         .exceptionHandling(handler -> handler
             .authenticationEntryPoint(jwtUnauthorizedHandler)
             .accessDeniedHandler(jwtForbiddenHandler));
+
     return httpSecurity.build();
   }
 
