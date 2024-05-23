@@ -58,6 +58,16 @@ public class JwtService {
         .compact();
   }
 
+  public String createAccessToken(String email, String authorities) {
+    return Jwts.builder()
+        .subject(ACCESS_TOKEN_SUBJECT)
+        .claim(CLAIM_EMAIL, email)
+        .claim(CLAIM_AUTHORITIES, authorities)
+        .expiration(new Date(new Date().getTime() + accessTokenExpiration))
+        .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
+        .compact();
+  }
+
   public String extractAccessToken(HttpServletRequest request) {
     String bearerToken = request.getHeader(accessHeader);
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
