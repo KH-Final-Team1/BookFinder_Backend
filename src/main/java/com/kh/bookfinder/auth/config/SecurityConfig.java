@@ -71,7 +71,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/v1/books/list", "/api/v1/books/{isbn}").permitAll())
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/trades/**").authenticated())
+            .requestMatchers("/api/v1/trades/**", "/api/v1/comments/**").authenticated())
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/v1/oauth2/signup").hasRole("SOCIAL_GUEST"))
         .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
