@@ -43,4 +43,7 @@ public class User {
   @CreationTimestamp
   private Date createDate;
 
+  public String getBoroughName() {
+    return this.address.split(" ")[1];
+  }
 }
