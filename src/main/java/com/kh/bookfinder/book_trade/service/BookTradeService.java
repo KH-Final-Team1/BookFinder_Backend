@@ -1,15 +1,10 @@
 package com.kh.bookfinder.book_trade.service;
 
-import com.kh.bookfinder.book.entity.Book;
-import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
-import com.kh.bookfinder.global.exception.UnauthorizedException;
-import com.kh.bookfinder.user.entity.User;
-import com.kh.bookfinder.user.service.UserService;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -21,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookTradeService {
 
   private final BookTradeRepository bookTradeRepository;
-  private final UserService userService;
-  private final BookService bookService;
 
   public BookTrade findTrade(Long tradeId) {
     return bookTradeRepository.findById(tradeId)
@@ -42,48 +35,29 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void saveBookTrade(String email, BookTradeRequestDto tradeDto) {
-    User user = userService.findUser(email);
-    Book book = bookService.findApprovedBook(tradeDto.getIsbn());
-    BookTrade bookTrade = tradeDto.toEntity(book);
-    bookTrade.setUser(user);
+  public void saveBookTrade(BookTrade bookTrade) {
     bookTradeRepository.save(bookTrade);
   }
 
   @Transactional
-  public void updateBookTrade(String email, Long tradeId, BookTradeRequestDto tradeDto) {
-    User user = userService.findUser(email);
-    BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
-      bookTrade.setRentalCost(tradeDto.getRentalCost());
-      bookTrade.setLimitedDate(tradeDto.getLimitedDate());
-      bookTrade.setContent(tradeDto.getContent());
-      bookTrade.setLatitude(tradeDto.getLatitude());
-      bookTrade.setLongitude(tradeDto.getLongitude());
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
-    }
+  public void updateBookTrade(Long tradeId, BookTradeRequestDto tradeDto) {
+    BookTrade bookTrade = findTrade(tradeId);
+    bookTrade.setRentalCost(tradeDto.getRentalCost());
+    bookTrade.setLimitedDate(tradeDto.getLimitedDate());
+    bookTrade.setContent(tradeDto.getContent());
+    bookTrade.setLatitude(tradeDto.getLatitude());
+    bookTrade.setLongitude(tradeDto.getLongitude());
   }
 
   @Transactional
-  public void deleteTrade(String email, Long tradeId) {
-    User user = userService.findUser(email);
-    BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
-      bookTrade.setDeleteYn(Status.Y);
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
-    }
+  public void deleteTrade(Long tradeId) {
+    BookTrade bookTrade = findTrade(tradeId);
+    bookTrade.setDeleteYn(Status.Y);
   }
 
   @Transactional
-  public void changeTrade(String email, Long tradeId, Status tradeYn) {
-    User user = userService.findUser(email);
-    BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
-      bookTrade.setTradeYn(tradeYn);
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
-    }
+  public void changeTrade(Long tradeId, Status tradeYn) {
+    BookTrade bookTrade = findTrade(tradeId);
+    bookTrade.setTradeYn(tradeYn);
   }
 }

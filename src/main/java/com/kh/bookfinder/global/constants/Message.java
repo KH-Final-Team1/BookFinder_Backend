@@ -62,8 +62,6 @@ public interface Message {
   String CONTENT_REQUIRED = "내용은 빈값일 수 없습니다.";
   String SECRET_REQUIRED = "비밀댓글 여부를 설정해주세요.";
 
-  String NOT_AUTHORIZED = "해당 기능에 대한 권한이 없습니다.";
-
   static String getSuccessMessageBy(String field) {
     return field.equals("email") ? VALID_EMAIL : VALID_NICKNAME;
   }

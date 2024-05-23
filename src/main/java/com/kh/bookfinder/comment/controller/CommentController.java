@@ -1,12 +1,13 @@
 package com.kh.bookfinder.comment.controller;
 
-import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
+import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.service.BookTradeService;
 import com.kh.bookfinder.comment.dto.CommentRequestDto;
 import com.kh.bookfinder.comment.dto.CommentResponseDto;
 import com.kh.bookfinder.comment.entity.Comment;
 import com.kh.bookfinder.comment.service.CommentService;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.service.UserService;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -16,8 +17,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,29 +50,24 @@ public class CommentController {
   @PostMapping("/{tradeId}")
   public ResponseEntity<Comment> createComment(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody @Valid CommentRequestDto commentDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    commentService.saveComment(email, tradeId, commentDto);
+    BookTrade bookTrade = bookTradeService.findTrade(tradeId);
+    User user = userService.findUser(commentDto.getUserId());
+    Comment comment = commentDto.toEntity(bookTrade, user);
+
+    commentService.saveComment(comment);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping("/{commentId}")
   public ResponseEntity<Map<String, String>> updateComment(@PathVariable(name = "commentId") Long commentId,
       @RequestBody @Valid CommentRequestDto commentDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    commentService.updateComment(email, commentId, commentDto);
+    commentService.updateComment(commentId, commentDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 
   @DeleteMapping("{commentId}")
   public ResponseEntity<Map<String, String>> updateComment(@PathVariable(name = "commentId") Long commentId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    commentService.deleteComment(email, commentId);
+    commentService.deleteComment(commentId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
   }
 }

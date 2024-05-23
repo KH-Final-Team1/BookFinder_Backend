@@ -57,8 +57,8 @@ public class UserService {
 
   }
 
-  public User findUser(String email) {
-    return this.userRepository.findByEmail(email)
+  public User findUser(Long userId) {
+    return this.userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_USER));
   }
 

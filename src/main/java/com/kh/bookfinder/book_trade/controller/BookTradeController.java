@@ -1,6 +1,7 @@
 package com.kh.bookfinder.book_trade.controller;
 
-import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
+import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.book_trade.dto.BookTradeDetailResponseDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
@@ -18,8 +19,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookTradeController {
 
   private final BookTradeService bookTradeService;
+  private final BookService bookService;
 
   @GetMapping(value = "list/{boroughId}", produces = "application/json;charset=UTF-8")
   public ResponseEntity<List<BookTradeListResponseDto>> getBookTrades(
@@ -60,40 +60,30 @@ public class BookTradeController {
 
   @PostMapping
   public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
+    Book book = bookService.findApprovedBook(tradeDto.getIsbn());
+    BookTrade bookTrade = tradeDto.toEntity(book);
 
-    bookTradeService.saveBookTrade(email, tradeDto);
+    bookTradeService.saveBookTrade(bookTrade);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody @Valid BookTradeRequestDto tradeDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.updateBookTrade(email, tradeId, tradeDto);
+    bookTradeService.updateBookTrade(tradeId, tradeDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 
   @DeleteMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> deleteBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.deleteTrade(email, tradeId);
+    bookTradeService.deleteTrade(tradeId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
   }
 
   @PatchMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> changeTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody BookTradeYnDto tradeYn) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.changeTrade(email, tradeId, tradeYn.getTradeYn());
+    bookTradeService.changeTrade(tradeId, tradeYn.getTradeYn());
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_CHANGE));
   }
 }

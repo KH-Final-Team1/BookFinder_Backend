@@ -66,20 +66,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         .body(errorResponseBody);
   }
 
-  @ExceptionHandler(UnauthorizedException.class)
-  public ResponseEntity<ErrorResponseBody> handleUnauthorizedException(UnauthorizedException e) {
-    Map<String, String> details = new HashMap<>();
-    details.put("권한 오류", e.getLocalizedMessage());
-    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-        .message(Message.UNAUTHORIZED)
-        .details(details)
-        .build();
-
-    return ResponseEntity
-        .status(HttpStatus.FORBIDDEN)
-        .body(errorResponseBody);
-  }
-
   private Map<String, String> extractDetailsForField(InvalidFieldException e) {
     Map<String, String> details = new HashMap<>();
     details.put(e.getField(), e.getLocalizedMessage());
