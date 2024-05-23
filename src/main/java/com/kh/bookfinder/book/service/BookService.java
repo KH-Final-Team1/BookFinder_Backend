@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -32,24 +33,43 @@ public class BookService {
 
   public List<Book> getBooks(SearchDto requestParam) {
     List<Book> books;
+    Sort sort = Sort.by(Sort.Order.asc("name"), Sort.Order.desc("publicationYear"));
+
     if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
       if (requestParam.getFilter().equals("name")) {
-        books = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(),
-            ApprovalStatus.APPROVE);
+        books = bookRepository.findByNameContainingAndApprovalStatus(
+            requestParam.getKeyword(),
+            ApprovalStatus.APPROVE,
+            sort);
       } else if (requestParam.getFilter().equals("authors")) {
-        books = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(),
-            ApprovalStatus.APPROVE);
+        books = bookRepository.findByAuthorsContainingAndApprovalStatus(
+            requestParam.getKeyword(),
+            ApprovalStatus.APPROVE,
+            sort
+        );
       } else {
-        books = bookRepository.findByPublisherContainingAndApprovalStatus(requestParam.getKeyword(),
-            ApprovalStatus.APPROVE);
+        books = bookRepository.findByPublisherContainingAndApprovalStatus(
+            requestParam.getKeyword(),
+            ApprovalStatus.APPROVE,
+            sort
+        );
       }
     } else {
       if (requestParam.getFilter().equals("name")) {
-        books = bookRepository.findByNameContaining(requestParam.getKeyword());
+        books = bookRepository.findByNameContaining(
+            requestParam.getKeyword(),
+            sort
+        );
       } else if (requestParam.getFilter().equals("authors")) {
-        books = bookRepository.findByAuthorsContaining(requestParam.getKeyword());
+        books = bookRepository.findByAuthorsContaining(
+            requestParam.getKeyword(),
+            sort
+        );
       } else {
-        books = bookRepository.findByPublisherContaining(requestParam.getKeyword());
+        books = bookRepository.findByPublisherContaining(
+            requestParam.getKeyword(),
+            sort
+        );
       }
     }
     return books;
