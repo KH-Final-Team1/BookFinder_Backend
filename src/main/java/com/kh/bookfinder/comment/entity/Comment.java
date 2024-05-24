@@ -60,6 +60,7 @@ public class Comment {
         .content(this.content)
         .secretYn(this.secretYn)
         .createDate(this.createDate)
+        .userId(this.user.getId())
         .nickname(this.user.getNickname())
         .build();
   }

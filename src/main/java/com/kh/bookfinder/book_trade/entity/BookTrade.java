@@ -94,6 +94,7 @@ public class BookTrade {
         .bookClassName(this.book.getClassName())
         .bookDescription(this.book.getDescription())
 
+        .userId(this.user.getId())
         .userNickname(this.user.getNickname())
         .build();
   }
