@@ -36,6 +36,7 @@ public class JwtService {
   private static final String CLAIM_EMAIL = "email";
   private static final String CLAIM_USER_ID = "id";
   private static final String CLAIM_BOROUGH_ID = "boroughId";
+  private static final String CLAIM_BOROUGH_NAME = "boroughName";
   public static final String CLAIM_AUTHORITIES = "auth";
   private static final String BEARER = "Bearer ";
   @Value("${jwt.secretKey}")
@@ -63,6 +64,7 @@ public class JwtService {
         .claim(CLAIM_USER_ID, user.getId())
         .claim(CLAIM_EMAIL, user.getEmail())
         .claim(CLAIM_BOROUGH_ID, borough.getId())
+        .claim(CLAIM_BOROUGH_NAME, borough.getName())
         .claim(CLAIM_AUTHORITIES, authorities)
         .expiration(new Date(new Date().getTime() + accessTokenExpiration))
         .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
@@ -81,6 +83,7 @@ public class JwtService {
         .claim(CLAIM_USER_ID, user.getId())
         .claim(CLAIM_EMAIL, user.getEmail())
         .claim(CLAIM_BOROUGH_ID, borough.getId())
+        .claim(CLAIM_BOROUGH_NAME, borough.getName())
         .claim(CLAIM_AUTHORITIES, authorities)
         .claim(CLAIM_AUTHORITIES, authorities)
         .expiration(new Date(new Date().getTime() + accessTokenExpiration))

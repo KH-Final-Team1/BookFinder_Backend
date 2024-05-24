@@ -20,11 +20,12 @@ public class CommentResponseDto {
   private Map<String, Object> user = new HashMap<>();
 
   @Builder
-  public CommentResponseDto(Long id, String content, Status secretYn, Date createDate, String nickname) {
+  public CommentResponseDto(Long id, String content, Status secretYn, Date createDate, Long userId, String nickname) {
     this.id = id;
     this.content = content;
     this.secretYn = secretYn;
     this.createDate = createDate;
+    this.user.put("commentWriterId", userId);
     this.user.put("nickname", nickname);
   }
 }

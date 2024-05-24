@@ -32,8 +32,8 @@ public class BookTradeDetailResponseDto {
   public BookTradeDetailResponseDto(Long id, TradeType tradeType, Status tradeYn, String content,
       Integer rentalCost, BigDecimal longitude, BigDecimal latitude, Date createdDate, Date limitedDate,
       Long isbn, String bookName, String bookAuthors, String bookPublisher, String bookImageUrl,
-      String bookDescription, String bookClassName,
-      Integer bookPublicationYear, String userNickname) {
+      String bookDescription, String bookClassName, Integer bookPublicationYear,
+      Long userId, String userNickname) {
     this.id = id;
     this.tradeType = tradeType;
     this.tradeYn = tradeYn;
@@ -53,6 +53,7 @@ public class BookTradeDetailResponseDto {
     this.book.put("className", bookClassName);
     this.book.put("description", bookDescription);
 
+    this.user.put("tradeWriterId", userId);
     this.user.put("nickname", userNickname);
   }
 }
