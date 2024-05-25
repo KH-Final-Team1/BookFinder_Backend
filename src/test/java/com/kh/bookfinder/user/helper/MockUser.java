@@ -2,6 +2,8 @@ package com.kh.bookfinder.user.helper;
 
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
+import java.sql.Date;
+import java.time.LocalDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class MockUser {
@@ -12,7 +14,10 @@ public class MockUser {
         .email("jinho4744@naver.com")
         .password(new BCryptPasswordEncoder().encode("test_password_123"))
         .nickname("고소하게")
+        .phone("01012345678")
         .role(UserRole.ROLE_ADMIN)
+        .address("서울 관악구 어딘가")
+        .createDate(Date.valueOf(LocalDate.now()))
         .build();
   }
 }

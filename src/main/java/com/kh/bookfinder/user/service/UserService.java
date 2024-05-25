@@ -2,13 +2,18 @@ package com.kh.bookfinder.user.service;
 
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.auth.oauth2.dto.OAuth2SignUpDto;
+import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
+import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.dto.DuplicateCheckDto;
+import com.kh.bookfinder.user.dto.MyInfoResponseDto;
 import com.kh.bookfinder.user.dto.SignUpDto;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
 import com.kh.bookfinder.user.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final BookTradeRepository bookTradeRepository;
   private final PasswordEncoder passwordEncoder;
 
   public void createNewUser(SignUpDto signUpDto) {
@@ -72,5 +78,16 @@ public class UserService {
     socialGuest.setAddress(signUpDto.getAddress());
     socialGuest.setPhone(signUpDto.getPhone());
     socialGuest.setRole(UserRole.ROLE_USER);
+  }
+
+  public MyInfoResponseDto getUserWithBookTrades(String email) {
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_USER));
+    List<BookTradeListResponseDto> trades = bookTradeRepository.findByUserId(user.getId())
+        .stream()
+        .map(x -> x.toResponse(BookTradeListResponseDto.class))
+        .collect(Collectors.toList());
+
+    return user.toMyInfoResponse(trades);
   }
 }
