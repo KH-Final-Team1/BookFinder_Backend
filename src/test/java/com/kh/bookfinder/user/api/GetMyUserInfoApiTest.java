@@ -5,6 +5,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -180,6 +181,21 @@ public class GetMyUserInfoApiTest {
     resultActions.andExpect(jsonPath("$.message", is(Message.NOT_FOUND)));
     resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_FOUND_USER)));
   }
+
+  @Test
+  @DisplayName("로그인하지 않고 요청하는 경우")
+  public void getMyUserInfoFailOnNotLogin() throws Exception {
+    // When: User List API를 호출한다.
+    ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+        .get("/api/v1/users/my-info")).andDo(print());
+
+    // Then: Status는 UNAUTHORIZED이다.
+    resultActions.andExpect(status().isUnauthorized());
+    // And: Response Body로 message와 detail을 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(Message.UNAUTHORIZED)));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_LOGIN)));
+  }
+
 
   private ResultActions callApiWithUser(User user) throws Exception {
     SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);

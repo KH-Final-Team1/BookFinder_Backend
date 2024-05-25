@@ -31,10 +31,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
 @Transactional
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class SignUpApiTest {
-
-  /* TODO: 주소에 대한 유효성 검사 생각해 봐야함
-   */
 
   @Autowired
   private ObjectMapper objectMapper;
