@@ -27,6 +27,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SuppressWarnings("unchecked")
 public class BookTrade {
 
   @Id
@@ -83,7 +84,7 @@ public class BookTrade {
         .longitude(this.longitude)
         .latitude(this.latitude)
         .limitedDate(this.limitedDate)
-        .createdDate(this.createDate)
+        .createDate(this.createDate)
 
         .isbn(this.book.getIsbn())
         .bookName(this.book.getName())
@@ -105,7 +106,7 @@ public class BookTrade {
         .tradeType(this.tradeType)
         .tradeYn(this.tradeYn)
         .rentalCost(this.rentalCost)
-        .createdDate(this.createDate)
+        .createDate(this.createDate)
         .bookName(this.book.getName())
         .bookAuthors(this.book.getAuthors())
         .bookPublicationYear(this.book.getPublicationYear())
