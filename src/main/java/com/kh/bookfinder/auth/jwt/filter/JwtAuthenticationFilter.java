@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private static final String LOGIN_URL = "/api/v1/login";
   private static final List<String> EXCEPT_FILTER_URLS =
-      List.of("/api/v1/signup/**", "/api/v1/books/list", "/api/v1/books/{isbn}");
+      List.of("/api/v1/signup/**", "/api/v1/books/list", "/api/v1/books/{isbn}", "/test/v1/anonymous");
   private final JwtService jwtService;
   private final UserRepository userRepository;
   private final AntPathMatcher antPathMatcher = new AntPathMatcher();
