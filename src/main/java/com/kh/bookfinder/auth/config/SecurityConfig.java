@@ -12,6 +12,7 @@ import com.kh.bookfinder.auth.login.service.SecurityUserService;
 import com.kh.bookfinder.auth.oauth2.handler.OAuth2LoginFailureHandler;
 import com.kh.bookfinder.auth.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.kh.bookfinder.auth.oauth2.service.CustomOAuth2UserService;
+import com.kh.bookfinder.user.repository.UserRepository;
 import jakarta.validation.Validator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public class SecurityConfig {
   private final JwtService jwtService;
   private final SecurityUserService securityUserService;
   private final CustomOAuth2UserService customOAuth2UserService;
+  private final UserRepository userRepository;
   private final JwtUnauthorizedHandler jwtUnauthorizedHandler;
   private final JwtForbiddenHandler jwtForbiddenHandler;
   private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
@@ -140,6 +142,6 @@ public class SecurityConfig {
 
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() {
-    return new JwtAuthenticationFilter(jwtService);
+    return new JwtAuthenticationFilter(jwtService, userRepository);
   }
 }
