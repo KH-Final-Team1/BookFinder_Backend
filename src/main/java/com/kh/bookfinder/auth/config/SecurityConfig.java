@@ -64,6 +64,11 @@ public class SecurityConfig {
         .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+    // Test에 대한 권한 설정
+    httpSecurity
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/test/v1/anonymous").anonymous());
+
     // API들에 대한 권한 설정
     httpSecurity
         .authorizeHttpRequests(authorize -> authorize
