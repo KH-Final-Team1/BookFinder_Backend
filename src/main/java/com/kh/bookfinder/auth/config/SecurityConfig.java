@@ -69,7 +69,13 @@ public class SecurityConfig {
     // Test에 대한 권한 설정
     httpSecurity
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/test/v1/anonymous").anonymous());
+            .requestMatchers("/test/v1/anonymous").anonymous())
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/test/v1/authenticate").authenticated())
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/test/v1/admin").hasRole("ADMIN"))
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/test/v1/user").hasAnyRole("ADMIN", "USER"));
 
     // API들에 대한 권한 설정
     httpSecurity
@@ -78,7 +84,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/v1/books/list", "/api/v1/books/{isbn}").permitAll())
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/trades/**", "/api/v1/comments/**").authenticated())
+            .requestMatchers("/api/v1/trades/**", "/api/v1/comments/**", "/api/v1/users/my-info").authenticated())
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/v1/oauth2/signup").hasRole("SOCIAL_GUEST"))
         .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
