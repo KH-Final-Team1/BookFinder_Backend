@@ -1,7 +1,7 @@
 package com.kh.bookfinder.user.entity;
 
 import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
-import com.kh.bookfinder.book_trade.entity.Borough;
+import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.user.dto.MyInfoResponseDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

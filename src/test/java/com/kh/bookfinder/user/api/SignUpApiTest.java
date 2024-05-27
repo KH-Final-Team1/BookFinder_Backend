@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.jwt.service.JwtService;
-import com.kh.bookfinder.book_trade.entity.Borough;
-import com.kh.bookfinder.book_trade.repository.BoroughRepository;
+import com.kh.bookfinder.borough.entity.Borough;
+import com.kh.bookfinder.borough.repository.BoroughRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.dto.SignUpDto;
 import com.kh.bookfinder.user.helper.MockUser;

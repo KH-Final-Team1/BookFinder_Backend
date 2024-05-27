@@ -2,9 +2,9 @@ package com.kh.bookfinder.book_trade.helper;
 
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
-import com.kh.bookfinder.book_trade.entity.Borough;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.entity.TradeType;
+import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.helper.MockUser;
 import java.math.BigDecimal;

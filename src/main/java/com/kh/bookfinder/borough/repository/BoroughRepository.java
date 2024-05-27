@@ -1,6 +1,6 @@
-package com.kh.bookfinder.book_trade.repository;
+package com.kh.bookfinder.borough.repository;
 
-import com.kh.bookfinder.book_trade.entity.Borough;
+import com.kh.bookfinder.borough.entity.Borough;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.kh.bookfinder.book_trade.entity;
+package com.kh.bookfinder.borough.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

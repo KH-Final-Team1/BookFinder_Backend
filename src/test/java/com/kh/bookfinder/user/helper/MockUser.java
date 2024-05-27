@@ -1,6 +1,6 @@
 package com.kh.bookfinder.user.helper;
 
-import com.kh.bookfinder.book_trade.entity.Borough;
+import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
 import java.sql.Date;
