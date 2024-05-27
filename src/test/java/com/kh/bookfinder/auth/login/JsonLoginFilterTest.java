@@ -1,5 +1,8 @@
 package com.kh.bookfinder.auth.login;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -88,7 +91,7 @@ public class JsonLoginFilterTest {
     // Then: Status는 400 Bad Request이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
   }
 
@@ -105,7 +108,7 @@ public class JsonLoginFilterTest {
     // Then: Status는 400 Bad Request이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.password", is(Message.INVALID_PASSWORD)));
   }
 
@@ -122,7 +125,7 @@ public class JsonLoginFilterTest {
     // Then: Status는 401 Unauthorized이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(UNAUTHORIZED.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.FAIL_LOGIN)));
   }
 
@@ -142,7 +145,7 @@ public class JsonLoginFilterTest {
     // Then: Status는 401 Unauthorized이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(UNAUTHORIZED.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.FAIL_LOGIN)));
   }
 
@@ -162,7 +165,7 @@ public class JsonLoginFilterTest {
     // Then: Status는 403 Forbidden이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(FORBIDDEN.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.INVALID_LOGIN_WITH_AUTHORIZATION)));
   }
 }

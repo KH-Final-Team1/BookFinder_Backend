@@ -1,5 +1,7 @@
 package com.kh.bookfinder.auth.login.filter;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNSUPPORTED_MEDIA_TYPE;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.login.dto.LoginDto;
 import com.kh.bookfinder.global.constants.Message;
@@ -39,7 +41,7 @@ public class JsonLoginFilter extends AbstractAuthenticationProcessingFilter {
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException, IOException {
     if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
-      throw new AuthenticationServiceException(Message.INVALID_CONTENT_TYPE);
+      throw new AuthenticationServiceException(UNSUPPORTED_MEDIA_TYPE.getMessage());
     }
     if (existsAuthorization(request)) {
       throw new AuthenticationServiceException(Message.INVALID_LOGIN_WITH_AUTHORIZATION);

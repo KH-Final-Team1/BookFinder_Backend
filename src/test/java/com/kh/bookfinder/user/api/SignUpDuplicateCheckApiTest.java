@@ -1,5 +1,7 @@
 package com.kh.bookfinder.user.api;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -85,7 +87,7 @@ public class SignUpDuplicateCheckApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
         // And: details는 {"email": "유효하지 않은 이메일 형식입니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
   }
 
@@ -112,7 +114,7 @@ public class SignUpDuplicateCheckApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
         // And: details는 {"email": "이미 가입된 이메일입니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.DUPLICATE_EMAIL)));
   }
 
@@ -158,7 +160,7 @@ public class SignUpDuplicateCheckApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
         // And: details는 {"nickname": "영문, 유효한 한글, 숫자를 이용하여 3자 이상 10자 이하로 입력해주세요."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.INVALID_NICKNAME)));
   }
 
@@ -185,7 +187,7 @@ public class SignUpDuplicateCheckApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
         // And: details는 {"nickname": "이미 가입된 닉네임입니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.DUPLICATE_NICKNAME)));
   }
 
@@ -209,7 +211,7 @@ public class SignUpDuplicateCheckApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해주세요."
         // And: details는 {"field": "field는 email이나 nickname만 가능합니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.field", is(Message.INVALID_FIELD)));
   }
 
@@ -232,13 +234,13 @@ public class SignUpDuplicateCheckApiTest {
         .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
             .param("field", duplicateCheckDto.getField())
             .param("value", duplicateCheckDto.getValue())
-            .header("Authorization", MockToken.mockAccessToken)
+            .header("Authorization", "validToken")
         );
 
     // Then: Status는 403 Forbidden 이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
     // And: Response Body로 message와 detail이 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(FORBIDDEN.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.ALREADY_LOGIN)));
   }
 }

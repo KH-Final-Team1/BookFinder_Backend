@@ -1,5 +1,7 @@
 package com.kh.bookfinder.auth.oauth2.handler;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.dto.ErrorResponseBody;
@@ -20,7 +22,7 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
-        .message(Message.UNAUTHORIZED)
+        .message(UNAUTHORIZED)
         .detail(Message.FAIL_LOGIN)
         .build();
     new ObjectMapper().writeValue(response.getWriter(), responseBody);

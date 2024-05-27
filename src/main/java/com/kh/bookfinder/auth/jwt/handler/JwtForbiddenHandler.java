@@ -1,5 +1,7 @@
 package com.kh.bookfinder.auth.jwt.handler;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.dto.ErrorResponseBody;
@@ -24,7 +26,7 @@ public class JwtForbiddenHandler implements AccessDeniedHandler {
     String url = request.getRequestURI();
     if (url.startsWith(SIGNUP_URLS)) {
       ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-          .message(Message.FORBIDDEN)
+          .message(FORBIDDEN)
           .detail(Message.ALREADY_LOGIN)
           .build();
       new ObjectMapper().writeValue(response.getWriter(), errorResponseBody);

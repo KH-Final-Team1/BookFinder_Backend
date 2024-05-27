@@ -1,5 +1,6 @@
 package com.kh.bookfinder.user.api;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -98,7 +99,7 @@ public class CheckVerificationAuthCodeTest {
         // Then: Status는 400 Bad Request이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         // And: Response Body로 message와 details가 반환한다.
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.authCode", is(Message.INVALID_AUTH_CODE)));
   }
 
@@ -122,7 +123,7 @@ public class CheckVerificationAuthCodeTest {
         // Then: Status는 400 Bad Request이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         // And: Response Body로 message와 details가 반환한다.
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.signingToken", is(Message.INVALID_SIGNING_TOKEN)));
   }
 
@@ -146,7 +147,7 @@ public class CheckVerificationAuthCodeTest {
         // Then: Status는 400 Bad Request이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         // And: Response Body로 message와 details가 반환한다.
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.signingToken", is(Message.INVALID_SIGNING_TOKEN)));
   }
 
@@ -170,7 +171,7 @@ public class CheckVerificationAuthCodeTest {
         // Then: Status는 400 Bad Request이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         // And: Response Body로 message와 details가 반환한다.
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.signingToken", is(Message.INVALID_SIGNING_TOKEN)));
   }
 
@@ -198,7 +199,7 @@ public class CheckVerificationAuthCodeTest {
         // Then: Status는 400 Bad Request이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         // And: Response Body로 message와 details가 반환한다.
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.authCode", is(Message.EXPIRED_AUTH_CODE)));
   }
 }

@@ -1,5 +1,7 @@
 package com.kh.bookfinder.user.api;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -89,7 +91,7 @@ public class SignUpApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
         // And: details는 {"email": "유효하지 않은 이메일 형식입니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
@@ -117,7 +119,7 @@ public class SignUpApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
         // And: details는 {"email": "이미 가입된 이메일입니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.DUPLICATE_EMAIL)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
@@ -142,7 +144,7 @@ public class SignUpApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
         // And: details는 {"password": "영문, 숫자, 특수문자를 포함하여 8자 이상 20자 이하로 입력해주세요."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.password", is(Message.INVALID_PASSWORD)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
@@ -167,7 +169,7 @@ public class SignUpApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
         // And: details는 {"password": "비밀번호와 비밀번호 확인이 일치하지 않습니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.password", is(Message.INVALID_PASSWORD_CONFIRM)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
@@ -192,7 +194,7 @@ public class SignUpApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
         // And: details는 {"nickname": "영문, 유효한 한글, 숫자를 이용하여 3자 이상 10자 이하로 입력해주세요."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.INVALID_NICKNAME)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
@@ -220,7 +222,7 @@ public class SignUpApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
         // And: details는 {"nickname": "이미 가입된 닉네임입니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.DUPLICATE_NICKNAME)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
@@ -245,7 +247,7 @@ public class SignUpApiTest {
         // And: message는 "요청이 유효하지 않습니다. 다시 한번 확인해 주세요."이다.
         // And: details는 {"phone": "유효하지 않은 휴대폰 번호 형식입니다."}이다.
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.details.phone", is(Message.INVALID_PHONE)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();
@@ -274,7 +276,7 @@ public class SignUpApiTest {
         // Then: Status는 403 Forbidden 이다.
         .andExpect(MockMvcResultMatchers.status().isForbidden())
         // And: Response Body로 message와 detail가 반환된다.
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(FORBIDDEN.getMessage())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.ALREADY_LOGIN)));
     // And: 데이터베이스에 해당 User 정보가 저장되지 않는다.
     assertThat(userRepository.findAll()).isEmpty();

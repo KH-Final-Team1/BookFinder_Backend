@@ -1,5 +1,7 @@
 package com.kh.bookfinder.user.api;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -177,7 +179,7 @@ public class GetMyUserInfoApiTest {
     // Then: Status는 NOT FOUND이다.
     resultActions.andExpect(status().isNotFound());
     // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(jsonPath("$.message", is(Message.NOT_FOUND)));
+    resultActions.andExpect(jsonPath("$.message", is(NOT_FOUND.getMessage())));
     resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_FOUND_USER)));
   }
 
@@ -186,12 +188,12 @@ public class GetMyUserInfoApiTest {
   public void getMyUserInfoFailOnNotLogin() throws Exception {
     // When: User List API를 호출한다.
     ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-        .get("/api/v1/users/my-info")).andDo(print());
+        .get("/api/v1/users/my-info"));
 
     // Then: Status는 UNAUTHORIZED이다.
     resultActions.andExpect(status().isUnauthorized());
     // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(jsonPath("$.message", is(Message.UNAUTHORIZED)));
+    resultActions.andExpect(jsonPath("$.message", is(UNAUTHORIZED.getMessage())));
     resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_LOGIN)));
   }
 

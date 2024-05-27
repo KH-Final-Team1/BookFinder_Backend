@@ -1,5 +1,7 @@
 package com.kh.bookfinder.book_trade.api;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -91,7 +93,7 @@ public class GetBookTradeOneApiTest {
     // Then: Status는 404 Not Found이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
     // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.NOT_FOUND)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(NOT_FOUND.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.NOT_FOUND_TRADE)));
   }
 
@@ -118,7 +120,7 @@ public class GetBookTradeOneApiTest {
     // Then: Status는 404 Not Found이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
     // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.NOT_FOUND)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(NOT_FOUND.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.DELETED_TRADE)));
   }
 
@@ -140,7 +142,7 @@ public class GetBookTradeOneApiTest {
     // Then: Status는 401 Unauthorized이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
     // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
+    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(UNAUTHORIZED.getMessage())));
     resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.NOT_LOGIN)));
   }
 

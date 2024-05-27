@@ -7,11 +7,6 @@ public interface Message {
       환영합니다.
       로그인 후 이용해 주세요 😊
       """;
-  String BAD_REQUEST = "요청이 유효하지 않습니다. 다시 한번 확인해주세요.";
-  String NOT_FOUND = "요청하신 정보를 찾을 수 없습니다.";
-  String UNAUTHORIZED = "인증 정보가 유효하지 않습니다.";
-  String INVALID_CONTENT_TYPE = "유효하지 않은 Content-Type 입니다.";
-  String FORBIDDEN = "잘못된 권한입니다.";
 
   String VALID_EMAIL = "가입이 가능한 이메일입니다.\n사용하시겠습니까?";
   String INVALID_EMAIL = "유효하지 않은 이메일 형식입니다.";
