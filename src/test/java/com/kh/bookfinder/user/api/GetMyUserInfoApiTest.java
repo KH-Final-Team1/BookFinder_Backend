@@ -7,6 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,7 +34,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,6 +43,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class GetMyUserInfoApiTest {
 
+  // 내 정보 가져오기 API
   @Autowired
   private MockMvc mockMvc;
   @MockBean
@@ -50,15 +51,20 @@ public class GetMyUserInfoApiTest {
   @MockBean
   private BookTradeRepository bookTradeRepository;
 
+  private ResultActions callApiWithUser(User user) throws Exception {
+    SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
+    return mockMvc.perform(get("/api/v1/users/my-info")
+        .with(user(securityUserDetails)));
+  }
+
   @Test
   @DisplayName("관리자 로그인 된 상태에서 요청하는 경우")
-  public void getMyUserInfoSuccessOnLoginUserOfRoleAdmin() throws Exception {
+  public void success_OnLoginUser_WithRoleAdmin() throws Exception {
     // Given: 권한이 "ROLE_ADMIN"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
-    // And: mockUser가 반환되도록 UserRepository를 Mocking
-    when(userRepository.findByEmail(any()))
-        .thenReturn(Optional.of(mockUser));
+    // And: mockUser가 반환되도록 UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockUser));
 
     // When: User List API를 호출한다.
     ResultActions resultActions = callApiWithUser(mockUser);
@@ -73,18 +79,16 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("관리자가 BookTrades를 갖고 있는 경우")
-  public void getMyUserInfoSuccessOnLoginAdminWithBookTrades() throws Exception {
+  public void success_OnLoginUser_WithRoleAdmin_WithHavingBookTrades() throws Exception {
     // Given: 권한이 "ROLE_ADMIN"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
     // And: mockUser는 mockBookTrades를 가지고 있다.
     ArrayList<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
-    // And: mockUser가 반환되도록 UserRepository를 Mocking
-    // And: mockBookTrades가 반환되도록 BookTradesRepository를 Mocking
-    when(userRepository.findByEmail(any()))
-        .thenReturn(Optional.of(mockUser));
-    when(bookTradeRepository.findByUserId(mockUser.getId()))
-        .thenReturn(mockBookTrades);
+    // And: mockUser가 반환되도록 UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+    // And: mockBookTrades가 반환되도록 BookTradesRepository를 Mocking한다.
+    when(bookTradeRepository.findByUserId(mockUser.getId())).thenReturn(mockBookTrades);
 
     // When: User List API를 호출한다.
     ResultActions resultActions = callApiWithUser(mockUser);
@@ -99,13 +103,12 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("일반 사용자 로그인 된 상태에서 요청하는 경우")
-  public void getMyUserInfoSuccessOnLoginUserOfRoleUser() throws Exception {
+  public void success_OnLoginUser_WithRoleUser() throws Exception {
     // Given: 권한이 "ROLE_USER"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
-    // And: mockUser가 반환되도록 UserRepository를 Mocking
-    when(userRepository.findByEmail(any()))
-        .thenReturn(Optional.of(mockUser));
+    // And: mockUser가 반환되도록 UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
 
     // When: User List API를 호출한다.
     ResultActions resultActions = callApiWithUser(mockUser);
@@ -120,18 +123,16 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("일반 사용자가 BookTrades를 갖고 있는 경우")
-  public void getMyUserInfoSuccessOnLoginUserWithBookTrades() throws Exception {
+  public void success_OnLoginUser_WithRoleUser_WithHavingBookTrades() throws Exception {
     // Given: 권한이 "ROLE_USER"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
     // And: mockUser는 mockBookTrades를 가지고 있다.
     ArrayList<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
-    // And: mockUser가 반환되도록 UserRepository를 Mocking
-    // And: mockBookTrades가 반환되도록 BookTradesRepository를 Mocking
-    when(userRepository.findByEmail(any()))
-        .thenReturn(Optional.of(mockUser));
-    when(bookTradeRepository.findByUserId(mockUser.getId()))
-        .thenReturn(mockBookTrades);
+    // And: mockUser가 반환되도록 UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+    // And: mockBookTrades가 반환되도록 BookTradesRepository를 Mocking한다.
+    when(bookTradeRepository.findByUserId(mockUser.getId())).thenReturn(mockBookTrades);
 
     // When: User List API를 호출한다.
     ResultActions resultActions = callApiWithUser(mockUser);
@@ -146,15 +147,13 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("이메일이 소셜 로그인에 해당하는 경우")
-  public void getMyUserInfoSuccessOnLoginUserWithSocialLoginEmail() throws Exception {
+  public void success_OnLoginOAuth2_WithRoleUser() throws Exception {
     // Given: 권한이 "ROLE_USER"이고 이메일이 소셜로그인인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
     mockUser.setEmail("testEmail@kakaoUser.com");
-
-    // And: User, BookTrade Mocking
-    when(userRepository.findByEmail(any()))
-        .thenReturn(Optional.of(mockUser));
+    // And: mockUser가 반환되도록 UserRepository를 Mocking한다.
+    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
 
     // When: User List API를 호출한다.
     ResultActions resultActions = callApiWithUser(mockUser);
@@ -167,11 +166,10 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("로그인 한 사용자 정보가 DB에 없는 경우")
-  public void getMyUserInfoFailOnInvalidUserThatEmailNotExistsInDB() throws Exception {
+  public void fail_OnInvalidUser_ThatEmailNotExistsInDB() throws Exception {
     // Given: 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
-    // And: UserRepository를 Mocking하지 않으므로 DB에는 mockUser가 없다.
 
     // When: User List API를 호출한다.
     ResultActions resultActions = callApiWithUser(mockUser);
@@ -185,10 +183,9 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("로그인하지 않고 요청하는 경우")
-  public void getMyUserInfoFailOnNotLogin() throws Exception {
+  public void fail_OnNotLogin() throws Exception {
     // When: User List API를 호출한다.
-    ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-        .get("/api/v1/users/my-info"));
+    ResultActions resultActions = mockMvc.perform(get("/api/v1/users/my-info"));
 
     // Then: Status는 UNAUTHORIZED이다.
     resultActions.andExpect(status().isUnauthorized());
@@ -197,13 +194,6 @@ public class GetMyUserInfoApiTest {
     resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_LOGIN)));
   }
 
-
-  private ResultActions callApiWithUser(User user) throws Exception {
-    SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
-    return mockMvc.perform(MockMvcRequestBuilders
-        .get("/api/v1/users/my-info")
-        .with(user(securityUserDetails)));
-  }
 
   private void assertMyUserInfo(ResultActions resultActions, User mockUser) throws Exception {
     resultActions.andExpect(jsonPath("$.id", is(mockUser.getId().intValue())));
