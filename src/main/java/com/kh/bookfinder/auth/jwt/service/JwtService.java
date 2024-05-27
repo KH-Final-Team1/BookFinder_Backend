@@ -56,20 +56,14 @@ public class JwtService {
         .compact();
   }
 
-  public String createAccessToken(String email, String authorities) {
+  public String createTempAccessTokenForOAuthSignUp(String email, String authorities) {
     User user = userRepository.findByEmail(email).orElseThrow(
         () -> new ResourceNotFoundException(Message.NOT_FOUND_USER)
-    );
-    Borough borough = boroughRepository.findByName(user.getBoroughName()).orElseThrow(
-        () -> new ResourceNotFoundException(Message.NOT_FOUND)
     );
     return Jwts.builder()
         .subject(ACCESS_TOKEN_SUBJECT)
         .claim(CLAIM_USER_ID, user.getId())
         .claim(CLAIM_EMAIL, user.getEmail())
-        .claim(CLAIM_BOROUGH_ID, borough.getId())
-        .claim(CLAIM_BOROUGH_NAME, borough.getName())
-        .claim(CLAIM_AUTHORITIES, authorities)
         .claim(CLAIM_AUTHORITIES, authorities)
         .expiration(new Date(new Date().getTime() + accessTokenExpiration))
         .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
