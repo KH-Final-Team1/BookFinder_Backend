@@ -23,6 +23,7 @@ public interface Message {
   String INVALID_AUTH_CODE = "유효하지 않은 인증 코드입니다.";
   String EXPIRED_AUTH_CODE = "인증 코드가 만료되었습니다.";
   String INVALID_SIGNING_TOKEN = "유효하지 않은 Signing 토큰입니다.";
+  String NOT_FOUND_EMAIL_AUTH = "인증 코드에 해당하는 이메일을 찾을 수 없습니다. 다시 한번 확인해주세요.";
 
   String FAIL_LOGIN = "이메일 또는 비밀번호가 올바르지 않습니다.";
   String INVALID_LOGIN_WITH_AUTHORIZATION = "헤더에 Authorization이 있어 로그인 요청을 할 수 없습니다.";

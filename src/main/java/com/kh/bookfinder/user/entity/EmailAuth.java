@@ -7,17 +7,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Random;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 @Data
 @NoArgsConstructor
@@ -49,13 +45,5 @@ public class EmailAuth implements Serializable {
       result.append(ALPHABET_AND_NUMBER.charAt(index));
     }
     return result.toString();
-  }
-
-  public String generateSigningToken() throws JSONException {
-    JSONObject jsonObject = new JSONObject();
-    jsonObject.put("email", email);
-    jsonObject.put("code", authCode);
-
-    return Base64.getEncoder().encodeToString(jsonObject.toString().getBytes(StandardCharsets.UTF_8));
   }
 }
