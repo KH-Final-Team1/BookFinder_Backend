@@ -32,9 +32,6 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   public void createNewUser(SignUpDto signUpDto) {
-    if (!signUpDto.equalsPassword()) {
-      throw new InvalidFieldException("password", Message.INVALID_PASSWORD_CONFIRM);
-    }
     this.userRepository
         .findByEmail(signUpDto.getEmail())
         .ifPresent((value) -> {

@@ -18,7 +18,7 @@ public interface Message {
   String INVALID_NICKNAME = "영문, 유효한 한글, 숫자를 이용하여 3자 이상 20자 이하로 입력해주세요.";
   String VALID_NICKNAME = "가입이 가능한 닉네임입니다.\n사용하시겠습니까?";
   String DUPLICATE_NICKNAME = "이미 가입된 닉네임입니다.";
-  String INVALID_ADDRESS = "현재는 서울시만 등록 가능합니다.";
+  String INVALID_ADDRESS = "유효하지 않은 주소 형식입니다. 현재는 서울시만 등록 가능합니다.";
   String INVALID_PHONE = "유효하지 않은 휴대폰 번호 형식입니다.";
   String INVALID_AUTH_CODE = "유효하지 않은 인증 코드입니다.";
   String EXPIRED_AUTH_CODE = "인증 코드가 만료되었습니다.";

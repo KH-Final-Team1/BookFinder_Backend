@@ -171,7 +171,7 @@ public class SignUpApiTest {
     resultActions.andExpect(status().isBadRequest());
     // And: ResponseBody로 message와 details를 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(jsonPath("$.details.password", is(Message.INVALID_PASSWORD_CONFIRM)));
+    resultActions.andExpect(jsonPath("$.details.passwordConfirm", is(Message.INVALID_PASSWORD_CONFIRM)));
   }
 
   @Test
@@ -212,6 +212,24 @@ public class SignUpApiTest {
     // And: ResponseBody로 message와 details를 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
     resultActions.andExpect(jsonPath("$.details.nickname", is(Message.DUPLICATE_NICKNAME)));
+  }
+
+  @Test
+  @DisplayName("SignUpDto의 address가 유효하지 않은 경우")
+  public void fail_OnInvalidSignUpDto_WithAddress() throws Exception {
+    // Given: 유효하지 않은 SignUpDto가 주어진다. (address)
+    SignUpDto invalidSignUpDto = getBaseSingUpDto();
+    invalidSignUpDto.setAddress("invalidAddress");
+    String requestBody = objectMapper.writeValueAsString(invalidSignUpDto);
+
+    // When: SignUp API를 호출한다.
+    ResultActions resultActions = callApiWith(requestBody);
+
+    // Then: Status는 400 Bad Request 이다.
+    resultActions.andExpect(status().isBadRequest());
+    // And: ResponseBody로 message와 details를 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.address", is(Message.INVALID_ADDRESS)));
   }
 
   @Test

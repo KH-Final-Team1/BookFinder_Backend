@@ -4,7 +4,7 @@ import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.constants.Regexp;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,12 +25,13 @@ public class SignUpDto {
   private String passwordConfirm;
   @Pattern(regexp = Regexp.NICKNAME, message = Message.INVALID_NICKNAME)
   private String nickname;
-  @NotNull(message = "올바른 주소를 입력하세요.")
+  @Pattern(regexp = Regexp.ADDRESS, message = Message.INVALID_ADDRESS)
   private String address;
   @Pattern(regexp = Regexp.PHONE, message = Message.INVALID_PHONE)
   private String phone;
 
-  public boolean equalsPassword() {
+  @AssertTrue(message = Message.INVALID_PASSWORD_CONFIRM)
+  public boolean isPasswordConfirm() {
     return this.password.equals(this.passwordConfirm);
   }
 
