@@ -3,7 +3,9 @@ package com.kh.bookfinder.user.service;
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.auth.oauth2.dto.OAuth2SignUpDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
+import com.kh.bookfinder.book_trade.entity.Borough;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
+import com.kh.bookfinder.book_trade.repository.BoroughRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.dto.DuplicateCheckDto;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final BoroughRepository boroughRepository;
   private final BookTradeRepository bookTradeRepository;
   private final PasswordEncoder passwordEncoder;
 
@@ -42,8 +45,13 @@ public class UserService {
         .ifPresent((value) -> {
           throw new InvalidFieldException("nickname", Message.DUPLICATE_NICKNAME);
         });
-
     User user = signUpDto.toEntity(passwordEncoder);
+    Borough borough = this.boroughRepository
+        .findByName(user.extractBoroughName())
+        .orElseThrow(() -> {
+          throw new InvalidFieldException("address", Message.INVALID_ADDRESS);
+        });
+    user.setBorough(borough);
     this.userRepository.save(user);
   }
 

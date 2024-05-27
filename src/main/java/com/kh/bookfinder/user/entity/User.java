@@ -1,6 +1,7 @@
 package com.kh.bookfinder.user.entity;
 
 import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
+import com.kh.bookfinder.book_trade.entity.Borough;
 import com.kh.bookfinder.user.dto.MyInfoResponseDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.Date;
@@ -38,6 +41,9 @@ public class User {
   @Column(unique = true, nullable = false)
   private String nickname;
   private String address;
+  @ManyToOne
+  @JoinColumn(name = "BOROUGH_ID")
+  private Borough borough;
   @Enumerated(EnumType.STRING)
   private UserRole role;
   private String socialId;

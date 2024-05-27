@@ -42,6 +42,10 @@ public class SignUpApiTest {
   private MockMvc mockMvc;
   @MockBean
   private UserRepository userRepository;
+  @MockBean
+  private BoroughRepository boroughRepository;
+  @MockBean
+  private JwtService jwtService;
 
   @Test
   @DisplayName("유효한 SignUpDto가 주어지는 경우")
@@ -49,6 +53,9 @@ public class SignUpApiTest {
     // Given: 유효한 SignUpDto가 주어진다.
     SignUpDto validSignUpDto = this.buildValidSignUpDto();
     String requestBody = objectMapper.writeValueAsString(validSignUpDto);
+    // And: Borough가 mockBorough를 반환하도록 Mocking한다.
+    when(boroughRepository.findByName(any()))
+        .thenReturn(Optional.of(Borough.builder().id(5L).name("관악구").build()));
 
     // When: SignUp API를 호출한다.
     this.mockMvc
