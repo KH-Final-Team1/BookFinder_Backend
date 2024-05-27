@@ -6,7 +6,6 @@ import com.kh.bookfinder.book_trade.repository.BoroughRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -99,16 +98,13 @@ public class JwtService {
     return null;
   }
 
-  public SecurityUserDetails getSecurityUserDetails(String accessToken) {
-    Claims claims = Jwts.parser()
+  public String extractEmail(String accessToken) {
+    return Jwts.parser()
         .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
         .build()
         .parseSignedClaims(accessToken)
-        .getPayload();
-    User serviceUser = userRepository
-        .findByEmail(claims.get(CLAIM_EMAIL, String.class))
-        .orElseThrow(() -> new JwtException(Message.INVALID_ACCESS_TOKEN));
-    return new SecurityUserDetails(serviceUser);
+        .getPayload()
+        .get(CLAIM_EMAIL, String.class);
   }
 
   public boolean validateToken(String token)
