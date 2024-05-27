@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface BookTradeRepository extends JpaRepository<BookTrade, Long> {
 
   ArrayList<BookTrade> findByBoroughIdAndDeleteYn(Long boroughId, Status deleteYn);
+
+  ArrayList<BookTrade> findByUserId(Long userId);
 }

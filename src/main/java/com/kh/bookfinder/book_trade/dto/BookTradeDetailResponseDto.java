@@ -21,16 +21,16 @@ public class BookTradeDetailResponseDto {
   private BigDecimal latitude;
   private TradeType tradeType;
   private Status tradeYn;
-  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
+  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
   private Date limitedDate;
-  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
-  private Date createdDate;
+  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+  private Date createDate;
   private Map<String, Object> user = new HashMap<>();
   private Map<String, Object> book = new HashMap<>();
 
   @Builder
   public BookTradeDetailResponseDto(Long id, TradeType tradeType, Status tradeYn, String content,
-      Integer rentalCost, BigDecimal longitude, BigDecimal latitude, Date createdDate, Date limitedDate,
+      Integer rentalCost, BigDecimal longitude, BigDecimal latitude, Date createDate, Date limitedDate,
       Long isbn, String bookName, String bookAuthors, String bookPublisher, String bookImageUrl,
       String bookDescription, String bookClassName, Integer bookPublicationYear,
       Long userId, String userNickname) {
@@ -42,7 +42,7 @@ public class BookTradeDetailResponseDto {
     this.longitude = longitude;
     this.latitude = latitude;
     this.limitedDate = limitedDate;
-    this.createdDate = createdDate;
+    this.createDate = createDate;
 
     this.book.put("isbn", isbn);
     this.book.put("name", bookName);
