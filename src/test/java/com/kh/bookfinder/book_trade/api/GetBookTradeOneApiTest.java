@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.auth.helper.MockToken;
 import com.kh.bookfinder.book_trade.dto.BookTradeDetailResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
@@ -35,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class GetBookTradeOneApiTest {
 
   @Autowired
@@ -63,7 +63,7 @@ public class GetBookTradeOneApiTest {
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
             .get("/api/v1/trades/{tradeId}", tradeId)
-            .header("Authorization", MockToken.mockAccessToken));
+            .header("Authorization", "validToken"));
 
     // Then: Status는 200 Ok이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isOk());
@@ -86,7 +86,7 @@ public class GetBookTradeOneApiTest {
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
             .get("/api/v1/trades/{tradeId}", invalidTradeId)
-            .header("Authorization", MockToken.mockAccessToken));
+            .header("Authorization", "validToken"));
 
     // Then: Status는 404 Not Found이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -113,7 +113,7 @@ public class GetBookTradeOneApiTest {
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
             .get("/api/v1/trades/{tradeId}", tradeId)
-            .header("Authorization", MockToken.mockAccessToken));
+            .header("Authorization", "validToken"));
 
     // Then: Status는 404 Not Found이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isNotFound());

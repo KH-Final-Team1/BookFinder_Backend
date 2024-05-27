@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.auth.helper.MockToken;
 import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
@@ -39,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class ListBookTradeApiTest {
 
   // 유저 간 책 대출 API, List
@@ -65,7 +65,7 @@ public class ListBookTradeApiTest {
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
             .get("/api/v1/trades/list/{boroughId}", boroughId)
-            .header("Authorization", MockToken.mockAccessToken));
+            .header("Authorization", "validToken"));
     // Then: Status는 200이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     // And: Response Body로 BookTrade List를 반환한다. (Empty)
@@ -89,7 +89,7 @@ public class ListBookTradeApiTest {
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
             .get("/api/v1/trades/list/{boroughId}", boroughId)
-            .header("Authorization", MockToken.mockAccessToken));
+            .header("Authorization", "validToken"));
 
     // Then: Status는 200 Ok 이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isOk());
@@ -118,7 +118,7 @@ public class ListBookTradeApiTest {
     ResultActions resultActions = mockMvc
         .perform(MockMvcRequestBuilders
             .get("/api/v1/trades/list/{boroughId}", invalidBoroughId)
-            .header("Authorization", MockToken.mockAccessToken));
+            .header("Authorization", "validToken"));
 
     // Then: Status는 400 Bad Request 이다.
     resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());

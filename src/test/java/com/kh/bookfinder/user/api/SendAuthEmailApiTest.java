@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.auth.helper.MockToken;
+import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.dto.SendingEmailAuthDto;
 import com.kh.bookfinder.user.entity.EmailAuth;
@@ -35,6 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
 @Transactional
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class SendAuthEmailApiTest {
 
   /* TODO: 이미 가입된 이메일로 요청을 보낼 경우에 대한 테스트가 없음
@@ -48,6 +49,8 @@ public class SendAuthEmailApiTest {
   private EmailAuthService emailAuthService;
   @MockBean
   private UserRepository userRepository;
+  @MockBean
+  private JwtService jwtService;
   private EmailAuth mockEmailAuth;
 
   @BeforeEach
@@ -104,7 +107,7 @@ public class SendAuthEmailApiTest {
   }
 
   @Test
-  @DisplayName("Header에 Auhtorization이 포함된 경우")
+  @DisplayName("Header에 유효한 Auhtorization이 포함된 경우")
   public void sendAuthEmailFailOnAuthorizationInHeaderTest() throws Exception {
     // Given: 유효한 SendingEmailAuthDto가 주어진다.
     SendingEmailAuthDto requestDto = SendingEmailAuthDto
@@ -112,16 +115,18 @@ public class SendAuthEmailApiTest {
         .email("jinho6442@naver.com")
         .build();
     String requestBody = objectMapper.writeValueAsString(requestDto);
-    // When: UserRepository를 Mocking한다.
+    // And: UserRepository를 Mocking한다.
     when(userRepository.findByEmail(any()))
         .thenReturn(Optional.of(MockUser.getMockUser()));
+    // And: JwtService를 Mocking한다.
+    when(jwtService.validateToken(any())).thenReturn(true);
 
     // When: Header에 유효한 Authorization을 담아 Sending Auth Code Email API를 호출한다.
     mockMvc.perform(MockMvcRequestBuilders
         .post("/api/v1/signup/email")
         .content(requestBody)
         .contentType(MediaType.APPLICATION_JSON)
-        .header("Authorization", MockToken.mockAccessToken)
+        .header("Authorization", "validToken")
     )
         // Then: Status는 403 Forbidden이다.
         .andExpect(MockMvcResultMatchers.status().isForbidden())

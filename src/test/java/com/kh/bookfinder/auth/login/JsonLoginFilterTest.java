@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class JsonLoginFilterTest {
 
   @Autowired

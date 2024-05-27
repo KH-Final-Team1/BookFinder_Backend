@@ -4,8 +4,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.auth.helper.MockToken;
+import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.dto.DuplicateCheckDto;
 import com.kh.bookfinder.user.helper.MockUser;
@@ -31,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
 @Transactional
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class SignUpDuplicateCheckApiTest {
 
   /* TODO: 중복된 이메일인 경우, Bad Request가 나을까? 아니면 Conflict(409)가 나을까?
@@ -38,10 +38,10 @@ public class SignUpDuplicateCheckApiTest {
 
   @Autowired
   private MockMvc mockMvc;
-  @Autowired
-  private ObjectMapper objectMapper;
   @MockBean
   private UserRepository userRepository;
+  @MockBean
+  private JwtService jwtService;
 
   @Test
   @DisplayName("유효한 email이 주어지는 경우")
@@ -214,7 +214,7 @@ public class SignUpDuplicateCheckApiTest {
   }
 
   @Test
-  @DisplayName("Header에 Authorization이 포함된 경우")
+  @DisplayName("Header에 유효한 Authorization이 포함된 경우")
   public void duplicateCheckFailOnAuthorizationInHeaderTest() throws Exception {
     // Given: 유효한 DuplicateCheckDto가 주어진다.
     DuplicateCheckDto duplicateCheckDto = DuplicateCheckDto
@@ -224,6 +224,8 @@ public class SignUpDuplicateCheckApiTest {
         .build();
     // And: UserRepository를 Mocking 한다.
     when(userRepository.findByEmail(any())).thenReturn(Optional.of(MockUser.getMockUser()));
+    // And: JwtService를 Mocking한다.
+    when(jwtService.validateToken(any())).thenReturn(true);
 
     // When: Header에 유효한 Authorization을 담아 Duplicate Check API를 호출한다.
     ResultActions resultActions = this.mockMvc

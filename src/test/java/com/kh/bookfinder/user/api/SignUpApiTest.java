@@ -6,7 +6,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.auth.helper.MockToken;
+import com.kh.bookfinder.auth.jwt.service.JwtService;
+import com.kh.bookfinder.book_trade.entity.Borough;
+import com.kh.bookfinder.book_trade.repository.BoroughRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.dto.SignUpDto;
 import com.kh.bookfinder.user.helper.MockUser;
@@ -243,7 +245,7 @@ public class SignUpApiTest {
   }
 
   @Test
-  @DisplayName("Header에 Authorization이 포함된 경우")
+  @DisplayName("Header에 유효한 Authorization이 포함된 경우")
   public void signUpFailTestOnAuthorizationInHeader() throws Exception {
     // Given: 유효한 SignUpDto가 주어진다.
     SignUpDto validSignUpDto = this.buildValidSignUpDto();
@@ -251,6 +253,8 @@ public class SignUpApiTest {
     // And: UserRepository를 Mocking한다.
     when(userRepository.findByEmail(any()))
         .thenReturn(Optional.of(MockUser.getMockUser()));
+    // And: JwtService를 Mocking한다.
+    when(jwtService.validateToken(any())).thenReturn(true);
 
     // When: Header에 유효한 Authorization을 담아 SignUp API를 호출한다.
     this.mockMvc
@@ -258,7 +262,7 @@ public class SignUpApiTest {
             .post("/api/v1/signup")
             .content(requestBody)
             .contentType("application/json")
-            .header("Authorization", MockToken.mockAccessToken)
+            .header("Authorization", "validToken")
         )
         // Then: Status는 403 Forbidden 이다.
         .andExpect(MockMvcResultMatchers.status().isForbidden())
@@ -276,7 +280,7 @@ public class SignUpApiTest {
         .password("q1w2e3r41!")
         .passwordConfirm("q1w2e3r41!")
         .nickname("nickname")
-        .address("address")
+        .address("서울시 관악구 어딘가")
         .phone("01012345678")
         .build();
   }
