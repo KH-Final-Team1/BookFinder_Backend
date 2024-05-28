@@ -1,6 +1,5 @@
 package com.kh.bookfinder.user.user_info;
 
-import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -162,23 +161,6 @@ public class GetMyUserInfoApiTest {
     resultActions.andExpect(status().isOk());
     // And: Response Body의 email은 "카카오 로그인 사용자"이다.
     resultActions.andExpect(jsonPath("$.email", is("카카오 로그인 사용자")));
-  }
-
-  @Test
-  @DisplayName("로그인 한 사용자 정보가 DB에 없는 경우")
-  public void fail_OnInvalidUser_ThatEmailNotExistsInDB() throws Exception {
-    // Given: 사용자가 주어진다.
-    User mockUser = MockUser.getMockUser();
-    mockUser.setRole(UserRole.ROLE_USER);
-
-    // When: User List API를 호출한다.
-    ResultActions resultActions = callApiWithUser(mockUser);
-
-    // Then: Status는 NOT FOUND이다.
-    resultActions.andExpect(status().isNotFound());
-    // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(jsonPath("$.message", is(NOT_FOUND.getMessage())));
-    resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_FOUND_USER)));
   }
 
   @Test

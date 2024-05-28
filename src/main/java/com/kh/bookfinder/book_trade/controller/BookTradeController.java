@@ -43,7 +43,7 @@ public class BookTradeController {
     if (!Borough.isValid(boroughId)) {
       throw new InvalidFieldException("boroughId", Message.INVALID_BOROUGH);
     }
-    ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
+    ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTradesByBoroughId(boroughId);
 
     List<BookTradeListResponseDto> response = bookTradeList.stream().map(
         x -> x.toResponse(BookTradeListResponseDto.class)

@@ -37,8 +37,12 @@ public class BookTradeService {
     return bookTrade;
   }
 
-  public ArrayList<BookTrade> getBookTrades(Long boroughId) {
+  public ArrayList<BookTrade> getBookTradesByBoroughId(Long boroughId) {
     return bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N);
+  }
+
+  public ArrayList<BookTrade> getBookTradesByUserId(Long userId) {
+    return bookTradeRepository.findByUserId(userId);
   }
 
   @Transactional
