@@ -1,6 +1,7 @@
 package com.kh.bookfinder.user.api;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.global.constants.Message;
-import com.kh.bookfinder.global.exception.InvalidFieldException;
+import com.kh.bookfinder.global.exception.DuplicateResourceException;
 import com.kh.bookfinder.user.dto.SendingEmailAuthDto;
 import com.kh.bookfinder.user.entity.EmailAuth;
 import com.kh.bookfinder.user.helper.MockUser;
@@ -124,16 +125,16 @@ public class SendAuthEmailApiTest {
     // And: EmailAuthService가 Exception이 발생하도록 Mocking한다.
     when(userRepository.findByEmail(validEmailAuthDto.getEmail())).thenReturn(Optional.of(MockUser.getMockUser()));
     when(emailAuthService.sendAuthCodeTo(validEmailAuthDto.getEmail()))
-        .thenThrow(new InvalidFieldException("email", Message.DUPLICATE_EMAIL));
+        .thenThrow(new DuplicateResourceException(Message.DUPLICATE_EMAIL));
 
     // When: Sending Auth Code Email API를 호출한다.
     ResultActions resultActions = callApiWith(requestBody);
 
-    // Then: Status는 400 Bad Request이다.
-    resultActions.andExpect(status().isBadRequest());
+    // Then: Status는 409 Conflict이다.
+    resultActions.andExpect(status().isConflict());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(jsonPath("$.details.email", is(Message.DUPLICATE_EMAIL)));
+    resultActions.andExpect(jsonPath("$.message", is(CONFLICT.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.DUPLICATE_EMAIL)));
   }
 
   @Test

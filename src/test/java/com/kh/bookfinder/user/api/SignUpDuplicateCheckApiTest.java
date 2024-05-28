@@ -1,10 +1,14 @@
 package com.kh.bookfinder.user.api;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.global.constants.Message;
@@ -25,8 +29,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -63,7 +65,7 @@ public class SignUpDuplicateCheckApiTest {
 
   private ResultActions callApiWith(DuplicateCheckDto validDuplicateCheckDto) throws Exception {
     return mockMvc
-        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
+        .perform(get("/api/v1/signup/duplicate")
             .param("field", validDuplicateCheckDto.getField())
             .param("value", validDuplicateCheckDto.getValue())
         );
@@ -79,9 +81,9 @@ public class SignUpDuplicateCheckApiTest {
     ResultActions resultActions = callApiWith(validDuplicateCheckDto);
 
     // Then: Status는 200 Ok이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+    resultActions.andExpect(status().isOk());
     // And: ResponseBody로 message를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.VALID_EMAIL)));
+    resultActions.andExpect(jsonPath("$.message", is(Message.VALID_EMAIL)));
   }
 
   @Test
@@ -95,10 +97,10 @@ public class SignUpDuplicateCheckApiTest {
     ResultActions resultActions = callApiWith(invalidDuplicateCheckDto);
 
     // Then: Status는 400 Bad Request 이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    resultActions.andExpect(status().isBadRequest());
     // And: ResponseBody로 message와 details를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
   }
 
   @Test
@@ -114,11 +116,11 @@ public class SignUpDuplicateCheckApiTest {
     // When: Duplicate Check API를 호출한다.
     ResultActions resultActions = callApiWith(validDuplicateCheckDto);
 
-    // Then: Status는 400 Bad Request 이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
-    // And: ResponseBody로 message와 details를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.DUPLICATE_EMAIL)));
+    // Then: Status는 409 Conflict 이다.
+    resultActions.andExpect(status().isConflict());
+    // And: ResponseBody로 message와 detail를 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(CONFLICT.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.DUPLICATE_EMAIL)));
   }
 
   @Test
@@ -131,9 +133,9 @@ public class SignUpDuplicateCheckApiTest {
     ResultActions resultActions = callApiWith(validDuplicateCheckDto);
 
     // Then: Status는 200 Ok이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+    resultActions.andExpect(status().isOk());
     // And: ResponseBody로 message를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.VALID_NICKNAME)));
+    resultActions.andExpect(jsonPath("$.message", is(Message.VALID_NICKNAME)));
   }
 
   @Test
@@ -147,10 +149,10 @@ public class SignUpDuplicateCheckApiTest {
     ResultActions resultActions = callApiWith(invalidDuplicateCheckDto);
 
     // Then: Status는 400 Bad Request 이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    resultActions.andExpect(status().isBadRequest());
     // And: ResponseBody로 message와 details를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.INVALID_NICKNAME)));
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.nickname", is(Message.INVALID_NICKNAME)));
   }
 
   @Test
@@ -166,11 +168,11 @@ public class SignUpDuplicateCheckApiTest {
     // When: Duplicate Check API를 호출한다.
     ResultActions resultActions = callApiWith(validDuplicateCheckDto);
 
-    // Then: Status는 400 Bad Request 이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    // Then: Status는 409 Conflict 이다.
+    resultActions.andExpect(status().isConflict());
     // And: ResponseBody로 message와 details를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.nickname", is(Message.DUPLICATE_NICKNAME)));
+    resultActions.andExpect(jsonPath("$.message", is(CONFLICT.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.DUPLICATE_NICKNAME)));
   }
 
   @Test
@@ -184,10 +186,10 @@ public class SignUpDuplicateCheckApiTest {
     ResultActions resultActions = callApiWith(invalidDuplicateCheckDto);
 
     // Then: Status는 400 Bad Request 이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    resultActions.andExpect(status().isBadRequest());
     // And: ResponseBody로 message와 details를 반환한다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.field", is(Message.INVALID_FIELD)));
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.field", is(Message.INVALID_FIELD)));
   }
 
   @Test
@@ -202,16 +204,16 @@ public class SignUpDuplicateCheckApiTest {
 
     // When: Header에 유효한 Authorization을 담아 Duplicate Check API를 호출한다.
     ResultActions resultActions = mockMvc
-        .perform(MockMvcRequestBuilders.get("/api/v1/signup/duplicate")
+        .perform(get("/api/v1/signup/duplicate")
             .param("field", duplicateCheckDto.getField())
             .param("value", duplicateCheckDto.getValue())
             .header("Authorization", "validToken")
         );
 
     // Then: Status는 403 Forbidden 이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
+    resultActions.andExpect(status().isForbidden());
     // And: Response Body로 message와 detail이 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(FORBIDDEN.getMessage())));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.ALREADY_LOGIN)));
+    resultActions.andExpect(jsonPath("$.message", is(FORBIDDEN.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.ALREADY_LOGIN)));
   }
 }

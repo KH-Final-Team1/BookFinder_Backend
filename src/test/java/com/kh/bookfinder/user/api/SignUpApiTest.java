@@ -1,6 +1,7 @@
 package com.kh.bookfinder.user.api;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -131,11 +132,11 @@ public class SignUpApiTest {
     // When: SignUp API를 호출한다.
     ResultActions resultActions = callApiWith(requestBody);
 
-    // Then: Status는 400 Bad Request 이다.
-    resultActions.andExpect(status().isBadRequest());
-    // And: ResponseBody로 message와 details를 반환한다.
-    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(jsonPath("$.details.email", is(Message.DUPLICATE_EMAIL)));
+    // Then: Status는 409 Conflict 이다.
+    resultActions.andExpect(status().isConflict());
+    // And: ResponseBody로 message와 detail를 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(CONFLICT.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.DUPLICATE_EMAIL)));
   }
 
   @Test
@@ -201,17 +202,16 @@ public class SignUpApiTest {
     // And: UserRepository가 mockUser를 반환하도록 Mocking한다.
     User mockUser = MockUser.getMockUser();
     mockUser.setNickname(validSignUpDto.getNickname());
-    when(userRepository.findByNickname(validSignUpDto.getNickname()))
-        .thenReturn(Optional.of(mockUser));
+    when(userRepository.findByNickname(validSignUpDto.getNickname())).thenReturn(Optional.of(mockUser));
 
     // When: SignUp API를 호출한다.
     ResultActions resultActions = callApiWith(requestBody);
 
-    // Then: Status는 400 Bad Request 이다.
-    resultActions.andExpect(status().isBadRequest());
-    // And: ResponseBody로 message와 details를 반환한다.
-    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(jsonPath("$.details.nickname", is(Message.DUPLICATE_NICKNAME)));
+    // Then: Status는 409 Conflict 이다.
+    resultActions.andExpect(status().isConflict());
+    // And: ResponseBody로 message와 detail를 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(CONFLICT.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.DUPLICATE_NICKNAME)));
   }
 
   @Test

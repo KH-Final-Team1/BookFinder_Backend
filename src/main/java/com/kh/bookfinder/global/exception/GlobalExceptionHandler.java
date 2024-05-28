@@ -1,6 +1,7 @@
 package com.kh.bookfinder.global.exception;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 
@@ -54,6 +55,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         .build();
     return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
+        .body(errorResponseBody);
+  }
+
+  @ExceptionHandler(DuplicateResourceException.class)
+  public ResponseEntity<ErrorResponseBody> handleDuplicateResource(DuplicateResourceException e) {
+    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
+        .message(CONFLICT)
+        .detail(e.getLocalizedMessage())
+        .build();
+
+    return ResponseEntity
+        .status(HttpStatus.CONFLICT)
         .body(errorResponseBody);
   }
 

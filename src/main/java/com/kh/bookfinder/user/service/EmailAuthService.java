@@ -1,6 +1,7 @@
 package com.kh.bookfinder.user.service;
 
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.global.exception.DuplicateResourceException;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.dto.CheckingVerificationDto;
 import com.kh.bookfinder.user.entity.EmailAuth;
@@ -28,10 +29,9 @@ public class EmailAuthService {
   private final UserRepository userRepository;
 
   public EmailAuth sendAuthCodeTo(String targetEmail) {
-    this.userRepository.findByEmail(targetEmail)
-        .ifPresent((value) -> {
-          throw new InvalidFieldException("email", Message.DUPLICATE_EMAIL);
-        });
+    if (alreadyExistEmail(targetEmail)) {
+      throw new DuplicateResourceException(Message.DUPLICATE_NICKNAME);
+    }
 
     EmailAuth emailAuth = EmailAuth
         .builder()
@@ -79,5 +79,9 @@ public class EmailAuthService {
     jsonObject.put("code", emailAuth.getAuthCode());
 
     return Base64.getEncoder().encodeToString(jsonObject.toString().getBytes(StandardCharsets.UTF_8));
+  }
+
+  private boolean alreadyExistEmail(String email) {
+    return userRepository.findByNickname(email).isPresent();
   }
 }

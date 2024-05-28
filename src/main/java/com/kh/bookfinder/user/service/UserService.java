@@ -7,6 +7,7 @@ import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.borough.repository.BoroughRepository;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.global.exception.DuplicateResourceException;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
 import com.kh.bookfinder.user.dto.DuplicateCheckDto;
 import com.kh.bookfinder.user.dto.MyInfoResponseDto;
@@ -32,38 +33,27 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   public void createNewUser(SignUpDto signUpDto) {
-    this.userRepository
-        .findByEmail(signUpDto.getEmail())
-        .ifPresent((value) -> {
-          throw new InvalidFieldException("email", Message.DUPLICATE_EMAIL);
-        });
-    this.userRepository
-        .findByNickname(signUpDto.getNickname())
-        .ifPresent((value) -> {
-          throw new InvalidFieldException("nickname", Message.DUPLICATE_NICKNAME);
-        });
+    if (alreadyExistEmail(signUpDto.getEmail())) {
+      throw new DuplicateResourceException(Message.DUPLICATE_EMAIL);
+    }
+    if (alreadyExistNickname(signUpDto.getNickname())) {
+      throw new DuplicateResourceException(Message.DUPLICATE_NICKNAME);
+    }
+
     User user = signUpDto.toEntity(passwordEncoder);
     Borough borough = this.boroughRepository
         .findByName(user.extractBoroughName())
-        .orElseThrow(() -> {
-          throw new InvalidFieldException("address", Message.INVALID_ADDRESS);
-        });
+        .orElseThrow(() -> new InvalidFieldException("address", Message.INVALID_ADDRESS));
     user.setBorough(borough);
     this.userRepository.save(user);
   }
 
   public void checkDuplicate(DuplicateCheckDto duplicateCheckDto) {
-    if (duplicateCheckDto.getField().equals("email")) {
-      this.userRepository.findByEmail(duplicateCheckDto.getValue())
-          .ifPresent((value) -> {
-            throw new InvalidFieldException("email", Message.DUPLICATE_EMAIL);
-          });
+    if (duplicateCheckDto.getField().equals("email") && alreadyExistEmail(duplicateCheckDto.getValue())) {
+      throw new DuplicateResourceException(Message.DUPLICATE_EMAIL);
     }
-    if (duplicateCheckDto.getField().equals("nickname")) {
-      this.userRepository.findByNickname(duplicateCheckDto.getValue())
-          .ifPresent((value) -> {
-            throw new InvalidFieldException("nickname", Message.DUPLICATE_NICKNAME);
-          });
+    if (duplicateCheckDto.getField().equals("nickname") && alreadyExistNickname(duplicateCheckDto.getValue())) {
+      throw new DuplicateResourceException(Message.DUPLICATE_NICKNAME);
     }
 
   }
@@ -94,5 +84,13 @@ public class UserService {
         .collect(Collectors.toList());
 
     return user.toMyInfoResponse(trades);
+  }
+
+  private boolean alreadyExistNickname(String nickname) {
+    return userRepository.findByNickname(nickname).isPresent();
+  }
+
+  private boolean alreadyExistEmail(String email) {
+    return userRepository.findByEmail(email).isPresent();
   }
 }
