@@ -1,4 +1,4 @@
-package com.kh.bookfinder.user.api;
+package com.kh.bookfinder.user.signup;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;

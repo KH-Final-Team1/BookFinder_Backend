@@ -1,4 +1,4 @@
-package com.kh.bookfinder.user.api;
+package com.kh.bookfinder.user.signup;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;
@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles("test")
 @Transactional
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class SignUpDuplicateCheckApiTest {
+public class DuplicateCheckApiTest {
 
   // 이메일,닉네임 중복검사 API
 

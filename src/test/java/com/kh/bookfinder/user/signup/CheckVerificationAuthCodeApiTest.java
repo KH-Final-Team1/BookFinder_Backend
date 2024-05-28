@@ -1,4 +1,4 @@
-package com.kh.bookfinder.user.api;
+package com.kh.bookfinder.user.signup;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @SpringBootTest
 @AutoConfigureMockMvc
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class CheckVerificationAuthCodeTest {
+public class CheckVerificationAuthCodeApiTest {
 
   // Email로 보낸 Auth 코드 확인하는 API
   /*

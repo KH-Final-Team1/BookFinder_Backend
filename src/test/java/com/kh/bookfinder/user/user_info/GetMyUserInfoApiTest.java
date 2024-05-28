@@ -1,4 +1,4 @@
-package com.kh.bookfinder.user.api;
+package com.kh.bookfinder.user.user_info;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
