@@ -7,11 +7,6 @@ public interface Message {
       환영합니다.
       로그인 후 이용해 주세요 😊
       """;
-  String BAD_REQUEST = "요청이 유효하지 않습니다. 다시 한번 확인해주세요.";
-  String NOT_FOUND = "요청하신 정보를 찾을 수 없습니다.";
-  String UNAUTHORIZED = "인증 정보가 유효하지 않습니다.";
-  String INVALID_CONTENT_TYPE = "유효하지 않은 Content-Type 입니다.";
-  String FORBIDDEN = "잘못된 권한입니다.";
 
   String VALID_EMAIL = "가입이 가능한 이메일입니다.\n사용하시겠습니까?";
   String INVALID_EMAIL = "유효하지 않은 이메일 형식입니다.";
@@ -23,10 +18,12 @@ public interface Message {
   String INVALID_NICKNAME = "영문, 유효한 한글, 숫자를 이용하여 3자 이상 20자 이하로 입력해주세요.";
   String VALID_NICKNAME = "가입이 가능한 닉네임입니다.\n사용하시겠습니까?";
   String DUPLICATE_NICKNAME = "이미 가입된 닉네임입니다.";
+  String INVALID_ADDRESS = "유효하지 않은 주소 형식입니다. 현재는 서울시만 등록 가능합니다.";
   String INVALID_PHONE = "유효하지 않은 휴대폰 번호 형식입니다.";
   String INVALID_AUTH_CODE = "유효하지 않은 인증 코드입니다.";
   String EXPIRED_AUTH_CODE = "인증 코드가 만료되었습니다.";
   String INVALID_SIGNING_TOKEN = "유효하지 않은 Signing 토큰입니다.";
+  String NOT_FOUND_EMAIL_AUTH = "인증 코드에 해당하는 이메일을 찾을 수 없습니다. 다시 한번 확인해주세요.";
 
   String FAIL_LOGIN = "이메일 또는 비밀번호가 올바르지 않습니다.";
   String INVALID_LOGIN_WITH_AUTHORIZATION = "헤더에 Authorization이 있어 로그인 요청을 할 수 없습니다.";

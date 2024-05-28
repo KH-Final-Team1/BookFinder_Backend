@@ -1,8 +1,12 @@
 package com.kh.bookfinder.auth.login;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.login.dto.LoginDto;
@@ -24,7 +28,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -32,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class JsonLoginFilterTest {
 
   @Autowired
@@ -58,26 +62,26 @@ public class JsonLoginFilterTest {
 
   @Test
   @DisplayName("DB에 저장된 email과 password가 일치하는 경우")
-  public void loginSuccessOnValidLoginDtoTest() throws Exception {
-    // Given: 로그인 정보가 주어진다.
-    LoginDto loginDto = getBaseLoginDto();
-    // And: Repository가 Mock User객체를 리턴하도록 모킹한다.
+  public void success_OnValidLoginDto() throws Exception {
+    // Given: 유효한 LoginDto가 주어진다.
+    LoginDto validLoginDto = getBaseLoginDto();
+    // And: Repository가 mockUser를 리턴하도록 Mocking한다.
     User mockUser = MockUser.getMockUser();
-    when(userRepository.findByEmail(loginDto.getEmail())).thenReturn(Optional.of(mockUser));
+    when(userRepository.findByEmail(validLoginDto.getEmail())).thenReturn(Optional.of(mockUser));
 
     // When: Login API를 호출한다.
-    ResultActions resultActions = callLoginApi(loginDto).andDo(print());
+    ResultActions resultActions = callLoginApi(validLoginDto);
 
     // Then: Status는 200 Ok이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+    resultActions.andExpect(status().isOk());
     // And: Response Body로 AccessToken이 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.accessToken").exists());
+    resultActions.andExpect(jsonPath("$.accessToken").exists());
   }
 
   @Test
   @DisplayName("Login Dto의 email 형식이 유효하지 않은 경우")
-  public void loginFailOnInvalidEmailFormatTest() throws Exception {
-    // Given: 유효하지 않은 이메일 형식이 주어진다.
+  public void fail_OnInvalidLoginDto_WithEmailFormat() throws Exception {
+    // Given: 유효하지 않은 LoginDto가 주어진다.
     LoginDto invalidLoginDto = getBaseLoginDto();
     invalidLoginDto.setEmail("jinho4744navercom");
 
@@ -85,16 +89,16 @@ public class JsonLoginFilterTest {
     ResultActions resultActions = callLoginApi(invalidLoginDto);
 
     // Then: Status는 400 Bad Request이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    resultActions.andExpect(status().isBadRequest());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.email", is(Message.INVALID_EMAIL)));
   }
 
   @Test
   @DisplayName("Login Dto의 password 형식이 유효하지 않은 경우")
-  public void loginFailOnInvalidPasswordFormatTest() throws Exception {
-    // Given: 유효하지 않은 비밀번호 형식이 주어진다.
+  public void fail_OnInvalidLoginDto_WithPasswordFormat() throws Exception {
+    // Given: 유효하지 않은 LoginDto가 주어진다.
     LoginDto invalidLoginDto = getBaseLoginDto();
     invalidLoginDto.setPassword("zz");
 
@@ -102,66 +106,65 @@ public class JsonLoginFilterTest {
     ResultActions resultActions = callLoginApi(invalidLoginDto);
 
     // Then: Status는 400 Bad Request이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    resultActions.andExpect(status().isBadRequest());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.BAD_REQUEST)));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.details.password", is(Message.INVALID_PASSWORD)));
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.password", is(Message.INVALID_PASSWORD)));
   }
 
   @Test
   @DisplayName("DB에 email에 해당하는 튜플이 없는 경우")
-  public void loginFailOnNotExistTupleForEmailTest() throws Exception {
-    // Given: 로그인 정보가 주어진다.
-    LoginDto loginDto = getBaseLoginDto();
-    // And: DB에 email에 해당하는 튜플이 없다.
+  public void fail_OnNotExistInDB_ForEmail() throws Exception {
+    // Given: 유효한 LoginDto가 주어진다.
+    LoginDto validLoginDto = getBaseLoginDto();
 
     // When: Login API를 호출한다.
-    ResultActions resultActions = callLoginApi(loginDto);
+    ResultActions resultActions = callLoginApi(validLoginDto);
 
     // Then: Status는 401 Unauthorized이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    resultActions.andExpect(status().isUnauthorized());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.FAIL_LOGIN)));
+    resultActions.andExpect(jsonPath("$.message", is(UNAUTHORIZED.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.FAIL_LOGIN)));
   }
 
   @Test
-  @DisplayName("DB에 password가 일치하지 않는 경우")
-  public void loginFailOnNotEqualsPasswordTest() throws Exception {
-    // Given: password가 DB의 튜플과 일치하지 않는 로그인 정보가 주어진다.
-    LoginDto loginDto = getBaseLoginDto();
-    loginDto.setPassword("test_password_1");
+  @DisplayName("password가 DB 튜플의 password와 일치하지 않는 경우")
+  public void fail_OnNotEqualsPassword_WithUserInDB() throws Exception {
+    // Given: 유효한 LoginDto가 주어진다.
+    LoginDto validLoginDto = getBaseLoginDto();
+    validLoginDto.setPassword("test_password_1");
     // And: Repository가 Mock User객체를 리턴하도록 모킹한다.
     User mockUser = MockUser.getMockUser();
-    when(userRepository.findByEmail(loginDto.getEmail())).thenReturn(Optional.of(mockUser));
+    when(userRepository.findByEmail(validLoginDto.getEmail())).thenReturn(Optional.of(mockUser));
 
     // When: Login API를 호출한다.
-    ResultActions resultActions = callLoginApi(loginDto);
+    ResultActions resultActions = callLoginApi(validLoginDto);
 
     // Then: Status는 401 Unauthorized이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    resultActions.andExpect(status().isUnauthorized());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.UNAUTHORIZED)));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.FAIL_LOGIN)));
+    resultActions.andExpect(jsonPath("$.message", is(UNAUTHORIZED.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.FAIL_LOGIN)));
   }
 
   @Test
   @DisplayName("Header에 Authorization을 포함한 경우")
-  public void loginFailOnExistsAuthorizationInHeaderTest() throws Exception {
-    // Given: 로그인 정보가 주어진다.
-    LoginDto loginDto = getBaseLoginDto();
+  public void fail_OnExistsAuthorizationInHeader() throws Exception {
+    // Given: 유효한 LoginDto가 주어진다.
+    LoginDto validLoginDto = getBaseLoginDto();
 
     // When: Header에 "Authorization"을 추가하여 Login API를 호출한다.
     ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
         .post("/api/v1/login")
-        .content(objectMapper.writeValueAsString(loginDto))
+        .content(objectMapper.writeValueAsString(validLoginDto))
         .contentType(MediaType.APPLICATION_JSON)
         .header("Authorization", "testAccessToken"));
 
     // Then: Status는 403 Forbidden이다.
-    resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
+    resultActions.andExpect(status().isForbidden());
     // And: Response Body로 message와 details가 반환된다.
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.message", is(Message.FORBIDDEN)));
-    resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.detail", is(Message.INVALID_LOGIN_WITH_AUTHORIZATION)));
+    resultActions.andExpect(jsonPath("$.message", is(FORBIDDEN.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.INVALID_LOGIN_WITH_AUTHORIZATION)));
   }
 }

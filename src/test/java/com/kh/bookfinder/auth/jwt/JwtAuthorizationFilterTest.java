@@ -1,5 +1,6 @@
 package com.kh.bookfinder.auth.jwt;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -85,7 +86,7 @@ public class JwtAuthorizationFilterTest {
     // Then: Status는 Unauthorized이다.
     resultActions.andExpect(status().isUnauthorized());
     // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(jsonPath("$.message", is(Message.UNAUTHORIZED)));
+    resultActions.andExpect(jsonPath("$.message", is(UNAUTHORIZED.getMessage())));
     resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_LOGIN)));
   }
 

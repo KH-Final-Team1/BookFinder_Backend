@@ -1,6 +1,7 @@
 package com.kh.bookfinder.auth.login.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.bookfinder.global.constants.HttpErrorMessage;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.dto.ErrorResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
-        .message(exception.getLocalizedMessage())
+        .message(HttpErrorMessage.UNSUPPORTED_MEDIA_TYPE)
         .build();
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
@@ -44,7 +45,7 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
-        .message(Message.FORBIDDEN)
+        .message(HttpErrorMessage.FORBIDDEN)
         .detail(exception.getLocalizedMessage())
         .build();
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
@@ -54,7 +55,7 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
-        .message(Message.UNAUTHORIZED)
+        .message(HttpErrorMessage.UNAUTHORIZED)
         .detail(Message.FAIL_LOGIN)
         .build();
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
@@ -67,14 +68,14 @@ public class JsonLoginFailureHandler extends SimpleUrlAuthenticationFailureHandl
     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     ErrorResponseBody responseBody = ErrorResponseBody
         .builder()
-        .message(Message.BAD_REQUEST)
+        .message(HttpErrorMessage.BAD_REQUEST)
         .details(objectMapper.readValue(exception.getLocalizedMessage(), Map.class))
         .build();
     objectMapper.writeValue(response.getWriter(), responseBody);
   }
 
   private boolean isContentTypeException(AuthenticationException exception) {
-    return exception.getMessage().contains(Message.INVALID_CONTENT_TYPE);
+    return exception.getMessage().contains(HttpErrorMessage.UNSUPPORTED_MEDIA_TYPE.getMessage());
   }
 
   private boolean isDtoException(AuthenticationException exception) {

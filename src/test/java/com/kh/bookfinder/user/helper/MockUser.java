@@ -1,5 +1,6 @@
 package com.kh.bookfinder.user.helper;
 
+import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
 import java.sql.Date;
@@ -9,6 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class MockUser {
 
   public static User getMockUser() {
+    Borough borough = Borough.builder()
+        .id(5L)
+        .name("관악구")
+        .build();
     return User.builder()
         .id(1L)
         .email("jinho4744@naver.com")
@@ -18,6 +23,7 @@ public class MockUser {
         .role(UserRole.ROLE_ADMIN)
         .address("서울 관악구 어딘가")
         .createDate(Date.valueOf(LocalDate.now()))
+        .borough(borough)
         .build();
   }
 }

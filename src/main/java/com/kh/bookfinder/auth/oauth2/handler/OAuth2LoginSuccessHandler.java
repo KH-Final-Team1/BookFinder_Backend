@@ -24,11 +24,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException {
     CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-    String accessToken = jwtService.createAccessToken(customOAuth2User.getEmail(), customOAuth2User.getRole().name());
 
     if (customOAuth2User.getRole() == UserRole.ROLE_SOCIAL_GUEST) {
-      response.sendRedirect("http://localhost:3000/oauth2/sign-up?token=" + accessToken);
+      String tempAccessToken = jwtService
+          .createTempAccessTokenForOAuthSignUp(customOAuth2User.getEmail(), customOAuth2User.getRole().name());
+      response.sendRedirect("http://localhost:3000/oauth2/sign-up?token=" + tempAccessToken);
     } else {
+      String accessToken = jwtService.createAccessToken(customOAuth2User.getEmail(), customOAuth2User.getRole().name());
       Cookie cookie = new Cookie("accessToken", accessToken);
       cookie.setPath("/");
       cookie.setMaxAge(30);

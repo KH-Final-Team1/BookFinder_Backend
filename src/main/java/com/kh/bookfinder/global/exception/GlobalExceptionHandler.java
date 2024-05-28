@@ -1,6 +1,10 @@
 package com.kh.bookfinder.global.exception;
 
-import com.kh.bookfinder.global.constants.Message;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
+
 import com.kh.bookfinder.global.dto.ErrorResponseBody;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +28,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
       HttpStatusCode status, WebRequest request) {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-        .message(Message.BAD_REQUEST)
+        .message(BAD_REQUEST)
         .details(extractDetailsForField(ex))
         .build();
 
@@ -35,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(InvalidFieldException.class)
   public ResponseEntity<ErrorResponseBody> handleInvalidField(InvalidFieldException e) {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-        .message(Message.BAD_REQUEST)
+        .message(BAD_REQUEST)
         .details(extractDetailsForField(e))
         .build();
     return ResponseEntity
@@ -46,7 +50,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorResponseBody> handleResourceNotFound(ResourceNotFoundException e) {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-        .message(Message.NOT_FOUND)
+        .message(NOT_FOUND)
         .detail(e.getLocalizedMessage())
         .build();
     return ResponseEntity
@@ -54,10 +58,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         .body(errorResponseBody);
   }
 
+  @ExceptionHandler(DuplicateResourceException.class)
+  public ResponseEntity<ErrorResponseBody> handleDuplicateResource(DuplicateResourceException e) {
+    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
+        .message(CONFLICT)
+        .detail(e.getLocalizedMessage())
+        .build();
+
+    return ResponseEntity
+        .status(HttpStatus.CONFLICT)
+        .body(errorResponseBody);
+  }
+
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ErrorResponseBody> handleBadCredentials(BadCredentialsException e) {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-        .message(Message.UNAUTHORIZED)
+        .message(UNAUTHORIZED)
         .detail(e.getLocalizedMessage())
         .build();
 
@@ -71,7 +87,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     Map<String, String> details = new HashMap<>();
     details.put("권한 오류", e.getLocalizedMessage());
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-        .message(Message.UNAUTHORIZED)
+        .message(UNAUTHORIZED)
         .details(details)
         .build();
 

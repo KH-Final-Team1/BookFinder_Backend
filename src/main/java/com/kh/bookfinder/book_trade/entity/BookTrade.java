@@ -3,6 +3,7 @@ package com.kh.bookfinder.book_trade.entity;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book_trade.dto.BookTradeDetailResponseDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
+import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

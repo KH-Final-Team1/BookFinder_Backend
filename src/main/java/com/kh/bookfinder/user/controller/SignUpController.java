@@ -49,8 +49,8 @@ public class SignUpController {
   @PostMapping(value = "/email", produces = "application/json;charset=UTF-8")
   public ResponseEntity<Map<String, String>> sendAuthEmail(@Valid @RequestBody SendingEmailAuthDto requestBody)
       throws JSONException {
-    EmailAuth emailAuth = this.emailAuthService.sendAuthCodeTo(requestBody.getEmail());
-    String signingToken = emailAuth.generateSigningToken();
+    EmailAuth emailAuth = emailAuthService.sendAuthCodeTo(requestBody.getEmail());
+    String signingToken = emailAuthService.generateSigningToken(emailAuth);
 
     return ResponseEntity
         .ok()
@@ -60,7 +60,7 @@ public class SignUpController {
   @PostMapping(value = "/verification-code", produces = "application/json;charset=UTF-8")
   public ResponseEntity<Map<String, String>> checkVerification(@Valid @RequestBody CheckingVerificationDto requestBody)
       throws JSONException {
-    String singingToken = this.emailAuthService.checkVerification(requestBody);
+    String singingToken = emailAuthService.checkVerification(requestBody);
 
     return ResponseEntity
         .ok()

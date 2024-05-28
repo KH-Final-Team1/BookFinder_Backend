@@ -1,7 +1,8 @@
 package com.kh.bookfinder.auth.jwt.handler;
 
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.dto.ErrorResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ public class JwtUnauthorizedHandler implements AuthenticationEntryPoint {
     Exception jwtException = (Exception) request.getAttribute("exception");
 
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-        .message(Message.UNAUTHORIZED)
+        .message(UNAUTHORIZED)
         .detail(jwtException.getLocalizedMessage())
         .build();
 
