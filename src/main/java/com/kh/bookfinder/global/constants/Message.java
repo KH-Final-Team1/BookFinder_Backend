@@ -45,6 +45,8 @@ public interface Message {
   String SUCCESS_CHANGE = "거래 상태가 변경되었습니다.";
   String SUCCESS_UPDATE = "수정을 성공했습니다.";
   String SUCCESS_DELETE = "삭제를 성공했습니다.";
+  String FORBIDDEN_BOOK_TRADES = "자신의 자치구 게시판/게시글만 조회할 수 있습니다.";
+
 
   String INVALID_FILTER = "filter는 name이나 authors나 publisher만 가능합니다.";
   String NOT_FOUND_BOOK = "해당 도서는 북적북적 사이트에 없는 도서이거나 존재하지 않는 도서입니다.";

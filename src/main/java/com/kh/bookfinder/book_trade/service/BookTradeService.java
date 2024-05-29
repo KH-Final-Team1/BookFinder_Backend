@@ -9,10 +9,12 @@ import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.exception.UnauthorizedException;
 import com.kh.bookfinder.user.entity.User;
+import com.kh.bookfinder.user.entity.UserRole;
 import com.kh.bookfinder.user.service.UserService;
-import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,11 +39,19 @@ public class BookTradeService {
     return bookTrade;
   }
 
-  public ArrayList<BookTrade> getBookTradesByBoroughId(Long boroughId) {
+  public List<BookTrade> getBookTradesByBoroughId(User serviceUser, Long boroughId) {
+    if (serviceUser.getRole() == UserRole.ROLE_ADMIN) {
+      return bookTradeRepository.findByBoroughId(boroughId);
+    }
+
+    if (serviceUser.getRole() == UserRole.ROLE_USER && !serviceUser.getBorough().getId().equals(boroughId)) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
+    }
+
     return bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N);
   }
 
-  public ArrayList<BookTrade> getBookTradesByUserId(Long userId) {
+  public List<BookTrade> getBookTradesByUserId(Long userId) {
     return bookTradeRepository.findByUserId(userId);
   }
 

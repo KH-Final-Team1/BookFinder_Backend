@@ -22,7 +22,7 @@ import com.kh.bookfinder.user.helper.MockUser;
 import com.kh.bookfinder.user.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -101,7 +101,7 @@ public class GetMyUserInfoApiTest {
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
     // And: User가 mockUser인 BookTrades가 10개 주어진다.
-    ArrayList<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
+    List<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
 
     // Mocking: JwtService가 validAccessToken를 반환
     when(jwtService.extractAccessToken(any())).thenReturn(validAccessToken);
@@ -161,7 +161,7 @@ public class GetMyUserInfoApiTest {
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
     // And: User가 mockUser인 BookTrades가 10개 주어진다.
-    ArrayList<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
+    List<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
 
     // Mocking: JwtService가 validAccessToken를 반환
     when(jwtService.extractAccessToken(any())).thenReturn(validAccessToken);
@@ -239,7 +239,7 @@ public class GetMyUserInfoApiTest {
     resultActions.andExpect(jsonPath("$.createDate", is(mockUser.getCreateDate().toString())));
   }
 
-  private void assertBookTrades(ResultActions resultActions, ArrayList<BookTrade> bookTrades) throws Exception {
+  private void assertBookTrades(ResultActions resultActions, List<BookTrade> bookTrades) throws Exception {
     resultActions.andExpect(jsonPath("$.bookTrades", hasSize(bookTrades.size())));
     for (int i = 0; i < bookTrades.size(); i++) {
       String target = String.format("$.bookTrades[%d]", i);

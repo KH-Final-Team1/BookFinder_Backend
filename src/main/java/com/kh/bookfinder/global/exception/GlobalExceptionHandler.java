@@ -2,6 +2,7 @@ package com.kh.bookfinder.global.exception;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.CONFLICT;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -89,6 +91,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
         .message(UNAUTHORIZED)
         .details(details)
+        .build();
+
+    return ResponseEntity
+        .status(HttpStatus.FORBIDDEN)
+        .body(errorResponseBody);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ErrorResponseBody> handleAccessDenied(AccessDeniedException e) {
+    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
+        .message(FORBIDDEN)
+        .detail(e.getLocalizedMessage())
         .build();
 
     return ResponseEntity
