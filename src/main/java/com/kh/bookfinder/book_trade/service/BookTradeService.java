@@ -72,11 +72,9 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void saveBookTrade(String email, BookTradeRequestDto tradeDto) {
-    User user = userService.findUser(email);
+  public void saveBookTrade(User serviceUser, BookTradeRequestDto tradeDto) {
     Book book = bookService.findApprovedBook(tradeDto.getIsbn());
-    BookTrade bookTrade = tradeDto.toEntity(book);
-    bookTrade.setUser(user);
+    BookTrade bookTrade = tradeDto.toEntity(serviceUser, book);
     bookTradeRepository.save(bookTrade);
   }
 
