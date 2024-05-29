@@ -59,7 +59,11 @@ public class BookTradeController {
 
   @GetMapping("/{tradeId}")
   public ResponseEntity<BookTradeDetailResponseDto> getBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
-    BookTrade bookTrade = bookTradeService.getBookTrade(tradeId);
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
+
+    BookTrade bookTrade = bookTradeService.getBookTrade(serviceUser, tradeId);
     return ResponseEntity.ok().body(bookTrade.toResponse(BookTradeDetailResponseDto.class));
   }
 
