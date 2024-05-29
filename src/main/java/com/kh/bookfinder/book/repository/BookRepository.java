@@ -4,6 +4,8 @@ import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,9 +22,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
   List<Book> findByAuthorsContainingAndApprovalStatus(String keyword, ApprovalStatus approvalStatus);
 
-  List<Book> findByNameContaining(String keyword);
+  Page<Book> findByNameContainingAndApprovalStatusIn(String keyword, List<ApprovalStatus> approvalStatuses,
+      Pageable pageable);
 
-  List<Book> findByAuthorsContaining(String keyword);
+  Page<Book> findByAuthorsContainingAndApprovalStatusIn(String keyword, List<ApprovalStatus> approvalStatuses,
+      Pageable pageable);
 
-  List<Book> findByPublisherContaining(String keyword);
+  Page<Book> findByPublisherContainingAndApprovalStatusIn(String keyword, List<ApprovalStatus> approvalStatuses,
+      Pageable pageable);
 }
