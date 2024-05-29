@@ -1,5 +1,6 @@
 package com.kh.bookfinder.helper;
 
+import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
 
 public class MockBook {
@@ -13,6 +14,7 @@ public class MockBook {
         .publicationYear(2024)
         .description("test book description")
         .imageUrl("test book image url")
+        .approvalStatus(ApprovalStatus.APPROVE)
         .build();
   }
 }

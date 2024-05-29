@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
@@ -32,6 +33,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
         .message(BAD_REQUEST)
         .details(extractDetailsForField(ex))
+        .build();
+
+    return ResponseEntity.badRequest()
+        .body(errorResponseBody);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
+      HttpStatusCode status, WebRequest request) {
+    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
+        .message(BAD_REQUEST)
+        .detail(ex.getLocalizedMessage())
         .build();
 
     return ResponseEntity.badRequest()

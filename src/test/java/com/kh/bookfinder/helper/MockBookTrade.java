@@ -1,6 +1,7 @@
 package com.kh.bookfinder.helper;
 
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.entity.TradeType;
@@ -16,6 +17,17 @@ public class MockBookTrade {
 
   public static BookTrade getMockBookTrade() {
     return getMockBookTradeList(1).get(0);
+  }
+
+  public static BookTrade buildOnRequest(BookTradeRequestDto requestDto) {
+    return BookTrade.builder()
+        .tradeType(requestDto.getTradeType())
+        .rentalCost(requestDto.getRentalCost())
+        .limitedDate(requestDto.getLimitedDate())
+        .content(requestDto.getContent())
+        .latitude(requestDto.getLatitude())
+        .longitude(requestDto.getLongitude())
+        .build();
   }
 
   public static List<BookTrade> getMockBookTradeList(int count) {

@@ -69,11 +69,11 @@ public class BookTradeController {
 
   @PostMapping
   public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
 
-    bookTradeService.saveBookTrade(email, tradeDto);
+    bookTradeService.saveBookTrade(serviceUser, tradeDto);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
