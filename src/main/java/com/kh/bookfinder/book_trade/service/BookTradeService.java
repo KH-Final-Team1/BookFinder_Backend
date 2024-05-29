@@ -9,10 +9,12 @@ import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.exception.UnauthorizedException;
 import com.kh.bookfinder.user.entity.User;
+import com.kh.bookfinder.user.entity.UserRole;
 import com.kh.bookfinder.user.service.UserService;
-import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,16 +31,44 @@ public class BookTradeService {
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_TRADE));
   }
 
-  public BookTrade getBookTrade(Long tradeId) {
+  public BookTrade getBookTrade(User serviceUser, Long tradeId) {
     BookTrade bookTrade = findTrade(tradeId);
-    if (bookTrade.getDeleteYn().equals(Status.Y)) {
+    if (isAdmin(serviceUser)) {
+      return bookTrade;
+    }
+    if (isDeleted(bookTrade)) {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
+    if (!equalsBorough(serviceUser, bookTrade)) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
+    }
+
     return bookTrade;
   }
 
-  public ArrayList<BookTrade> getBookTrades(Long boroughId) {
+  public BookTrade getBookTrade(Long tradeId) {
+    BookTrade bookTrade = findTrade(tradeId);
+    if (isDeleted(bookTrade)) {
+      throw new ResourceNotFoundException(Message.DELETED_TRADE);
+    }
+
+    return bookTrade;
+  }
+
+  public List<BookTrade> getBookTradesByBoroughId(User serviceUser, Long boroughId) {
+    if (isAdmin(serviceUser)) {
+      return bookTradeRepository.findByBoroughId(boroughId);
+    }
+
+    if (serviceUser.getRole() == UserRole.ROLE_USER && !serviceUser.getBorough().getId().equals(boroughId)) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
+    }
+
     return bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N);
+  }
+
+  public List<BookTrade> getBookTradesByUserId(Long userId) {
+    return bookTradeRepository.findByUserId(userId);
   }
 
   @Transactional
@@ -85,5 +115,17 @@ public class BookTradeService {
     } else {
       throw new UnauthorizedException(Message.NOT_AUTHORIZED);
     }
+  }
+
+  private boolean isAdmin(User serviceUser) {
+    return serviceUser.getRole() == UserRole.ROLE_ADMIN;
+  }
+
+  private boolean isDeleted(BookTrade bookTrade) {
+    return bookTrade.getDeleteYn().equals(Status.Y);
+  }
+
+  private boolean equalsBorough(User serviceUser, BookTrade bookTrade) {
+    return serviceUser.getBorough().getId().equals(bookTrade.getBorough().getId());
   }
 }

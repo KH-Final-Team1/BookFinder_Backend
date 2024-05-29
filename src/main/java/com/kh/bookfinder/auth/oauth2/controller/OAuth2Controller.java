@@ -37,7 +37,7 @@ public class OAuth2Controller {
         .body(Map.of("message", Message.SIGNUP_SUCCESS));
   }
 
-  @GetMapping(value = "/accessToken", produces = "application/json;charset=UTF-8")
+  @GetMapping(value = "/token", produces = "application/json;charset=UTF-8")
   public ResponseEntity<AccessTokenDto> responseAccessTokenForOAuth2Login(
       @CookieValue(name = "accessToken") String accessToken) {
 

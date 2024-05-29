@@ -16,6 +16,7 @@ public class BookTradeListResponseDto {
   private Long id;
   private TradeType tradeType;
   private Status tradeYn;
+  private Status deleteYn;
   private Integer rentalCost;
   @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
   private Date createDate;
@@ -24,12 +25,14 @@ public class BookTradeListResponseDto {
   private Map<String, Object> borough = new HashMap<>();
 
   @Builder
-  public BookTradeListResponseDto(Long id, TradeType tradeType, Status tradeYn, Integer rentalCost, Date createDate,
+  public BookTradeListResponseDto(Long id, TradeType tradeType, Status tradeYn, Status deleteYn, Integer rentalCost,
+      Date createDate,
       String bookName, String bookAuthors, Integer bookPublicationYear, String bookImageUrl,
       String userNickname,
       String boroughName) {
     this.id = id;
     this.tradeType = tradeType;
+    this.deleteYn = deleteYn;
     this.tradeYn = tradeYn;
     this.rentalCost = rentalCost;
     this.createDate = createDate;

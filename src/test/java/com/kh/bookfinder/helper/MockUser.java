@@ -1,4 +1,4 @@
-package com.kh.bookfinder.user.helper;
+package com.kh.bookfinder.helper;
 
 import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.user.entity.User;

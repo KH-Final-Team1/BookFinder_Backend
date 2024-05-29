@@ -1,8 +1,12 @@
 package com.kh.bookfinder.user.controller;
 
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
+import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
+import com.kh.bookfinder.book_trade.service.BookTradeService;
 import com.kh.bookfinder.user.dto.MyInfoResponseDto;
-import com.kh.bookfinder.user.service.UserService;
+import com.kh.bookfinder.user.entity.User;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,16 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ServiceUserController {
 
-  private final UserService userService;
+  private final BookTradeService bookTradeService;
 
   @GetMapping(value = "/my-info", produces = "application/json;charset=UTF-8")
   public ResponseEntity<MyInfoResponseDto> getMyInfo() {
     SecurityUserDetails principal = (SecurityUserDetails)
         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    String email = principal.getUsername();
+    User serviceUser = principal.getServiceUser();
 
-    MyInfoResponseDto response = userService.getUserWithBookTrades(email);
+    List<BookTradeListResponseDto> bookTrades = bookTradeService.getBookTradesByUserId(serviceUser.getId())
+        .stream()
+        .map(x -> x.toResponse(BookTradeListResponseDto.class))
+        .collect(Collectors.toList());
 
-    return ResponseEntity.ok(response);
+    MyInfoResponseDto responseDto = serviceUser.toMyInfoResponse(bookTrades);
+
+    return ResponseEntity.ok(responseDto);
   }
 }

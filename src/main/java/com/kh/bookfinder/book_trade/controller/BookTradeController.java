@@ -10,8 +10,8 @@ import com.kh.bookfinder.book_trade.service.BookTradeService;
 import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
+import com.kh.bookfinder.user.entity.User;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,18 +43,27 @@ public class BookTradeController {
     if (!Borough.isValid(boroughId)) {
       throw new InvalidFieldException("boroughId", Message.INVALID_BOROUGH);
     }
-    ArrayList<BookTrade> bookTradeList = bookTradeService.getBookTrades(boroughId);
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
 
-    List<BookTradeListResponseDto> response = bookTradeList.stream().map(
-        x -> x.toResponse(BookTradeListResponseDto.class)
-    ).collect(Collectors.toList());
+    List<BookTrade> bookTradeList = bookTradeService.getBookTradesByBoroughId(serviceUser, boroughId);
+
+    List<BookTradeListResponseDto> response = bookTradeList
+        .stream()
+        .map(x -> x.toResponse(BookTradeListResponseDto.class))
+        .collect(Collectors.toList());
 
     return ResponseEntity.ok().body(response);
   }
 
   @GetMapping("/{tradeId}")
   public ResponseEntity<BookTradeDetailResponseDto> getBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
-    BookTrade bookTrade = bookTradeService.getBookTrade(tradeId);
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
+
+    BookTrade bookTrade = bookTradeService.getBookTrade(serviceUser, tradeId);
     return ResponseEntity.ok().body(bookTrade.toResponse(BookTradeDetailResponseDto.class));
   }
 
