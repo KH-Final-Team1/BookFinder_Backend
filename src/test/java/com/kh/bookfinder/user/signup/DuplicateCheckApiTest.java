@@ -12,9 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.helper.MockUser;
 import com.kh.bookfinder.user.dto.DuplicateCheckDto;
 import com.kh.bookfinder.user.entity.User;
-import com.kh.bookfinder.user.helper.MockUser;
 import com.kh.bookfinder.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Optional;

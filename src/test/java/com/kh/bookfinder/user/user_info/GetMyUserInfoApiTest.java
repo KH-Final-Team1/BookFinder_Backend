@@ -13,12 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
-import com.kh.bookfinder.book_trade.helper.MockBookTrade;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.helper.MockBookTrade;
+import com.kh.bookfinder.helper.MockUser;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
-import com.kh.bookfinder.user.helper.MockUser;
 import com.kh.bookfinder.user.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;

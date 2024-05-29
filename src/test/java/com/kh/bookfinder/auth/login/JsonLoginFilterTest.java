@@ -11,8 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.login.dto.LoginDto;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.helper.MockUser;
 import com.kh.bookfinder.user.entity.User;
-import com.kh.bookfinder.user.helper.MockUser;
 import com.kh.bookfinder.user.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
