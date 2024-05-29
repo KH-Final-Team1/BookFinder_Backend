@@ -1,4 +1,4 @@
-package com.kh.bookfinder.book_trade.api;
+package com.kh.bookfinder.book_trade;
 
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
