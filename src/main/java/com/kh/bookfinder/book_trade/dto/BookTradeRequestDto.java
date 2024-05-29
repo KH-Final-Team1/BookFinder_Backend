@@ -4,38 +4,40 @@ import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.TradeType;
 import com.kh.bookfinder.global.constants.Message;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import com.kh.bookfinder.user.entity.User;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
+import lombok.Builder;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 @Data
+@Builder
 public class BookTradeRequestDto {
 
-  @Min(value = 1000000000000L, message = Message.INVALID_ISBN_DIGITS)
-  @Max(value = 9999999999999L, message = Message.INVALID_ISBN_DIGITS)
+  @Range(min = 1000000000000L, max = 9999999999999L, message = Message.INVALID_ISBN_DIGITS)
   private Long isbn;
   private TradeType tradeType;
-  @NotNull(message = Message.COST_REQUIRED)
-  @Min(value = 0, message = Message.INVALID_COST)
-  @Max(value = 100000, message = Message.INVALID_COST)
+  @NotNull(message = Message.INVALID_COST)
+  @Range(max = 100000L, message = Message.INVALID_COST)
   private Integer rentalCost;
   private Date limitedDate;
   private String content;
   private BigDecimal latitude;
   private BigDecimal longitude;
 
-  public BookTrade toEntity(Book book) {
+  public BookTrade toEntity(User user, Book book) {
     return BookTrade.builder()
-        .book(book)
         .tradeType(this.tradeType)
         .rentalCost(this.rentalCost)
         .limitedDate(this.limitedDate)
         .content(this.content)
         .latitude(this.latitude)
         .longitude(this.longitude)
+
+        .user(user)
+        .book(book)
         .build();
   }
 }

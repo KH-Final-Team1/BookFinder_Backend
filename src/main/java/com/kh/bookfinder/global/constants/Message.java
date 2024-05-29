@@ -38,7 +38,6 @@ public interface Message {
   String INVALID_ISBN_DIGITS = "ISBN 번호는 13자리의 숫자만 입력 가능합니다.";
   String UNSAVED_ISBN = "유효하지 않은 ISBN 번호 입니다.";
   String INVALID_COST = "금액은 0부터 100000까지의 정수값만 입력 가능합니다.";
-  String COST_REQUIRED = "금액은 빈값일 수 없습니다.";
   String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
   String NOT_FOUND_TRADE = "거래 번호를 찾을 수 없습니다.";
   String DELETED_TRADE = "삭제된 게시물 입니다.";
