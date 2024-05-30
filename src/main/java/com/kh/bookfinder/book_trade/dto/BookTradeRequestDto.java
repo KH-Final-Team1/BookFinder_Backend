@@ -37,6 +37,7 @@ public class BookTradeRequestDto {
         .longitude(this.longitude)
 
         .user(user)
+        .borough(user.getBorough())
         .book(book)
         .build();
   }
