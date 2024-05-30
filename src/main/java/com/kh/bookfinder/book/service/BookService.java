@@ -8,9 +8,11 @@ import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,8 @@ public class BookService {
   }
 
   public List<Book> getBooks(SearchDto requestParam) {
+    org.springframework.data.domain.Pageable pageable = PageRequest.of(requestParam.getPage(), requestParam.getSize());
+
     List<Book> books;
     if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
       if (requestParam.getFilter().equals("name")) {
@@ -45,11 +49,14 @@ public class BookService {
       }
     } else {
       if (requestParam.getFilter().equals("name")) {
-        books = bookRepository.findByNameContaining(requestParam.getKeyword());
+        books = bookRepository.findByNameContainingAndApprovalStatusIn(requestParam.getKeyword(),
+            Arrays.asList(ApprovalStatus.WAIT, ApprovalStatus.REJECT), pageable).getContent();
       } else if (requestParam.getFilter().equals("authors")) {
-        books = bookRepository.findByAuthorsContaining(requestParam.getKeyword());
+        books = bookRepository.findByAuthorsContainingAndApprovalStatusIn(requestParam.getKeyword(),
+            Arrays.asList(ApprovalStatus.WAIT, ApprovalStatus.REJECT), pageable).getContent();
       } else {
-        books = bookRepository.findByPublisherContaining(requestParam.getKeyword());
+        books = bookRepository.findByPublisherContainingAndApprovalStatusIn(requestParam.getKeyword(),
+            Arrays.asList(ApprovalStatus.WAIT, ApprovalStatus.REJECT), pageable).getContent();
       }
     }
 
