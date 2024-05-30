@@ -65,14 +65,14 @@ public class UserService {
     User socialGuest = userRepository.findByEmail(email).orElseThrow(
         () -> new ResourceNotFoundException(Message.NOT_FOUND_USER)
     );
-    Borough borough = this.boroughRepository
-        .findByName(socialGuest.extractBoroughName())
-        .orElseThrow(() -> new InvalidFieldException("address", Message.INVALID_ADDRESS));
-
     socialGuest.setNickname(signUpDto.getNickname());
     socialGuest.setAddress(signUpDto.getAddress());
     socialGuest.setPhone(signUpDto.getPhone());
     socialGuest.setRole(UserRole.ROLE_USER);
+
+    Borough borough = this.boroughRepository
+        .findByName(socialGuest.extractBoroughName())
+        .orElseThrow(() -> new InvalidFieldException("address", Message.INVALID_ADDRESS));
     socialGuest.setBorough(borough);
   }
 
