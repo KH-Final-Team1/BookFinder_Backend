@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +32,13 @@ public class BookService {
   }
 
   public List<Book> getBooks(SearchDto requestParam) {
-    if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
-      return bookRepository
-          .findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(), requestParam.getKeyword());
+    org.springframework.data.domain.Pageable pageable = PageRequest.of(requestParam.getPage(), requestParam.getSize());
+    if (requestParam.getApprovalStatus() == ApprovalStatus.WAIT) {
+      return bookRepository.findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
+          requestParam.getKeyword(), pageable);
     }
-
-    return bookRepository
-        .findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(), requestParam.getKeyword());
+    return bookRepository.findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
+        requestParam.getKeyword());
   }
 
   @Transactional
