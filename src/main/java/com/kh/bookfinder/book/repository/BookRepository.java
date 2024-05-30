@@ -14,15 +14,35 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
   Optional<Book> findByIsbnAndApprovalStatus(Long isbn, ApprovalStatus approvalStatus);
 
-  List<Book> findByPublisherContainingAndApprovalStatus(String keyword, ApprovalStatus approvalStatus);
-
   List<Book> findByNameContainingAndApprovalStatus(String keyword, ApprovalStatus approvalStatus);
 
   List<Book> findByAuthorsContainingAndApprovalStatus(String keyword, ApprovalStatus approvalStatus);
 
-  List<Book> findByNameContaining(String keyword);
+  List<Book> findByPublisherContainingAndApprovalStatus(String keyword, ApprovalStatus approvalStatus);
 
-  List<Book> findByAuthorsContaining(String keyword);
+  default List<Book> findApprovedBooksByFilterAndKeywordContaining(String filter, String keyword) {
+    if (filter.equals("name")) {
+      return findByNameContainingAndApprovalStatus(keyword, ApprovalStatus.APPROVE);
+    }
+    if (filter.equals("authors")) {
+      return findByAuthorsContainingAndApprovalStatus(keyword, ApprovalStatus.APPROVE);
+    }
+    return findByPublisherContainingAndApprovalStatus(keyword, ApprovalStatus.APPROVE);
+  }
 
-  List<Book> findByPublisherContaining(String keyword);
+  List<Book> findByNameContainingAndApprovalStatusNot(String keyword, ApprovalStatus approvalStatus);
+
+  List<Book> findByAuthorsContainingAndApprovalStatusNot(String keyword, ApprovalStatus approvalStatus);
+
+  List<Book> findByPublisherContainingAndApprovalStatusNot(String keyword, ApprovalStatus approvalStatus);
+
+  default List<Book> findNotApprovedBooksByFilterAndKeywordContaining(String filter, String keyword) {
+    if (filter.equals("name")) {
+      return findByNameContainingAndApprovalStatusNot(keyword, ApprovalStatus.APPROVE);
+    }
+    if (filter.equals("authors")) {
+      return findByAuthorsContainingAndApprovalStatusNot(keyword, ApprovalStatus.APPROVE);
+    }
+    return findByPublisherContainingAndApprovalStatusNot(keyword, ApprovalStatus.APPROVE);
+  }
 }

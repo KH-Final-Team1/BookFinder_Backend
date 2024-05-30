@@ -31,32 +31,13 @@ public class BookService {
   }
 
   public List<Book> getBooks(SearchDto requestParam) {
-    List<Book> books;
     if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
-      if (requestParam.getFilter().equals("name")) {
-        books = bookRepository.findByNameContainingAndApprovalStatus(requestParam.getKeyword(),
-            requestParam.getApprovalStatus());
-      } else if (requestParam.getFilter().equals("authors")) {
-        books = bookRepository.findByAuthorsContainingAndApprovalStatus(requestParam.getKeyword(),
-            requestParam.getApprovalStatus());
-      } else {
-        books = bookRepository.findByPublisherContainingAndApprovalStatus(requestParam.getKeyword(),
-            requestParam.getApprovalStatus());
-      }
-    } else {
-      if (requestParam.getFilter().equals("name")) {
-        books = bookRepository.findByNameContaining(requestParam.getKeyword());
-      } else if (requestParam.getFilter().equals("authors")) {
-        books = bookRepository.findByAuthorsContaining(requestParam.getKeyword());
-      } else {
-        books = bookRepository.findByPublisherContaining(requestParam.getKeyword());
-      }
+      return bookRepository
+          .findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(), requestParam.getKeyword());
     }
 
-    if (books.isEmpty()) {
-      throw new ResourceNotFoundException(Message.NOT_FOUND_BOOK);
-    }
-    return books;
+    return bookRepository
+        .findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(), requestParam.getKeyword());
   }
 
   @Transactional
