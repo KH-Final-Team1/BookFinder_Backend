@@ -8,12 +8,16 @@ import com.kh.bookfinder.user.entity.User;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookTradeRequestDto {
 
   @Range(min = 1000000000000L, max = 9999999999999L, message = Message.INVALID_ISBN_DIGITS)
