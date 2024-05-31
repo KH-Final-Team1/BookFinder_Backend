@@ -27,6 +27,8 @@ import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
 import com.kh.bookfinder.user.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -183,6 +185,29 @@ public class CreateBookTradeApiTest {
     // And: Response Body로 message와 detail을 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
     resultActions.andExpect(jsonPath("$.details.rentalCost", is(Message.INVALID_COST)));
+  }
+
+  @Test
+  @DisplayName("유효하지 않은 limitedDate가 주어졌을 때")
+  public void fail_onInvalidBookTradeRequestDto_WithLimitedDate() throws Exception {
+    // Given: 권한이 "ROLE_ADMIN"인 User가 주어진다.
+    User mockUser = MockUser.getMockUser();
+    mockUser.setRole(UserRole.ROLE_ADMIN);
+    // And: 유효하지 않은 BookTradeRequestDto가 주어진다. (limitedDate)
+    BookTradeRequestDto invalidRequestDto = RequestDto.baseBookTradeRequestDto();
+    invalidRequestDto.setLimitedDate(Date.valueOf(LocalDate.now().minusDays(1)));
+
+    // Mocking: JwtAuthenticationFilter Mocking
+    mockJwtAuthenticationFilter(mockUser);
+
+    // When: Create BookTrade API를 호출한다.
+    ResultActions resultActions = callApiWithAuthorization(invalidRequestDto);
+
+    // Then: Status는 Bad Request이다.
+    resultActions.andExpect(status().isBadRequest());
+    // And: Response Body로 message와 detail을 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.limitedDate", is(Message.INVALID_LIMITED_DATE)));
   }
 
   @Test

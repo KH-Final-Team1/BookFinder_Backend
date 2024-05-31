@@ -149,6 +149,39 @@ public class UpdateBookTradeApiTest {
   }
 
   @Test
+  @DisplayName("유효하지 않은 limitedDate가 주어졌을 때")
+  public void fail_onInvalidBookTradeRequestDto_withLimitedDate() throws Exception {
+    // Given: 권한이 "ROLE_USER"인 User가 주어진다.
+    User mockUser = MockUser.getMockUser();
+    mockUser.setRole(UserRole.ROLE_USER);
+    // And: ApprovalStatus가 Approve인 Book이 주어진다.
+    Book mockBook = MockBook.getMockBook();
+    mockBook.setApprovalStatus(ApprovalStatus.APPROVE);
+    // And: mockBookTrade가 주어진다.
+    BookTrade mockBookTrade = MockBookTrade.getMockBookTrade();
+    mockBookTrade.setUser(mockUser);
+    mockBookTrade.setBook(mockBook);
+
+    // And: 유효하지 않은 BookTradeRequestDto가 주어진다. (rentalCost)
+    BookTradeRequestDto invalidRequestDto = RequestDto.updateBookTradeRequestDto();
+    invalidRequestDto.setRentalCost(-123);
+
+    // Mocking: JwtAuthenticationFilter Mocking
+    mockJwtAuthenticationFilter(mockUser);
+    // And: BookTradeRepository가 mockBookTrade를 반환
+    when(bookTradeRepository.findById(mockBookTrade.getId())).thenReturn(Optional.of(mockBookTrade));
+
+    // When: Update BookTrade API를 호출한다.
+    ResultActions resultActions = callApiWithAuth(invalidRequestDto, mockBookTrade.getId());
+
+    // Then: Status는 Bad Request이다.
+    resultActions.andExpect(status().isBadRequest());
+    // And: Response Body로 messag와 details를 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.rentalCost", is(Message.INVALID_COST)));
+  }
+
+  @Test
   @DisplayName("유효하지 않은 TradeId가 주어졌을 때")
   public void fail_onInvalidTradeId() throws Exception {
     // Given: 권한이 "ROLE_USER"인 User가 주어진다.
