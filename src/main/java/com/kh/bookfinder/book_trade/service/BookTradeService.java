@@ -40,7 +40,7 @@ public class BookTradeService {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
     if (!serviceUser.getBorough().equals(bookTrade.getBorough())) {
-      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_READ);
     }
 
     return bookTrade;
@@ -61,7 +61,7 @@ public class BookTradeService {
     }
 
     if (serviceUser.getRole() == UserRole.ROLE_USER && !serviceUser.getBorough().getId().equals(boroughId)) {
-      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_READ);
     }
 
     return bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N);

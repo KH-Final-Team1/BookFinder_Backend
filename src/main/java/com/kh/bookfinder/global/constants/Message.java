@@ -45,7 +45,7 @@ public interface Message {
   String SUCCESS_CHANGE = "거래 상태가 변경되었습니다.";
   String SUCCESS_UPDATE = "수정을 성공했습니다.";
   String SUCCESS_DELETE = "삭제를 성공했습니다.";
-  String FORBIDDEN_BOOK_TRADES = "자신의 자치구 게시판/게시글만 조회할 수 있습니다.";
+  String FORBIDDEN_BOOK_TRADES_READ = "자신의 자치구 게시판/게시글만 조회할 수 있습니다.";
   String FORBIDDEN_BOOK_TRADES_UPDATE = "자신의 게시글만 수정/삭제할 수 있습니다.";
 
   String INVALID_FILTER = "filter는 name이나 authors나 publisher만 가능합니다.";
