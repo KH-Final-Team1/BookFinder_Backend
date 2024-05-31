@@ -39,7 +39,7 @@ public class BookTradeService {
     if (isDeleted(bookTrade)) {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
-    if (!equalsBorough(serviceUser, bookTrade)) {
+    if (!serviceUser.getBorough().equals(bookTrade.getBorough())) {
       throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
     }
 
@@ -79,25 +79,24 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void updateBookTrade(String email, Long tradeId, BookTradeRequestDto tradeDto) {
-    User user = userService.findUser(email);
+  public void updateBookTrade(User user, Long tradeId, BookTradeRequestDto tradeDto) {
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
-      bookTrade.setRentalCost(tradeDto.getRentalCost());
-      bookTrade.setLimitedDate(tradeDto.getLimitedDate());
-      bookTrade.setContent(tradeDto.getContent());
-      bookTrade.setLatitude(tradeDto.getLatitude());
-      bookTrade.setLongitude(tradeDto.getLongitude());
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
+    if (!user.equals(bookTrade.getUser())) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_UPDATE);
     }
+
+    bookTrade.setRentalCost(tradeDto.getRentalCost());
+    bookTrade.setLimitedDate(tradeDto.getLimitedDate());
+    bookTrade.setContent(tradeDto.getContent());
+    bookTrade.setLatitude(tradeDto.getLatitude());
+    bookTrade.setLongitude(tradeDto.getLongitude());
   }
 
   @Transactional
   public void deleteTrade(String email, Long tradeId) {
     User user = userService.findUser(email);
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
+    if (user.equals(bookTrade.getUser())) {
       bookTrade.setDeleteYn(Status.Y);
     } else {
       throw new UnauthorizedException(Message.NOT_AUTHORIZED);
@@ -108,7 +107,7 @@ public class BookTradeService {
   public void changeTrade(String email, Long tradeId, Status tradeYn) {
     User user = userService.findUser(email);
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
+    if (user.equals(bookTrade.getUser())) {
       bookTrade.setTradeYn(tradeYn);
     } else {
       throw new UnauthorizedException(Message.NOT_AUTHORIZED);
@@ -123,7 +122,4 @@ public class BookTradeService {
     return bookTrade.getDeleteYn().equals(Status.Y);
   }
 
-  private boolean equalsBorough(User serviceUser, BookTrade bookTrade) {
-    return serviceUser.getBorough().getId().equals(bookTrade.getBorough().getId());
-  }
 }

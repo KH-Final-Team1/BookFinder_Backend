@@ -80,10 +80,11 @@ public class BookTradeController {
   @PutMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody @Valid BookTradeRequestDto tradeDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.updateBookTrade(email, tradeId, tradeDto);
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
+
+    bookTradeService.updateBookTrade(serviceUser, tradeId, tradeDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 
