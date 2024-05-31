@@ -33,12 +33,12 @@ public class BookService {
 
   public List<Book> getBooks(SearchDto requestParam) {
     org.springframework.data.domain.Pageable pageable = PageRequest.of(requestParam.getPage(), requestParam.getSize());
-    if (requestParam.getApprovalStatus() == ApprovalStatus.WAIT) {
-      return bookRepository.findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
-          requestParam.getKeyword(), pageable);
+    if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
+      return bookRepository.findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
+          requestParam.getKeyword());
     }
-    return bookRepository.findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
-        requestParam.getKeyword());
+    return bookRepository.findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
+        requestParam.getKeyword(), pageable);
   }
 
   @Transactional
