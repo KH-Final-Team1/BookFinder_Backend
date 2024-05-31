@@ -96,7 +96,7 @@ public class CreateBookTradeApiTest {
     Book mockBook = MockBook.getMockBook();
     mockBook.setApprovalStatus(ApprovalStatus.APPROVE);
     // And: 유효한 BookTradeRequestDto가 주어진다.
-    BookTradeRequestDto requestDto = RequestDto.getBaseBookTradeRequestDto();
+    BookTradeRequestDto requestDto = RequestDto.baseBookTradeRequestDto();
     // And: mockBookTrade가 주어진다.
     BookTrade mockBookTrade = MockBookTrade.buildOnRequest(requestDto);
     mockBookTrade.setBook(mockBook);
@@ -123,8 +123,8 @@ public class CreateBookTradeApiTest {
     // Given: 권한이 "ROLE_ADMIN"인 User가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
-    // And: 유효하지 않은 BookTradeRequestDto가 주어진다.
-    BookTradeRequestDto invalidRequestDto = RequestDto.getBaseBookTradeRequestDto();
+    // And: 유효하지 않은 BookTradeRequestDto가 주어진다. (isbn)
+    BookTradeRequestDto invalidRequestDto = RequestDto.baseBookTradeRequestDto();
     invalidRequestDto.setIsbn(1L);
 
     // Mocking: JwtAuthenticationFilter Mocking
@@ -147,7 +147,7 @@ public class CreateBookTradeApiTest {
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
     // And: 유효한 BookTradeRequestDto가 주어진다.
-    BookTradeRequestDto validRequestDto = RequestDto.getBaseBookTradeRequestDto();
+    BookTradeRequestDto validRequestDto = RequestDto.baseBookTradeRequestDto();
 
     // Mocking: JwtAuthenticationFilter Mocking
     mockJwtAuthenticationFilter(mockUser);
@@ -168,8 +168,8 @@ public class CreateBookTradeApiTest {
     // Given: 권한이 "ROLE_ADMIN"인 User가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
-    // And: 유효하지 않은 BookTradeRequestDto가 주어진다.
-    BookTradeRequestDto invalidRequestDto = RequestDto.getBaseBookTradeRequestDto();
+    // And: 유효하지 않은 BookTradeRequestDto가 주어진다. (rentalCost)
+    BookTradeRequestDto invalidRequestDto = RequestDto.baseBookTradeRequestDto();
     invalidRequestDto.setRentalCost(null);
 
     // Mocking: JwtAuthenticationFilter Mocking
@@ -189,7 +189,7 @@ public class CreateBookTradeApiTest {
   @DisplayName("권한 없이 요청했을 때")
   public void fail_onNoAuthorization() throws Exception {
     // And: 유효한 BookTradeRequestDto가 주어진다.
-    BookTradeRequestDto invalidRequestDto = RequestDto.getBaseBookTradeRequestDto();
+    BookTradeRequestDto invalidRequestDto = RequestDto.baseBookTradeRequestDto();
 
     // Mocking: JwtService가 JwtException을 발생
     when(jwtService.validateToken(any())).thenThrow(new JwtException(Message.NOT_LOGIN));
