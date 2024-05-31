@@ -104,14 +104,12 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void changeTrade(String email, Long tradeId, Status tradeYn) {
-    User user = userService.findUser(email);
+  public void changeTrade(User user, Long tradeId, Status tradeYn) {
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (user.equals(bookTrade.getUser())) {
-      bookTrade.setTradeYn(tradeYn);
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
+    if (!user.equals(bookTrade.getUser())) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_UPDATE);
     }
+    bookTrade.setTradeYn(tradeYn);
   }
 
   private boolean isAdmin(User serviceUser) {

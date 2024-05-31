@@ -98,12 +98,13 @@ public class BookTradeController {
   }
 
   @PatchMapping("/{tradeId}")
-  public ResponseEntity<Map<String, String>> changeTrade(@PathVariable(name = "tradeId") Long tradeId,
-      @RequestBody BookTradeYnDto tradeYn) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.changeTrade(email, tradeId, tradeYn.getTradeYn());
+  public ResponseEntity<Map<String, String>> changeTradeStatus(@PathVariable(name = "tradeId") Long tradeId,
+      @RequestBody @Valid BookTradeYnDto tradeYn) {
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
+
+    bookTradeService.changeTrade(serviceUser, tradeId, tradeYn.getTradeYn());
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_CHANGE));
   }
 }
