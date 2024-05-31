@@ -165,6 +165,33 @@ public class CreateBookTradeApiTest {
   }
 
   @Test
+  @DisplayName("유효한 Isbn에 해당하는 Book의 상태가 Approve가 아닐 때")
+  public void fail_onNotApporvedBook_WithIsbn() throws Exception {
+    // Given: 권한이 "ROLE_ADMIN"인 User가 주어진다.
+    User mockUser = MockUser.getMockUser();
+    mockUser.setRole(UserRole.ROLE_ADMIN);
+    // And: ApprovalStatus가 "APPROVE"가 아닌 책이 주어진다.
+    Book mockBook = MockBook.getMockBook();
+    mockBook.setApprovalStatus(ApprovalStatus.WAIT);
+    // And: 유효한 BookTradeRequestDto가 주어진다.
+    BookTradeRequestDto validRequestDto = RequestDto.baseBookTradeRequestDto();
+
+    // Mocking: JwtAuthenticationFilter Mocking
+    mockJwtAuthenticationFilter(mockUser);
+    // And: BookRepository가 mockBook을 반환
+    when(bookRepository.findByIsbn(validRequestDto.getIsbn())).thenReturn(Optional.of(mockBook));
+
+    // When: Create BookTrade API를 호출한다.
+    ResultActions resultActions = callApiWithAuthorization(validRequestDto);
+
+    // Then: Status는 Not Found이다.
+    resultActions.andExpect(status().isNotFound());
+    // And: Response Body로 message와 detail을 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(NOT_FOUND.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_FOUND_BOOK)));
+  }
+
+  @Test
   @DisplayName("유효하지 않은 rentalCost가 주어졌을 때")
   public void fail_onInvalidBookTradeRequestDto_WithRentalCost() throws Exception {
     // Given: 권한이 "ROLE_ADMIN"인 User가 주어진다.
