@@ -75,8 +75,8 @@ public class UpdateBookTradeApiTest {
     when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
   }
 
-  private ResultActions callApiWithAuth(BookTradeRequestDto validRequestDto, Long bookTradeId) throws Exception {
-    String requestBody = objectMapper.writeValueAsString(validRequestDto);
+  private ResultActions callApiWithAuth(BookTradeRequestDto requestDto, Long bookTradeId) throws Exception {
+    String requestBody = objectMapper.writeValueAsString(requestDto);
     return mockMvc.perform(
         put("/api/v1/trades/{tradeId}", bookTradeId)
             .header("Authorization", "Bearer " + VALID_ACCESS_TOKEN)
