@@ -7,10 +7,8 @@ import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
-import com.kh.bookfinder.global.exception.UnauthorizedException;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
-import com.kh.bookfinder.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -23,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookTradeService {
 
   private final BookTradeRepository bookTradeRepository;
-  private final UserService userService;
   private final BookService bookService;
 
   public BookTrade findTrade(Long tradeId) {
@@ -93,14 +90,13 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void deleteTrade(String email, Long tradeId) {
-    User user = userService.findUser(email);
+  public void deleteTrade(User user, Long tradeId) {
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (user.equals(bookTrade.getUser())) {
+    if (user.isAdmin() || user.equals(bookTrade.getUser())) {
       bookTrade.setDeleteYn(Status.Y);
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
+      return;
     }
+    throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_UPDATE);
   }
 
   @Transactional
