@@ -33,10 +33,10 @@ public class BookTradeService {
 
   public BookTrade getBookTrade(User serviceUser, Long tradeId) {
     BookTrade bookTrade = findTrade(tradeId);
-    if (isAdmin(serviceUser)) {
+    if (serviceUser.isAdmin()) {
       return bookTrade;
     }
-    if (isDeleted(bookTrade)) {
+    if (bookTrade.isDeleted()) {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
     if (!serviceUser.getBorough().equals(bookTrade.getBorough())) {
@@ -48,7 +48,7 @@ public class BookTradeService {
 
   public BookTrade getBookTrade(Long tradeId) {
     BookTrade bookTrade = findTrade(tradeId);
-    if (isDeleted(bookTrade)) {
+    if (bookTrade.isDeleted()) {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
 
@@ -56,7 +56,7 @@ public class BookTradeService {
   }
 
   public List<BookTrade> getBookTradesByBoroughId(User serviceUser, Long boroughId) {
-    if (isAdmin(serviceUser)) {
+    if (serviceUser.isAdmin()) {
       return bookTradeRepository.findByBoroughId(boroughId);
     }
 
@@ -111,13 +111,4 @@ public class BookTradeService {
     }
     bookTrade.setTradeYn(tradeYn);
   }
-
-  private boolean isAdmin(User serviceUser) {
-    return serviceUser.getRole() == UserRole.ROLE_ADMIN;
-  }
-
-  private boolean isDeleted(BookTrade bookTrade) {
-    return bookTrade.getDeleteYn().equals(Status.Y);
-  }
-
 }
