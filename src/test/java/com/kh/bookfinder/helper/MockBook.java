@@ -17,4 +17,10 @@ public class MockBook {
         .approvalStatus(ApprovalStatus.APPROVE)
         .build();
   }
+
+  public static Book getMockBook(ApprovalStatus status) {
+    Book result = getMockBook();
+    result.setApprovalStatus(status);
+    return result;
+  }
 }

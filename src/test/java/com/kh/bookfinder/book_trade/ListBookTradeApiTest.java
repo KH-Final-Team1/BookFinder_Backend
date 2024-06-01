@@ -228,7 +228,7 @@ public class ListBookTradeApiTest {
     resultActions.andExpect(status().isForbidden());
     // And: Response Body로 message와 detail을 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(FORBIDDEN.getMessage())));
-    resultActions.andExpect(jsonPath("$.detail", is(Message.FORBIDDEN_BOOK_TRADES)));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.FORBIDDEN_BOOK_TRADES_READ)));
   }
 
   @Test
