@@ -21,11 +21,11 @@ public class Book {
 
   @Id
   private Long isbn;
-  private int additionSymbol;
+  private Integer additionSymbol;
   private String name;
   private String authors;
   private String publisher;
-  private int publicationYear;
+  private Integer publicationYear;
   @Temporal(TemporalType.DATE)
   private LocalDate publicationDate;
   private String classNo;
