@@ -1,5 +1,7 @@
 package com.kh.bookfinder.helper;
 
+import com.kh.bookfinder.book.dto.BookSearchRequestDto;
+import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.TradeType;
 import java.math.BigDecimal;
@@ -28,6 +30,14 @@ public class RequestDto {
         .content("valid update test content, 업데이트 컨텐츠")
         .latitude(BigDecimal.valueOf(12.3))
         .longitude(BigDecimal.valueOf(23.4))
+        .build();
+  }
+
+  public static BookSearchRequestDto baseBookSearchRequestDto() {
+    return BookSearchRequestDto.builder()
+        .filter("name")
+        .keyword("test book name")
+        .approvalStatus(ApprovalStatus.APPROVE)
         .build();
   }
 }
