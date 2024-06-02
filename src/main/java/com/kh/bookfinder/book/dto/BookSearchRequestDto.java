@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchDto {
+public class BookSearchRequestDto {
 
   private String filter;
   @NotNull
