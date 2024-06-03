@@ -26,8 +26,6 @@ public class Book {
   private String authors;
   private String publisher;
   private int publicationYear;
-  @Temporal(TemporalType.DATE)
-  private LocalDate publicationDate;
   private String classNo;
   private String className;
   private String description;
