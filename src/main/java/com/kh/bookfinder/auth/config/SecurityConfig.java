@@ -24,6 +24,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,6 +67,9 @@ public class SecurityConfig {
         .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+    httpSecurity.headers(frame ->
+        frame.frameOptions(FrameOptionsConfig::sameOrigin));
+
     // Test에 대한 권한 설정
     httpSecurity
         .authorizeHttpRequests(authorize -> authorize
@@ -75,7 +79,9 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/test/v1/admin").hasRole("ADMIN"))
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/test/v1/user").hasAnyRole("ADMIN", "USER"));
+            .requestMatchers("/test/v1/user").hasAnyRole("ADMIN", "USER"))
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/h2-console/**").permitAll());
 
     // API들에 대한 권한 설정
     httpSecurity
