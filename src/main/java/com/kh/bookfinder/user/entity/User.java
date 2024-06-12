@@ -78,4 +78,8 @@ public class User {
     return this.email.split("@")[1].startsWith("kakaoUser") ||
         this.email.split("@")[1].startsWith("googleUser");
   }
+
+  public boolean isAdmin() {
+    return this.role.equals(UserRole.ROLE_ADMIN);
+  }
 }

@@ -32,7 +32,9 @@
 ## Users
 
 ### 회원 가입 API (SignUp API)
+
 **Request**
+
 ```
 POST {BASE_URL}/api/v1/signup
 
