@@ -66,7 +66,8 @@ public class CheckVerificationAuthCodeApiTest {
         .build();
   }
 
-  private ResultActions callApiWith(String requestBody) throws Exception {
+  private ResultActions callApiWith(CheckingVerificationDto checkingVerificationDto) throws Exception {
+    String requestBody = objectMapper.writeValueAsString(checkingVerificationDto);
     return mockMvc.perform(
         post("/api/v1/signup/verification-code")
             .content(requestBody)
@@ -84,15 +85,15 @@ public class CheckVerificationAuthCodeApiTest {
 
   @Test
   @DisplayName("유효한 authCode와 signingToken이 주어진 경우")
-  public void success_OnValidAuthCodeAndSigningToken() throws Exception {
+  public void success_onValidAuthCodeAndSigningToken() throws Exception {
     // Given: 유효한 CheckingVerificationDto가 주어진다.
     CheckingVerificationDto verificationDto = getBaseCheckingVerificationDto();
-    String requestBody = objectMapper.writeValueAsString(verificationDto);
-    // And: EmailAuthRepository가 mockEmailAuth를 반환하도록 mocking한다.
+
+    // Mocking: EmailAuthRepository가 mockEmailAuth를 반환
     when(emailAuthRepository.findByEmailAndAuthCode(anyString(), anyString())).thenReturn(Optional.of(mockEmailAuth));
 
     // When: Check Verification Auth Code API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(verificationDto);
 
     // Then: Status는 200 Ok이다.
     resultActions.andExpect(status().isOk());
@@ -102,14 +103,13 @@ public class CheckVerificationAuthCodeApiTest {
 
   @Test
   @DisplayName("유효하지 않은 authCode가 주어진 경우")
-  public void fail_OnInvalidCheckingVerificationDto_WithAuthCode() throws Exception {
+  public void fail_onInvalidCheckingVerificationDto_withAuthCode() throws Exception {
     // Given: 유효하지 않은 CheckingVerificationDto가 주어진다.
     CheckingVerificationDto invalidCheckingVerificationDto = getBaseCheckingVerificationDto();
     invalidCheckingVerificationDto.setAuthCode("invalidAuthCode");
-    String requestBody = objectMapper.writeValueAsString(invalidCheckingVerificationDto);
 
     // When: Check Verification Auth Code API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(invalidCheckingVerificationDto);
 
     // Then: Status는 400 Bad Request이다.
     resultActions.andExpect(status().isBadRequest());
@@ -120,14 +120,13 @@ public class CheckVerificationAuthCodeApiTest {
 
   @Test
   @DisplayName("유효하지 않은 signingToken이 주어진 경우")
-  public void fail_OnInvalidCheckingVerificationDto_WithSigningToken() throws Exception {
+  public void fail_onInvalidCheckingVerificationDto_withSigningToken() throws Exception {
     // Given: 유효하지 않은 CheckingVerificationDto가 주어진다.
     CheckingVerificationDto invalidCheckingVerificationDto = getBaseCheckingVerificationDto();
     invalidCheckingVerificationDto.setSigningToken("invalidSigningToken");
-    String requestBody = objectMapper.writeValueAsString(invalidCheckingVerificationDto);
 
     // When: Check Verification Auth Code API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(invalidCheckingVerificationDto);
 
     // Then: Status는 400 Bad Request이다.
     resultActions.andExpect(status().isBadRequest());
@@ -138,13 +137,12 @@ public class CheckVerificationAuthCodeApiTest {
 
   @Test
   @DisplayName("signingToken의 email과 authCode가 db에 없는 경우")
-  public void fail_OnNotExistInDB_ForEmailAuth() throws Exception {
+  public void fail_onNotExistInDB_forEmailAuth() throws Exception {
     // Given: CheckingVerificationDto가 주어진다.
     CheckingVerificationDto checkingVerificationDto = getBaseCheckingVerificationDto();
-    String requestBody = objectMapper.writeValueAsString(checkingVerificationDto);
 
     // When: Check Verification Auth Code API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(checkingVerificationDto);
 
     // Then: Status는 404 Not Found이다.
     resultActions.andExpect(status().isNotFound());
@@ -158,15 +156,15 @@ public class CheckVerificationAuthCodeApiTest {
   public void fail_OnExpirationAuthCode() throws Exception {
     // Given: 유효한 CheckingVerificationDto가 주어진다.
     CheckingVerificationDto validCheckingVerificationDto = getBaseCheckingVerificationDto();
-    String requestBody = objectMapper.writeValueAsString(validCheckingVerificationDto);
-    // And: EmailAuthRepository가 expiredMockEmailAuth를 반환하도록 mocking 한다.
+
+    // Mocking: EmailAuthRepository가 expiredMockEmailAuth를 반환
     EmailAuth invalidMockEmailAuth = mockEmailAuth;
     invalidMockEmailAuth.setExpiration(LocalDateTime.now().minusMinutes(1));
     when(emailAuthRepository.findByEmailAndAuthCode(anyString(), anyString()))
         .thenReturn(Optional.of(invalidMockEmailAuth));
 
     // When: Check Verification Auth Code API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(validCheckingVerificationDto);
 
     // Then: Status는 400 Bad Request이다.
     resultActions.andExpect(status().isBadRequest());
@@ -177,15 +175,16 @@ public class CheckVerificationAuthCodeApiTest {
 
   @Test
   @DisplayName("Header에 유효한 Authorization이 포함된 경우")
-  public void fail_OnValidAuthorization_InHeader() throws Exception {
+  public void fail_onValidAuthorization_inHeader() throws Exception {
     // Given: 유효한 CheckingVerificationDto가 주어진다.
     CheckingVerificationDto requestDto = getBaseCheckingVerificationDto();
     String requestBody = objectMapper.writeValueAsString(requestDto);
-    // And: EmailAuthRepository가 mockEmailAuth를 반환하도록 mocking한다.
+
+    // Mocking: EmailAuthRepository가 mockEmailAuth를 반환
     when(emailAuthRepository.findByEmailAndAuthCode(anyString(), anyString())).thenReturn(Optional.of(mockEmailAuth));
-    // And: JwtService가 true를 반환하도록 mocking한다.
+    // And: JwtService가 true를 반환
     when(jwtService.validateToken(any())).thenReturn(true);
-    // And: UserRepository가 mockUser를 반환하도록 Mocking한다.
+    // And: UserRepository가 mockUser를 반환
     when(userRepository.findByEmail(any())).thenReturn(Optional.of(MockUser.getMockUser()));
 
     // When: Header에 유효한 Authorization을 담아 SignUp API를 호출한다.
