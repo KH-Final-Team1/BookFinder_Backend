@@ -73,7 +73,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("유효한 email이 주어지는 경우")
-  public void success_OnValidDuplicateCheckDto_WithEmail() throws Exception {
+  public void success_onValidDuplicateCheckDto_withEmail() throws Exception {
     // Given: 유효한 DuplicateCheckDto가 주어진다
     DuplicateCheckDto validDuplicateCheckDto = getBaseEmailDuplicateCheckDto();
 
@@ -88,7 +88,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("email 형식이 유효하지 않은 경우")
-  public void fail_OnInvalidDuplicateCheckDto_WithEmail() throws Exception {
+  public void fail_onInvalidDuplicateCheckDto_withEmail() throws Exception {
     // Given: 유효하지 않은 DuplicateCheckDto가 주어진다. (field=email)
     DuplicateCheckDto invalidDuplicateCheckDto = getBaseEmailDuplicateCheckDto();
     invalidDuplicateCheckDto.setValue("jinhokhkr");
@@ -105,7 +105,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("이미 가입한 email인 경우")
-  public void fail_OnExistAlreadyInDB_WithEmailInDuplicateCheckDto() throws Exception {
+  public void fail_onExistAlreadyInDB_withEmailInDuplicateCheckDto() throws Exception {
     // Given: 유효한 DuplicateCheckDto가 주어진다
     DuplicateCheckDto validDuplicateCheckDto = getBaseEmailDuplicateCheckDto();
     // And: UserRepository가 email이 jinho@kh.kr인 mockUser를 반환하도록 Mocking한다.
@@ -125,7 +125,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("유효한 nickname이 주어지는 경우")
-  public void success_OnValidDuplicateCheckDto_WithNickname() throws Exception {
+  public void success_onValidDuplicateCheckDto_withNickname() throws Exception {
     // Given: 유효한 DuplicateCheckDto가 주어진다
     DuplicateCheckDto validDuplicateCheckDto = getBaseNicknameDuplicateCheckDto();
 
@@ -140,7 +140,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("nickname 형식이 유효하지 않은 경우")
-  public void fail_OnInvalidDuplicateCheckDto_WithNickname() throws Exception {
+  public void fail_onInvalidDuplicateCheckDto_withNickname() throws Exception {
     // Given: 유효하지 않은 DuplicateCheckDto가 주어진다. (field=nickname)
     DuplicateCheckDto invalidDuplicateCheckDto = getBaseNicknameDuplicateCheckDto();
     invalidDuplicateCheckDto.setValue("ㅂㅈㄷㅁㅋ");
@@ -157,7 +157,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("이미 가입한 닉네임인 경우")
-  public void fail_OnExistAlreadyInDB_WithNicknameInDuplicateCheckDto() throws Exception {
+  public void fail_onExistAlreadyInDB_withNicknameInDuplicateCheckDto() throws Exception {
     // Given: 유효한 DuplicateCheckDto가 주어진다
     DuplicateCheckDto validDuplicateCheckDto = getBaseNicknameDuplicateCheckDto();
     // And: UserRepository가 mockUser를 반환하도록 Mocking한다.
@@ -177,7 +177,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("field가 email이나 nickname이 아닌 경우")
-  public void fail_OnInvalidDuplicateCheckDto_WithFieldNotEmailOrNickname() throws Exception {
+  public void fail_onInvalidDuplicateCheckDto_withFieldNotEmailOrNickname() throws Exception {
     // Given: 유효하지 않은 DuplicateCheckDto가 주어진다. (field=invalid)
     DuplicateCheckDto invalidDuplicateCheckDto = getBaseEmailDuplicateCheckDto();
     invalidDuplicateCheckDto.setField("invalid");
@@ -194,7 +194,7 @@ public class DuplicateCheckApiTest {
 
   @Test
   @DisplayName("Header에 유효한 Authorization이 포함된 경우")
-  public void fail_OnValidAuthorization_InHeader() throws Exception {
+  public void fail_onValidAuthorization_inHeader() throws Exception {
     // Given: 유효한 DuplicateCheckDto가 주어진다.
     DuplicateCheckDto duplicateCheckDto = getBaseEmailDuplicateCheckDto();
     // And: UserRepository가 mockUser를 반환하도록 Mocking한다.
