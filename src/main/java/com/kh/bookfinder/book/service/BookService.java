@@ -1,7 +1,7 @@
 package com.kh.bookfinder.book.service;
 
+import com.kh.bookfinder.book.dto.BookListRequestDto;
 import com.kh.bookfinder.book.dto.BookRequestDto;
-import com.kh.bookfinder.book.dto.BookSearchRequestDto;
 import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.repository.BookRepository;
@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +30,13 @@ public class BookService {
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
   }
 
-  public List<Book> getBooks(BookSearchRequestDto requestParam) {
-    org.springframework.data.domain.Pageable pageable = PageRequest.of(requestParam.getPage(), requestParam.getSize());
+  public List<Book> getBooks(BookListRequestDto requestParam) {
     if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
       return bookRepository.findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
           requestParam.getKeyword());
     }
     return bookRepository.findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
-        requestParam.getKeyword(), pageable);
+        requestParam.getKeyword());
   }
 
   @Transactional

@@ -1,6 +1,6 @@
 package com.kh.bookfinder.helper;
 
-import com.kh.bookfinder.book.dto.BookSearchRequestDto;
+import com.kh.bookfinder.book.dto.BookListRequestDto;
 import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.TradeType;
@@ -33,10 +33,10 @@ public class RequestDto {
         .build();
   }
 
-  public static BookSearchRequestDto baseBookSearchRequestDto() {
-    return BookSearchRequestDto.builder()
+  public static BookListRequestDto baseBookSearchRequestDto() {
+    return BookListRequestDto.builder()
         .filter("name")
-        .keyword("test book name")
+        .keyword("")
         .approvalStatus(ApprovalStatus.APPROVE)
         .build();
   }

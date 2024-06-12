@@ -13,16 +13,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookSearchRequestDto {
+public class BookListRequestDto {
 
   private String filter;
   @NotNull
   private String keyword;
   private ApprovalStatus approvalStatus;
-  @Builder.Default
-  private int page = 0;
-  @Builder.Default
-  private int size = 10;
 
   @AssertTrue(message = Message.INVALID_FILTER)
   public boolean isFilter() {

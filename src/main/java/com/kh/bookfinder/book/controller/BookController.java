@@ -1,8 +1,8 @@
 package com.kh.bookfinder.book.controller;
 
 import com.kh.bookfinder.book.dto.ApprovalStatusDto;
+import com.kh.bookfinder.book.dto.BookListRequestDto;
 import com.kh.bookfinder.book.dto.BookRequestDto;
-import com.kh.bookfinder.book.dto.BookSearchRequestDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.global.constants.Message;
@@ -29,7 +29,7 @@ public class BookController {
   private static final int ISBN_DIGITS = 13;
 
   @GetMapping("/list")
-  public ResponseEntity<List<Book>> getBooks(@Valid BookSearchRequestDto requestParam) {
+  public ResponseEntity<List<Book>> getBooks(@Valid BookListRequestDto requestParam) {
     List<Book> books = bookService.getBooks(requestParam);
     return ResponseEntity.ok().body(books);
   }
