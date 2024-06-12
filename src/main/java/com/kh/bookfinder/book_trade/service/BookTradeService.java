@@ -7,10 +7,8 @@ import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
-import com.kh.bookfinder.global.exception.UnauthorizedException;
 import com.kh.bookfinder.user.entity.User;
 import com.kh.bookfinder.user.entity.UserRole;
-import com.kh.bookfinder.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -23,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookTradeService {
 
   private final BookTradeRepository bookTradeRepository;
-  private final UserService userService;
   private final BookService bookService;
 
   public BookTrade findTrade(Long tradeId) {
@@ -33,14 +30,14 @@ public class BookTradeService {
 
   public BookTrade getBookTrade(User serviceUser, Long tradeId) {
     BookTrade bookTrade = findTrade(tradeId);
-    if (isAdmin(serviceUser)) {
+    if (serviceUser.isAdmin()) {
       return bookTrade;
     }
-    if (isDeleted(bookTrade)) {
+    if (bookTrade.isDeleted()) {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
-    if (!equalsBorough(serviceUser, bookTrade)) {
-      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
+    if (!serviceUser.getBorough().equals(bookTrade.getBorough())) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_READ);
     }
 
     return bookTrade;
@@ -48,7 +45,7 @@ public class BookTradeService {
 
   public BookTrade getBookTrade(Long tradeId) {
     BookTrade bookTrade = findTrade(tradeId);
-    if (isDeleted(bookTrade)) {
+    if (bookTrade.isDeleted()) {
       throw new ResourceNotFoundException(Message.DELETED_TRADE);
     }
 
@@ -56,12 +53,12 @@ public class BookTradeService {
   }
 
   public List<BookTrade> getBookTradesByBoroughId(User serviceUser, Long boroughId) {
-    if (isAdmin(serviceUser)) {
+    if (serviceUser.isAdmin()) {
       return bookTradeRepository.findByBoroughId(boroughId);
     }
 
     if (serviceUser.getRole() == UserRole.ROLE_USER && !serviceUser.getBorough().getId().equals(boroughId)) {
-      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES);
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_READ);
     }
 
     return bookTradeRepository.findByBoroughIdAndDeleteYn(boroughId, Status.N);
@@ -79,51 +76,35 @@ public class BookTradeService {
   }
 
   @Transactional
-  public void updateBookTrade(String email, Long tradeId, BookTradeRequestDto tradeDto) {
-    User user = userService.findUser(email);
+  public void updateBookTrade(User user, Long tradeId, BookTradeRequestDto tradeDto) {
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
-      bookTrade.setRentalCost(tradeDto.getRentalCost());
-      bookTrade.setLimitedDate(tradeDto.getLimitedDate());
-      bookTrade.setContent(tradeDto.getContent());
-      bookTrade.setLatitude(tradeDto.getLatitude());
-      bookTrade.setLongitude(tradeDto.getLongitude());
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
+    if (!user.equals(bookTrade.getUser())) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_UPDATE);
     }
+
+    bookTrade.setRentalCost(tradeDto.getRentalCost());
+    bookTrade.setLimitedDate(tradeDto.getLimitedDate());
+    bookTrade.setContent(tradeDto.getContent());
+    bookTrade.setLatitude(tradeDto.getLatitude());
+    bookTrade.setLongitude(tradeDto.getLongitude());
   }
 
   @Transactional
-  public void deleteTrade(String email, Long tradeId) {
-    User user = userService.findUser(email);
+  public void deleteTrade(User user, Long tradeId) {
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
+    if (user.isAdmin() || user.equals(bookTrade.getUser())) {
       bookTrade.setDeleteYn(Status.Y);
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
+      return;
     }
+    throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_UPDATE);
   }
 
   @Transactional
-  public void changeTrade(String email, Long tradeId, Status tradeYn) {
-    User user = userService.findUser(email);
+  public void changeTrade(User user, Long tradeId, Status tradeYn) {
     BookTrade bookTrade = getBookTrade(tradeId);
-    if (bookTrade.getUser().getId().equals(user.getId())) {
-      bookTrade.setTradeYn(tradeYn);
-    } else {
-      throw new UnauthorizedException(Message.NOT_AUTHORIZED);
+    if (!user.equals(bookTrade.getUser())) {
+      throw new AccessDeniedException(Message.FORBIDDEN_BOOK_TRADES_UPDATE);
     }
-  }
-
-  private boolean isAdmin(User serviceUser) {
-    return serviceUser.getRole() == UserRole.ROLE_ADMIN;
-  }
-
-  private boolean isDeleted(BookTrade bookTrade) {
-    return bookTrade.getDeleteYn().equals(Status.Y);
-  }
-
-  private boolean equalsBorough(User serviceUser, BookTrade bookTrade) {
-    return serviceUser.getBorough().getId().equals(bookTrade.getBorough().getId());
+    bookTrade.setTradeYn(tradeYn);
   }
 }

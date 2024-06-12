@@ -118,4 +118,8 @@ public class BookTrade {
         .boroughName(this.borough.getName())
         .build();
   }
+
+  public boolean isDeleted() {
+    return this.deleteYn.equals(Status.Y);
+  }
 }

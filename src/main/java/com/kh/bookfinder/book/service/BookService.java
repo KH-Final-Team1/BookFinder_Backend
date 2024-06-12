@@ -1,7 +1,7 @@
 package com.kh.bookfinder.book.service;
 
 import com.kh.bookfinder.book.dto.BookRequestDto;
-import com.kh.bookfinder.book.dto.SearchDto;
+import com.kh.bookfinder.book.dto.BookSearchRequestDto;
 import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.repository.BookRepository;
@@ -31,7 +31,7 @@ public class BookService {
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
   }
 
-  public List<Book> getBooks(SearchDto requestParam) {
+  public List<Book> getBooks(BookSearchRequestDto requestParam) {
     org.springframework.data.domain.Pageable pageable = PageRequest.of(requestParam.getPage(), requestParam.getSize());
     if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
       return bookRepository.findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
