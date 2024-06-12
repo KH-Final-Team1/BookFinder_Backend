@@ -1,9 +1,40 @@
+![Untitled](https://github.com/KH-Final-Team1/BookFinder_Frontend/assets/45187382/f2fc6c74-ec83-4727-b521-eb522ee3f928)
+
+# 💡 Topic
+
+- 서울시 공공 도서관 소장자료, 한번에 검색하자! 북적북적
+
+# 📝 Service Summary
+
+1-1. 개발 서적을 참고하여 공부할 때
+
+- 책 전체를 다 보는 경우도 있지만 부분만 참고하는 경우도 많다
+- 표지만 보고 구입했지만 원하는 내용이 없는 경우가 있다
+
+1-2. 무작정 책을 구매하기 전에 대여해서 보고 만족도가 높을 때 구입하는 것이 좋다
+
+2-1. 서울시 내에 있는 공공 도서관들이 많은 개발 서적을 소장하고 있다.
+
+2-2. 서울 시민이라면 서울 내 어느 도서관에서도 책을 대여할 수 있다.
+
+2-3. 그러나 소장 자료를 검색하기 위해서는 자치구 도서관 페이지를 확인해야하는 단점이 있다.
+
+![Untitled](https://github.com/KH-Final-Team1/BookFinder_Frontend/assets/45187382/93645a42-667d-408a-acaf-21e6344aa604)
+
+**한 번의 도서 검색으로 소장 중인 서울 공공 도서관을 보여주고 대출 가능 여부를 알려주는 서비스**
+
+![1](https://github.com/KH-Final-Team1/BookFinder_Frontend/assets/45187382/05c966d5-806b-418e-bda2-4ac4460a7f48)
+
+![2](https://github.com/KH-Final-Team1/BookFinder_Frontend/assets/45187382/12c608c0-c582-49fc-aae0-29a6ab805852)
+
 # API Docs
 
 ## Users
 
 ### 회원 가입 API (SignUp API)
+
 **Request**
+
 ```
 POST {BASE_URL}/api/v1/signup
 
