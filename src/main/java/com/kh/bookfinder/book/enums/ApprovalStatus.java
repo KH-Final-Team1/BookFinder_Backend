@@ -1,4 +1,4 @@
-package com.kh.bookfinder.book.entity;
+package com.kh.bookfinder.book.enums;
 
 public enum ApprovalStatus {
   REJECT,

@@ -1,7 +1,7 @@
 package com.kh.bookfinder.helper;
 
-import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.enums.ApprovalStatus;
 import java.util.ArrayList;
 import java.util.List;
 

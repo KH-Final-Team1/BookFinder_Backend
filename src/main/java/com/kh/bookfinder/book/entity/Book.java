@@ -1,5 +1,6 @@
 package com.kh.bookfinder.book.entity;
 
+import com.kh.bookfinder.book.enums.ApprovalStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

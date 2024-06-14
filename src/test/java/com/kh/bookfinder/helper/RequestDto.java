@@ -1,7 +1,6 @@
 package com.kh.bookfinder.helper;
 
 import com.kh.bookfinder.book.dto.BookListRequestDto;
-import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.TradeType;
 import java.math.BigDecimal;
@@ -37,7 +36,7 @@ public class RequestDto {
     return BookListRequestDto.builder()
         .filter("name")
         .keyword("")
-        .approvalStatus(ApprovalStatus.APPROVE)
+        .status("approve")
         .build();
   }
 }

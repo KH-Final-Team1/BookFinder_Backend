@@ -1,7 +1,7 @@
 package com.kh.bookfinder.book.repository;
 
-import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.enums.ApprovalStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

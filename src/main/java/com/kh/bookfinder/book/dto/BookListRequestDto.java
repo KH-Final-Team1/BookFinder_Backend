@@ -1,8 +1,9 @@
 package com.kh.bookfinder.book.dto;
 
-import com.kh.bookfinder.book.entity.ApprovalStatus;
+import com.kh.bookfinder.book.enums.ApprovalStatus;
+import com.kh.bookfinder.book.enums.BookListFilter;
 import com.kh.bookfinder.global.constants.Message;
-import jakarta.validation.constraints.AssertTrue;
+import com.kh.bookfinder.global.validation.ValidEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,18 +16,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookListRequestDto {
 
+  @ValidEnum(enumClass = BookListFilter.class, message = Message.INVALID_FILTER)
   private String filter;
   @NotNull
   private String keyword;
-  private ApprovalStatus approvalStatus;
-
-  @AssertTrue(message = Message.INVALID_FILTER)
-  public boolean isFilter() {
-    if (filter == null) {
-      return false;
-    }
-    return filter.equals("name")
-        || filter.equals("authors")
-        || filter.equals("publisher");
-  }
+  @ValidEnum(enumClass = ApprovalStatus.class, message = Message.INVALID_APPROVAL_STATUS)
+  private String status;
 }

@@ -2,8 +2,8 @@ package com.kh.bookfinder.book.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.enums.ApprovalStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.properties")
+@TestPropertySource(locations = "classpath:application-test.yml")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class ListBookTest {

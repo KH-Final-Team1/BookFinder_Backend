@@ -1,7 +1,7 @@
 package com.kh.bookfinder.book.dto;
 
-import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.enums.ApprovalStatus;
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
