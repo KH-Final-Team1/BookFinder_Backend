@@ -8,12 +8,14 @@ import com.kh.bookfinder.book.enums.ApprovalStatus;
 import com.kh.bookfinder.book.enums.BookListFilter;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.user.entity.User;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,9 +30,13 @@ public class BookService {
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
   }
 
-  public Book findApprovedBook(Long isbn) {
-    return bookRepository.findByIsbnAndApprovalStatus(isbn, ApprovalStatus.APPROVE)
+  public Book getBook(User serviceUser, Long isbn) {
+    Book result = bookRepository.findByIsbn(isbn)
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
+    if (serviceUser.isAdmin() || result.getApprovalStatus() == ApprovalStatus.APPROVE) {
+      return result;
+    }
+    throw new AccessDeniedException(Message.NOT_APPROVED_BOOK);
   }
 
   public List<Book> getBooks(BookListRequestDto requestParam) {

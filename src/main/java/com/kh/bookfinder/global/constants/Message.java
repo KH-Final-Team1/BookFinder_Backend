@@ -50,6 +50,7 @@ public interface Message {
 
   String INVALID_FILTER = "filter는 name, authors, publisher만 가능합니다.";
   String NOT_FOUND_BOOK = "해당 도서는 북적북적 사이트에 없는 도서이거나 존재하지 않는 도서입니다.";
+  String NOT_APPROVED_BOOK = "아직 승인되지 않은 도서입니다.";
   String UPDATE_APPROVAL_STATUS = "승인 여부가 변경되었습니다.";
   String INVALID_APPROVAL_STATUS = "status는 approve, wait, reject만 가능합니다";
   String DUPLICATE_BOOK_APPROVE = "이미 등록되어 있는 도서입니다.";
