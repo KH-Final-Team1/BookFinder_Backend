@@ -5,6 +5,7 @@ import com.kh.bookfinder.book.dto.BookListRequestDto;
 import com.kh.bookfinder.book.dto.BookRequestDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.enums.ApprovalStatus;
+import com.kh.bookfinder.book.enums.BookListFilter;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,7 @@ public class BookService {
 
   private final BookRepository bookRepository;
 
+
   public Book findBook(Long isbn) {
     return bookRepository.findByIsbn(isbn)
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
@@ -32,12 +34,11 @@ public class BookService {
   }
 
   public List<Book> getBooks(BookListRequestDto requestParam) {
-    if (requestParam.getStatus().equals(ApprovalStatus.APPROVE.name())) {
-      return bookRepository.findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
-          requestParam.getKeyword());
-    }
-    return bookRepository.findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
-        requestParam.getKeyword());
+    return bookRepository.findBy(
+        BookListFilter.fromStringIgnoreCase(requestParam.getFilter()),
+        requestParam.getKeyword(),
+        ApprovalStatus.fromStringIgnoreCase(requestParam.getStatus())
+    );
   }
 
   @Transactional

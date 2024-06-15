@@ -11,7 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.kh.bookfinder.book.dto.BookListRequestDto;
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.enums.ApprovalStatus;
+import com.kh.bookfinder.book.enums.BookListFilter;
 import com.kh.bookfinder.book.repository.BookRepository;
+import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.helper.MockBook;
 import com.kh.bookfinder.helper.RequestDto;
 import java.util.List;
@@ -77,8 +80,11 @@ public class ListBookApiTest {
     List<Book> mockBookList = MockBook.list(30);
 
     // And: BookRepository가 mockBookList를 반환
-    when(bookRepository.findApprovedBooksByFilterAndKeywordContaining(
-        validBookListRequestDto.getFilter(), validBookListRequestDto.getKeyword())
+    when(
+        bookRepository.findBy(
+            BookListFilter.fromStringIgnoreCase(validBookListRequestDto.getFilter()),
+            validBookListRequestDto.getKeyword(),
+            ApprovalStatus.fromStringIgnoreCase(validBookListRequestDto.getStatus()))
     ).thenReturn(mockBookList);
 
     // When: List Book API를 호출한다.
@@ -88,6 +94,23 @@ public class ListBookApiTest {
     resultActions.andExpect(status().isOk());
     // And: ResponseBody로 Book List를 반환한다.
     resultActions.andExpect(jsonPath("$", hasSize(mockBookList.size())));
+  }
+
+  @Test
+  @DisplayName("filter가 유효하지 않은 경우")
+  public void fail_onInvalidBookSearchRequestDto_withFilter() throws Exception {
+    // Given: 유효하지 않은 BookSearchRequestDto가 주어진다.
+    BookListRequestDto validBookListRequestDto = RequestDto.baseBookSearchRequestDto();
+    validBookListRequestDto.setFilter("invalid");
+
+    // When: List Book API를 호출한다.
+    ResultActions resultActions = callApi(validBookListRequestDto);
+
+    // Then: Status는 Bad Request이다.
+    resultActions.andExpect(status().isBadRequest());
+    // And: ResponseBody로 message와 details를 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.filter", containsString(Message.INVALID_FILTER)));
   }
 
   @Test
@@ -105,5 +128,22 @@ public class ListBookApiTest {
     // And: ResponseBody로 message와 details를 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
     resultActions.andExpect(jsonPath("$.details.keyword", containsString("null")));
+  }
+
+  @Test
+  @DisplayName("status가 유효하지 않은 경우")
+  public void fail_onInvalidBookSearchRequestDto_withStatus() throws Exception {
+    // Given: 유효하지 않은 BookSearchRequestDto가 주어진다.
+    BookListRequestDto validBookListRequestDto = RequestDto.baseBookSearchRequestDto();
+    validBookListRequestDto.setStatus("invalid");
+
+    // When: List Book API를 호출한다.
+    ResultActions resultActions = callApi(validBookListRequestDto);
+
+    // Then: Status는 Bad Request이다.
+    resultActions.andExpect(status().isBadRequest());
+    // And: ResponseBody로 message와 details를 반환한다.
+    resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
+    resultActions.andExpect(jsonPath("$.details.status", containsString(Message.INVALID_APPROVAL_STATUS)));
   }
 }
