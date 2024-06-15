@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.enums.ApprovalStatus;
 import com.kh.bookfinder.book.enums.BookListFilter;
+import com.kh.bookfinder.global.config.QuerydslConfig;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -19,6 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @DataJpaTest
+@Import(QuerydslConfig.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class ListBookTest {
 
@@ -27,7 +30,7 @@ public class ListBookTest {
 
   @Test
   @Sql("classpath:forBookListTest.sql")
-  public void test_repositoryLayer_findApprovedBooksByFilterAndKeywordContaining() {
+  public void test_repositoryLayer_onFilter() {
     // name=test book name {index} / authors=test authors {index} / publisher=test publisher {index}
     List<Book> all = bookRepository.findAll();
 

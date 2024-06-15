@@ -97,6 +97,107 @@ public class ListBookApiTest {
   }
 
   @Test
+  @DisplayName("filter가 name일 때")
+  public void success_onValidBookListRequestDto_withFilterIsName() throws Exception {
+    // Given: filter가 name, keyword가 '자바', status가 approve인 BookSearchRequestDto가 주어진다.
+    BookListRequestDto validBookListRequestDto = RequestDto.baseBookSearchRequestDto();
+    validBookListRequestDto.setKeyword("자바");
+    // And: Book 데이터가 30개 주어진다.
+    List<Book> mockBookList = MockBook.list(30);
+    // And: 그 중 10개의 데이터는 name에 '자바'가 포함된다.
+    updateOnFilter(mockBookList, 10, BookListFilter.NAME, "자바");
+    List<Book> expected = mockBookList.stream()
+        .filter(x -> x.getName().contains(validBookListRequestDto.getKeyword()))
+        .filter(x -> x.getApprovalStatus().name().equalsIgnoreCase(validBookListRequestDto.getStatus()))
+        .collect(Collectors.toList());
+
+    // And: BookRepository가 mockBookList를 반환
+    when(bookRepository.findAll()).thenReturn(mockBookList);
+    when(
+        bookRepository.findBy(
+            BookListFilter.fromStringIgnoreCase(validBookListRequestDto.getFilter()),
+            validBookListRequestDto.getKeyword(),
+            ApprovalStatus.fromStringIgnoreCase(validBookListRequestDto.getStatus()))
+    ).thenReturn(expected);
+
+    // When: List Book API를 호출한다.
+    ResultActions resultActions = callApi(validBookListRequestDto);
+
+    // Then: Status는 Ok이다.
+    resultActions.andExpect(status().isOk());
+    // And: ResponseBody로 Book List를 반환한다.
+    resultActions.andExpect(jsonPath("$", hasSize(expected.size())));
+  }
+
+  @Test
+  @DisplayName("filter가 authors일 때")
+  public void success_onValidBookListRequestDto_withFilterIsAuthors() throws Exception {
+    // Given: filter가 authors, keyword가 '저자', status가 approve인 BookSearchRequestDto가 주어진다.
+    BookListRequestDto validBookListRequestDto = RequestDto.baseBookSearchRequestDto();
+    validBookListRequestDto.setFilter("authors");
+    validBookListRequestDto.setKeyword("저자");
+    // And: Book 데이터가 30개 주어진다.
+    List<Book> mockBookList = MockBook.list(30);
+    // And: 그 중 5개의 데이터는 authors에 '저자'가 포함된다.
+    updateOnFilter(mockBookList, 5, BookListFilter.AUTHORS, "저자");
+    List<Book> expected = mockBookList.stream()
+        .filter(x -> x.getName().contains(validBookListRequestDto.getKeyword()))
+        .filter(x -> x.getApprovalStatus().name().equalsIgnoreCase(validBookListRequestDto.getStatus()))
+        .collect(Collectors.toList());
+
+    // And: BookRepository가 mockBookList를 반환
+    when(bookRepository.findAll()).thenReturn(mockBookList);
+    when(
+        bookRepository.findBy(
+            BookListFilter.fromStringIgnoreCase(validBookListRequestDto.getFilter()),
+            validBookListRequestDto.getKeyword(),
+            ApprovalStatus.fromStringIgnoreCase(validBookListRequestDto.getStatus()))
+    ).thenReturn(expected);
+
+    // When: List Book API를 호출한다.
+    ResultActions resultActions = callApi(validBookListRequestDto);
+
+    // Then: Status는 Ok이다.
+    resultActions.andExpect(status().isOk());
+    // And: ResponseBody로 Book List를 반환한다.
+    resultActions.andExpect(jsonPath("$", hasSize(expected.size())));
+  }
+
+  @Test
+  @DisplayName("filter가 publisher일 때")
+  public void success_onValidBookListRequestDto_withFilterIsPublisher() throws Exception {
+    // Given: filter가 publisher, keyword가 '길벗', status가 approve인 BookSearchRequestDto가 주어진다.
+    BookListRequestDto validBookListRequestDto = RequestDto.baseBookSearchRequestDto();
+    validBookListRequestDto.setFilter("publisher");
+    validBookListRequestDto.setKeyword("길벗");
+    // And: Book 데이터가 30개 주어진다.
+    List<Book> mockBookList = MockBook.list(30);
+    // And: 그 중 20개의 데이터는 authors에 '길벗'가 포함된다.
+    updateOnFilter(mockBookList, 20, BookListFilter.PUBLISHER, "길벗");
+    List<Book> expected = mockBookList.stream()
+        .filter(x -> x.getName().contains(validBookListRequestDto.getKeyword()))
+        .filter(x -> x.getApprovalStatus().name().equalsIgnoreCase(validBookListRequestDto.getStatus()))
+        .collect(Collectors.toList());
+
+    // And: BookRepository가 mockBookList를 반환
+    when(bookRepository.findAll()).thenReturn(mockBookList);
+    when(
+        bookRepository.findBy(
+            BookListFilter.fromStringIgnoreCase(validBookListRequestDto.getFilter()),
+            validBookListRequestDto.getKeyword(),
+            ApprovalStatus.fromStringIgnoreCase(validBookListRequestDto.getStatus()))
+    ).thenReturn(expected);
+
+    // When: List Book API를 호출한다.
+    ResultActions resultActions = callApi(validBookListRequestDto);
+
+    // Then: Status는 Ok이다.
+    resultActions.andExpect(status().isOk());
+    // And: ResponseBody로 Book List를 반환한다.
+    resultActions.andExpect(jsonPath("$", hasSize(expected.size())));
+  }
+
+  @Test
   @DisplayName("filter가 유효하지 않은 경우")
   public void fail_onInvalidBookSearchRequestDto_withFilter() throws Exception {
     // Given: 유효하지 않은 BookSearchRequestDto가 주어진다.
