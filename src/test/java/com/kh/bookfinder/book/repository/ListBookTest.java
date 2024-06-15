@@ -55,4 +55,27 @@ public class ListBookTest {
     actual = bookRepository.findBy(BookListFilter.PUBLISHER, " ", ApprovalStatus.APPROVE);
     assertThat(expected.size()).isEqualTo(actual.size());
   }
+
+  @Test
+  @Sql("classpath:forBookListTest.sql")
+  public void test_repositoryLayer_onStatus() {
+    // name=test book name {index} / authors=test authors {index} / publisher=test publisher {index}
+    List<Book> all = bookRepository.findAll();
+
+    // Test 1: filter=name / keyword=test / status=APPROVE
+    List<Book> expected = all.stream()
+        .filter(x -> x.getName().contains("test") && x.getApprovalStatus().equals(ApprovalStatus.APPROVE))
+        .collect(Collectors.toList());
+    List<Book> actual = bookRepository.findBy(BookListFilter.NAME, "test", ApprovalStatus.APPROVE);
+    // Then: Only Status == APPROVE
+    assertThat(expected.size()).isEqualTo(actual.size());
+
+    // Test 2: filter=name / keyword=test / status=null
+    expected = all.stream()
+        .filter(x -> x.getName().contains("test") && !x.getApprovalStatus().equals(ApprovalStatus.APPROVE))
+        .collect(Collectors.toList());
+    actual = bookRepository.findBy(BookListFilter.NAME, "test", null);
+    // Then: Only Status == APPROVE
+    assertThat(expected.size()).isEqualTo(actual.size());
+  }
 }

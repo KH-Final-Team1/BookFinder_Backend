@@ -9,6 +9,9 @@ public enum ApprovalStatus {
   APPROVE;
 
   public static ApprovalStatus fromStringIgnoreCase(String value) {
+    if (value == null) {
+      return null;
+    }
     for (ApprovalStatus status : ApprovalStatus.values()) {
       if (status.name().equalsIgnoreCase(value)) {
         return status;

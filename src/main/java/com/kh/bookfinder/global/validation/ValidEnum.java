@@ -22,4 +22,6 @@ public @interface ValidEnum {
   Class<? extends java.lang.Enum<?>> enumClass();
 
   boolean ignoreCase() default true;
+
+  boolean nullable() default false;
 }

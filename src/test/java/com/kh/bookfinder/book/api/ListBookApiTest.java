@@ -17,7 +17,10 @@ import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.helper.MockBook;
 import com.kh.bookfinder.helper.RequestDto;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +78,7 @@ public class ListBookApiTest {
   public void success_onBookDataInDB() throws Exception {
     // Given: 유효한 BookSearchRequestDto가 주어진다.
     BookListRequestDto validBookListRequestDto = RequestDto.baseBookSearchRequestDto();
-
-    // Book 데이터가 30개 주어진다.
+    // And: Book 데이터가 30개 주어진다.
     List<Book> mockBookList = MockBook.list(30);
 
     // And: BookRepository가 mockBookList를 반환
@@ -198,6 +200,40 @@ public class ListBookApiTest {
   }
 
   @Test
+  @DisplayName("status가 null일 때")
+  public void success_onValidBookListRequestDto_withStatusIsNull() throws Exception {
+    // Given: filter가 name, keyword가 '' status가 null인 BookSearchRequestDto가 주어진다.
+    BookListRequestDto validBookListRequestDto = RequestDto.baseBookSearchRequestDto();
+    validBookListRequestDto.setStatus(null);
+    // And: Book 데이터가 30개 주어진다.
+    List<Book> mockBookList = MockBook.list(30);
+    // And: 그 중 11개의 데이터는 status가 approve가 아니다.
+    updateOnStatus(mockBookList, 11, ApprovalStatus.WAIT);
+    List<Book> expected = mockBookList.stream()
+        .filter(x -> x.getName().contains(validBookListRequestDto.getKeyword()))
+        .filter(x -> !x.getApprovalStatus().equals(ApprovalStatus.APPROVE))
+        .collect(Collectors.toList());
+
+    // And: BookRepository가 mockBookList를 반환
+    when(bookRepository.findAll()).thenReturn(mockBookList);
+    when(
+        bookRepository.findBy(
+            BookListFilter.fromStringIgnoreCase(validBookListRequestDto.getFilter()),
+            validBookListRequestDto.getKeyword(),
+            ApprovalStatus.fromStringIgnoreCase(validBookListRequestDto.getStatus())
+        )
+    ).thenReturn(expected);
+
+    // When: List Book API를 호출한다.
+    ResultActions resultActions = callApi(validBookListRequestDto);
+
+    // Then: Status는 Ok이다.
+    resultActions.andExpect(status().isOk());
+    // And: ResponseBody로 Book List를 반환한다.
+    resultActions.andExpect(jsonPath("$", hasSize(expected.size())));
+  }
+
+  @Test
   @DisplayName("filter가 유효하지 않은 경우")
   public void fail_onInvalidBookSearchRequestDto_withFilter() throws Exception {
     // Given: 유효하지 않은 BookSearchRequestDto가 주어진다.
@@ -246,5 +282,40 @@ public class ListBookApiTest {
     // And: ResponseBody로 message와 details를 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
     resultActions.andExpect(jsonPath("$.details.status", containsString(Message.INVALID_APPROVAL_STATUS)));
+  }
+
+  private void updateOnFilter(List<Book> mockBookList, int count, BookListFilter filter, String updateKeyword) {
+    HashSet<Integer> indexes = new HashSet<>();
+    while (indexes.size() < count) {
+      indexes.add(new Random().nextInt(mockBookList.size()));
+    }
+
+    for (int index : indexes) {
+      Book target = mockBookList.get(index);
+      String updateContent = "update " + updateKeyword + " " + index;
+      if (filter == BookListFilter.NAME) {
+        target.setName(updateContent);
+      } else if (filter == BookListFilter.AUTHORS) {
+        target.setAuthors(updateContent);
+      } else if (filter == BookListFilter.PUBLISHER) {
+        target.setPublisher(updateContent);
+      }
+
+      mockBookList.set(index, target);
+    }
+  }
+
+  private void updateOnStatus(List<Book> mockBookList, int count, ApprovalStatus updateStatus) {
+    HashSet<Integer> indexes = new HashSet<>();
+    while (indexes.size() < count) {
+      indexes.add(new Random().nextInt(mockBookList.size()));
+    }
+
+    for (int index : indexes) {
+      Book target = mockBookList.get(index);
+      target.setApprovalStatus(updateStatus);
+
+      mockBookList.set(index, target);
+    }
   }
 }

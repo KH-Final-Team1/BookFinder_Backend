@@ -20,6 +20,6 @@ public class BookListRequestDto {
   private String filter;
   @NotNull
   private String keyword;
-  @ValidEnum(enumClass = ApprovalStatus.class, message = Message.INVALID_APPROVAL_STATUS)
+  @ValidEnum(enumClass = ApprovalStatus.class, nullable = true, message = Message.INVALID_APPROVAL_STATUS)
   private String status;
 }
