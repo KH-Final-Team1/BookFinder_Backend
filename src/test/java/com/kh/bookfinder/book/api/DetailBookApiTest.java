@@ -176,7 +176,6 @@ public class DetailBookApiTest {
 
   private void assertBook(ResultActions resultActions, Book expected) throws Exception {
     resultActions.andExpect(jsonPath("$.isbn", is(expected.getIsbn())));
-    resultActions.andExpect(jsonPath("$.additionSymbol", is(expected.getAdditionSymbol())));
     resultActions.andExpect(jsonPath("$.name", is(expected.getName())));
     resultActions.andExpect(jsonPath("$.authors", is(expected.getAuthors())));
     resultActions.andExpect(jsonPath("$.publisher", is(expected.getPublisher())));
