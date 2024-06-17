@@ -1,5 +1,6 @@
 package com.kh.bookfinder.helper;
 
+import com.kh.bookfinder.book.dto.BookCreateRequestDto;
 import com.kh.bookfinder.book.dto.BookListRequestDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.TradeType;
@@ -37,6 +38,20 @@ public class RequestDto {
         .filter("name")
         .keyword("")
         .status("approve")
+        .build();
+  }
+
+  public static BookCreateRequestDto baseBookCreateRequestDto() {
+    return BookCreateRequestDto.builder()
+        .isbn(1234567891011L)
+        .imageUrl("test image url")
+        .name("test name")
+        .authors("test authors")
+        .publisher("test publisher")
+        .publicationYear(2024)
+        .classNo("test class no")
+        .className("test class name")
+        .description("test description")
         .build();
   }
 }
