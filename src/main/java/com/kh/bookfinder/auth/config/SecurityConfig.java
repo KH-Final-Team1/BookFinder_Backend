@@ -90,6 +90,7 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/login", "/api/v1/signup/**").anonymous()
             .requestMatchers("/api/v1/trades/**", "/api/v1/comments/**", "/api/v1/users/my-info").authenticated()
             .requestMatchers(HttpMethod.POST, "/api/v1/books").authenticated()
+            .requestMatchers(HttpMethod.PATCH, "/api/v1/books/{isbn}").hasRole("ADMIN")
             .requestMatchers("/api/v1/oauth2/signup").hasRole("SOCIAL_GUEST")
             .anyRequest().permitAll()
         );

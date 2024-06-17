@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApprovalStatusDto {
+public class BookUpdateStatusRequestDto {
 
   @ValidEnum(enumClass = ApprovalStatus.class, message = Message.INVALID_APPROVAL_STATUS)
   private String approvalStatus;

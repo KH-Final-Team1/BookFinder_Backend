@@ -2,6 +2,7 @@ package com.kh.bookfinder.helper;
 
 import com.kh.bookfinder.book.dto.BookCreateRequestDto;
 import com.kh.bookfinder.book.dto.BookListRequestDto;
+import com.kh.bookfinder.book.dto.BookUpdateStatusRequestDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.entity.TradeType;
 import java.math.BigDecimal;
@@ -52,6 +53,12 @@ public class RequestDto {
         .classNo("test class no")
         .className("test class name")
         .description("test description")
+        .build();
+  }
+
+  public static BookUpdateStatusRequestDto baseBookUpdateStatusDto(String status) {
+    return BookUpdateStatusRequestDto.builder()
+        .approvalStatus(status)
         .build();
   }
 }
