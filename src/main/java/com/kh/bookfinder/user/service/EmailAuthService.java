@@ -82,6 +82,6 @@ public class EmailAuthService {
   }
 
   private boolean alreadyExistEmail(String email) {
-    return userRepository.findByNickname(email).isPresent();
+    return userRepository.findByEmail(email).isPresent();
   }
 }
