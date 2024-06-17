@@ -5,9 +5,10 @@ import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.entity.TradeType;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.user.entity.User;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class BookTradeRequestDto {
   @NotNull(message = Message.INVALID_COST)
   @Range(max = 100000L, message = Message.INVALID_COST)
   private Integer rentalCost;
+  @FutureOrPresent(message = Message.INVALID_LIMITED_DATE)
   private Date limitedDate;
   private String content;
   private BigDecimal latitude;

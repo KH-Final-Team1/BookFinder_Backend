@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,29 +79,32 @@ public class BookTradeController {
   @PutMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> updateBookTrade(@PathVariable(name = "tradeId") Long tradeId,
       @RequestBody @Valid BookTradeRequestDto tradeDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.updateBookTrade(email, tradeId, tradeDto);
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
+
+    bookTradeService.updateBookTrade(serviceUser, tradeId, tradeDto);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_UPDATE));
   }
 
   @DeleteMapping("/{tradeId}")
   public ResponseEntity<Map<String, String>> deleteBookTrade(@PathVariable(name = "tradeId") Long tradeId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.deleteTrade(email, tradeId);
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
+
+    bookTradeService.deleteTrade(serviceUser, tradeId);
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_DELETE));
   }
 
   @PatchMapping("/{tradeId}")
-  public ResponseEntity<Map<String, String>> changeTrade(@PathVariable(name = "tradeId") Long tradeId,
-      @RequestBody BookTradeYnDto tradeYn) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SecurityUserDetails principal = (SecurityUserDetails) authentication.getPrincipal();
-    String email = principal.getUsername();
-    bookTradeService.changeTrade(email, tradeId, tradeYn.getTradeYn());
+  public ResponseEntity<Map<String, String>> changeTradeStatus(@PathVariable(name = "tradeId") Long tradeId,
+      @RequestBody @Valid BookTradeYnDto tradeYn) {
+    SecurityUserDetails principal = (SecurityUserDetails)
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User serviceUser = principal.getServiceUser();
+
+    bookTradeService.changeTrade(serviceUser, tradeId, tradeYn.getTradeYn());
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_CHANGE));
   }
 }

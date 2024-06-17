@@ -12,6 +12,8 @@ application-mail.yml
 application-jwt.yml
 application-oauth.yml
 
+# QueryDsl
+/src/main/generated/querydsl
 
 ### STS ###
 .apt_generated

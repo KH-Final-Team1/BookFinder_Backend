@@ -26,4 +26,10 @@ public class MockUser {
         .borough(borough)
         .build();
   }
+
+  public static User getMockUser(UserRole userRole) {
+    User result = getMockUser();
+    result.setRole(userRole);
+    return result;
+  }
 }

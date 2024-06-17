@@ -69,7 +69,8 @@ public class SendAuthEmailApiTest {
         .build();
   }
 
-  private ResultActions callApiWith(String requestBody) throws Exception {
+  private ResultActions callApiWith(SendingEmailAuthDto emailAuthDto) throws Exception {
+    String requestBody = objectMapper.writeValueAsString(emailAuthDto);
     return mockMvc.perform(
         post("/api/v1/signup/email")
             .content(requestBody)
@@ -79,18 +80,19 @@ public class SendAuthEmailApiTest {
 
   @Test
   @DisplayName("유효한 형식의 email이 주어지는 경우")
-  public void success_OnValidSendingEmailAuthDto() throws Exception {
+  public void success_onValidSendingEmailAuthDto() throws Exception {
     // Given: 유효한 SendingEmailAuthDto가 주어진다.
     SendingEmailAuthDto validEmailAuthDto = getBaseSendingEmailAuthDto();
-    String requestBody = objectMapper.writeValueAsString(validEmailAuthDto);
-    // And: EamilAuthService가 mockEmailAuth를 반환하도록 mocking한다.
+    // And: mockEmailAuth가 주어진다.
     EmailAuth mockEmailAuth = getMockEmailAuth();
+
+    // Mocking: EmailAuthService가 mockEmailAuth를 반환
     when(emailAuthService.sendAuthCodeTo(any())).thenReturn(mockEmailAuth);
-    // And: EamilAuthService가 MOCK_SIGNING_TOKEN를 반환하도록 mocking한다.
+    // And: EmailAuthService가 MOCK_SIGNING_TOKEN를 반환
     when(emailAuthService.generateSigningToken(mockEmailAuth)).thenReturn(MOCK_SIGNING_TOKEN);
 
     // When: Sending Auth Code Email API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(validEmailAuthDto);
 
     // Then: Status는 200 Ok이다.
     resultActions.andExpect(status().isOk());
@@ -100,14 +102,13 @@ public class SendAuthEmailApiTest {
 
   @Test
   @DisplayName("유효하지 않은 형식의 email이 주어지는 경우")
-  public void fail_OnInvaliSendingEmailAuthDto_WithEmail() throws Exception {
+  public void fail_onInvalidSendingEmailAuthDto_withEmail() throws Exception {
     // Given: 유효하지 않은 SendingEmailAuthDto가 주어진다.
     SendingEmailAuthDto invalidEmailAuthDto = getBaseSendingEmailAuthDto();
     invalidEmailAuthDto.setEmail("jinho4744navercom");
-    String requestBody = objectMapper.writeValueAsString(invalidEmailAuthDto);
 
     // When: Sending Auth Code Email API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(invalidEmailAuthDto);
 
     // Then: Status는 400 Bad Request이다.
     resultActions.andExpect(status().isBadRequest());
@@ -118,17 +119,17 @@ public class SendAuthEmailApiTest {
 
   @Test
   @DisplayName("이미 DB에 저장된 Email인 경우")
-  public void fail_OnInvaliSendingEmailAuthDto_WithAlreadyExistInDB_ForEmail() throws Exception {
+  public void fail_onAlreadyExistInDB_forEmail() throws Exception {
     // Given: 유효한 SendingEmailAuthDto가 주어진다.
     SendingEmailAuthDto validEmailAuthDto = getBaseSendingEmailAuthDto();
-    String requestBody = objectMapper.writeValueAsString(validEmailAuthDto);
-    // And: EmailAuthService가 Exception이 발생하도록 Mocking한다.
+
+    // Mocking: EmailAuthService가 Exception이 발생
     when(userRepository.findByEmail(validEmailAuthDto.getEmail())).thenReturn(Optional.of(MockUser.getMockUser()));
     when(emailAuthService.sendAuthCodeTo(validEmailAuthDto.getEmail()))
         .thenThrow(new DuplicateResourceException(Message.DUPLICATE_EMAIL));
 
     // When: Sending Auth Code Email API를 호출한다.
-    ResultActions resultActions = callApiWith(requestBody);
+    ResultActions resultActions = callApiWith(validEmailAuthDto);
 
     // Then: Status는 409 Conflict이다.
     resultActions.andExpect(status().isConflict());
@@ -139,7 +140,7 @@ public class SendAuthEmailApiTest {
 
   @Test
   @DisplayName("Header에 유효한 Auhtorization이 포함된 경우")
-  public void fail_OnValidAuthorization_InHeader() throws Exception {
+  public void fail_onValidAuthorization_inHeader() throws Exception {
     // Given: 유효한 SendingEmailAuthDto가 주어진다.
     SendingEmailAuthDto validEmailAuthDto = getBaseSendingEmailAuthDto();
     String requestBody = objectMapper.writeValueAsString(validEmailAuthDto);

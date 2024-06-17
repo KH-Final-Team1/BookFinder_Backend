@@ -62,10 +62,11 @@ public class JsonLoginFilterTest {
 
   @Test
   @DisplayName("DB에 저장된 email과 password가 일치하는 경우")
-  public void success_OnValidLoginDto() throws Exception {
+  public void success_onValidLoginDto() throws Exception {
     // Given: 유효한 LoginDto가 주어진다.
     LoginDto validLoginDto = getBaseLoginDto();
-    // And: Repository가 mockUser를 리턴하도록 Mocking한다.
+
+    // Mocking: UserRepository가 mockUser를 리턴
     User mockUser = MockUser.getMockUser();
     when(userRepository.findByEmail(validLoginDto.getEmail())).thenReturn(Optional.of(mockUser));
 
@@ -80,7 +81,7 @@ public class JsonLoginFilterTest {
 
   @Test
   @DisplayName("Login Dto의 email 형식이 유효하지 않은 경우")
-  public void fail_OnInvalidLoginDto_WithEmailFormat() throws Exception {
+  public void fail_onInvalidLoginDto_withEmailFormat() throws Exception {
     // Given: 유효하지 않은 LoginDto가 주어진다.
     LoginDto invalidLoginDto = getBaseLoginDto();
     invalidLoginDto.setEmail("jinho4744navercom");
@@ -97,7 +98,7 @@ public class JsonLoginFilterTest {
 
   @Test
   @DisplayName("Login Dto의 password 형식이 유효하지 않은 경우")
-  public void fail_OnInvalidLoginDto_WithPasswordFormat() throws Exception {
+  public void fail_onInvalidLoginDto_withPasswordFormat() throws Exception {
     // Given: 유효하지 않은 LoginDto가 주어진다.
     LoginDto invalidLoginDto = getBaseLoginDto();
     invalidLoginDto.setPassword("zz");
@@ -114,7 +115,7 @@ public class JsonLoginFilterTest {
 
   @Test
   @DisplayName("DB에 email에 해당하는 튜플이 없는 경우")
-  public void fail_OnNotExistInDB_ForEmail() throws Exception {
+  public void fail_onNotExistInDB_forEmail() throws Exception {
     // Given: 유효한 LoginDto가 주어진다.
     LoginDto validLoginDto = getBaseLoginDto();
 
@@ -130,7 +131,7 @@ public class JsonLoginFilterTest {
 
   @Test
   @DisplayName("password가 DB 튜플의 password와 일치하지 않는 경우")
-  public void fail_OnNotEqualsPassword_WithUserInDB() throws Exception {
+  public void fail_onNotEqualsPassword_withUserInDB() throws Exception {
     // Given: 유효한 LoginDto가 주어진다.
     LoginDto validLoginDto = getBaseLoginDto();
     validLoginDto.setPassword("test_password_1");
@@ -150,7 +151,7 @@ public class JsonLoginFilterTest {
 
   @Test
   @DisplayName("Header에 Authorization을 포함한 경우")
-  public void fail_OnExistsAuthorizationInHeader() throws Exception {
+  public void fail_onExistsAuthorizationInHeader() throws Exception {
     // Given: 유효한 LoginDto가 주어진다.
     LoginDto validLoginDto = getBaseLoginDto();
 

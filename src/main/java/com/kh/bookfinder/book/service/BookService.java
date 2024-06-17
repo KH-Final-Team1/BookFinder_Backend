@@ -1,18 +1,21 @@
 package com.kh.bookfinder.book.service;
 
+import com.kh.bookfinder.book.dto.ApprovalStatusDto;
+import com.kh.bookfinder.book.dto.BookListRequestDto;
 import com.kh.bookfinder.book.dto.BookRequestDto;
-import com.kh.bookfinder.book.dto.SearchDto;
-import com.kh.bookfinder.book.entity.ApprovalStatus;
 import com.kh.bookfinder.book.entity.Book;
+import com.kh.bookfinder.book.enums.ApprovalStatus;
+import com.kh.bookfinder.book.enums.BookListFilter;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.user.entity.User;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,30 +24,33 @@ public class BookService {
 
   private final BookRepository bookRepository;
 
+
   public Book findBook(Long isbn) {
     return bookRepository.findByIsbn(isbn)
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
   }
 
-  public Book findApprovedBook(Long isbn) {
-    return bookRepository.findByIsbnAndApprovalStatus(isbn, ApprovalStatus.APPROVE)
+  public Book getBook(User serviceUser, Long isbn) {
+    Book result = bookRepository.findByIsbn(isbn)
         .orElseThrow(() -> new ResourceNotFoundException(Message.NOT_FOUND_BOOK));
+    if (serviceUser.isAdmin() || result.getApprovalStatus() == ApprovalStatus.APPROVE) {
+      return result;
+    }
+    throw new AccessDeniedException(Message.NOT_APPROVED_BOOK);
   }
 
-  public List<Book> getBooks(SearchDto requestParam) {
-    org.springframework.data.domain.Pageable pageable = PageRequest.of(requestParam.getPage(), requestParam.getSize());
-    if (requestParam.getApprovalStatus() == ApprovalStatus.APPROVE) {
-      return bookRepository.findApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
-          requestParam.getKeyword());
-    }
-    return bookRepository.findNotApprovedBooksByFilterAndKeywordContaining(requestParam.getFilter(),
-        requestParam.getKeyword(), pageable);
+  public List<Book> getBooks(BookListRequestDto requestParam) {
+    return bookRepository.findBy(
+        BookListFilter.fromStringIgnoreCase(requestParam.getFilter()),
+        requestParam.getKeyword(),
+        ApprovalStatus.fromStringIgnoreCase(requestParam.getStatus())
+    );
   }
 
   @Transactional
-  public void updateStatus(Long isbn, ApprovalStatus approvalStatus) {
+  public void updateStatus(Long isbn, ApprovalStatusDto statusDto) {
     Book book = findBook(isbn);
-    book.setApprovalStatus(approvalStatus);
+    book.setApprovalStatus(ApprovalStatus.valueOf(statusDto.getApprovalStatus()));
   }
 
   @Transactional

@@ -81,7 +81,7 @@ public class ListBookTradeApiTest {
 
   @Test
   @DisplayName("권한이 있고 DB에 저장된 BookTrade 튜플이 없는 경우")
-  public void success_OnAuthorization_WithNoBookTradeData_InDB() throws Exception {
+  public void success_OnAuthorization_WithBookTradeData_InDB() throws Exception {
     // Given: 권한이 "ROLE_USER"인 User가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
@@ -228,7 +228,7 @@ public class ListBookTradeApiTest {
     resultActions.andExpect(status().isForbidden());
     // And: Response Body로 message와 detail을 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(FORBIDDEN.getMessage())));
-    resultActions.andExpect(jsonPath("$.detail", is(Message.FORBIDDEN_BOOK_TRADES)));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.FORBIDDEN_BOOK_TRADES_READ)));
   }
 
   @Test
