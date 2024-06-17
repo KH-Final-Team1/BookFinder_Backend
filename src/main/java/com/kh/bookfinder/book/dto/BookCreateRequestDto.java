@@ -4,20 +4,36 @@ import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.enums.ApprovalStatus;
 import com.kh.bookfinder.global.constants.Message;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
 @Data
-public class BookRequestDto {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BookCreateRequestDto {
 
-  @NotNull(message = Message.UNSAVED_ISBN)
+  @Range(min = 1000000000000L, max = 9999999999999L, message = Message.INVALID_ISBN_DIGITS)
+  @NotNull
   private Long isbn;
+  @NotNull
   private String imageUrl;
+  @NotNull
   private String name;
+  @NotNull
   private String authors;
+  @NotNull
   private String publisher;
-  private int publicationYear;
+  @NotNull
+  private Integer publicationYear;
+  @NotNull
   private String classNo;
+  @NotNull
   private String className;
+  @NotNull
   private String description;
 
   public Book toEntity() {

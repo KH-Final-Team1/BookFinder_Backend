@@ -2,8 +2,8 @@ package com.kh.bookfinder.book.controller;
 
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.book.dto.ApprovalStatusDto;
+import com.kh.bookfinder.book.dto.BookCreateRequestDto;
 import com.kh.bookfinder.book.dto.BookListRequestDto;
-import com.kh.bookfinder.book.dto.BookRequestDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.global.constants.Message;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -59,8 +60,8 @@ public class BookController {
   }
 
   @PostMapping
-  public ResponseEntity<Map<String, String>> createBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
-    bookService.requestBook(bookRequestDto);
-    return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_REQUEST));
+  public ResponseEntity<Map<String, String>> createBook(@RequestBody @Valid BookCreateRequestDto bookCreateRequestDto) {
+    bookService.requestBook(bookCreateRequestDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", Message.SUCCESS_BOOK_REQUEST));
   }
 }
