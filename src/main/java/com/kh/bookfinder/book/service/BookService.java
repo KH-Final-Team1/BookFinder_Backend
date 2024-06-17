@@ -1,8 +1,8 @@
 package com.kh.bookfinder.book.service;
 
-import com.kh.bookfinder.book.dto.ApprovalStatusDto;
 import com.kh.bookfinder.book.dto.BookCreateRequestDto;
 import com.kh.bookfinder.book.dto.BookListRequestDto;
+import com.kh.bookfinder.book.dto.BookUpdateStatusRequestDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.enums.ApprovalStatus;
 import com.kh.bookfinder.book.enums.BookListFilter;
@@ -48,9 +48,9 @@ public class BookService {
   }
 
   @Transactional
-  public void updateStatus(Long isbn, ApprovalStatusDto statusDto) {
+  public void updateStatus(Long isbn, BookUpdateStatusRequestDto statusDto) {
     Book book = findBook(isbn);
-    book.setApprovalStatus(ApprovalStatus.valueOf(statusDto.getApprovalStatus()));
+    book.setApprovalStatus(ApprovalStatus.fromStringIgnoreCase(statusDto.getApprovalStatus()));
   }
 
   @Transactional

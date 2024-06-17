@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 public class JwtForbiddenHandler implements AccessDeniedHandler {
 
   private static final String SIGNUP_URLS = "/api/v1/signup";
+  private static final String BOOKS_URLS = "/api/v1/books";
+  private static final String PATCH = "PATCH";
 
   @Override
   public void handle(HttpServletRequest request, HttpServletResponse response,
@@ -23,15 +25,27 @@ public class JwtForbiddenHandler implements AccessDeniedHandler {
     response.setContentType("application/json;charset=UTF-8");
     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
+    ErrorResponseBody errorResponseBody = buildErrorResponseBody(accessDeniedException, request);
+
+    new ObjectMapper().writeValue(response.getWriter(), errorResponseBody);
+  }
+
+  private ErrorResponseBody buildErrorResponseBody(AccessDeniedException accessDeniedException,
+      HttpServletRequest request) {
     String url = request.getRequestURI();
+    String method = request.getMethod();
+    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
+        .message(FORBIDDEN)
+        .build();
+
     if (url.startsWith(SIGNUP_URLS)) {
-      ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
-          .message(FORBIDDEN)
-          .detail(Message.ALREADY_LOGIN)
-          .build();
-      new ObjectMapper().writeValue(response.getWriter(), errorResponseBody);
+      errorResponseBody.setDetail(Message.ALREADY_LOGIN);
+    } else if (url.startsWith(BOOKS_URLS) && method.equals(PATCH)) {
+      errorResponseBody.setDetail(Message.FORBIDDEN_BOOK_STATUS_UPDATE);
     } else {
-      response.getWriter().write(accessDeniedException.getLocalizedMessage());
+      errorResponseBody.setDetail(accessDeniedException.getLocalizedMessage());
     }
+
+    return errorResponseBody;
   }
 }

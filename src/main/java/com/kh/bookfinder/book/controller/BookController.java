@@ -1,9 +1,9 @@
 package com.kh.bookfinder.book.controller;
 
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
-import com.kh.bookfinder.book.dto.ApprovalStatusDto;
 import com.kh.bookfinder.book.dto.BookCreateRequestDto;
 import com.kh.bookfinder.book.dto.BookListRequestDto;
+import com.kh.bookfinder.book.dto.BookUpdateStatusRequestDto;
 import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.service.BookService;
 import com.kh.bookfinder.global.constants.Message;
@@ -53,9 +53,10 @@ public class BookController {
   }
 
   @PatchMapping("/{isbn}")
-  public ResponseEntity<Map<String, String>> updateBookStatus(@PathVariable(name = "isbn") Long isbn,
-      @Valid ApprovalStatusDto statusDto) {
-    bookService.updateStatus(isbn, statusDto);
+  public ResponseEntity<Map<String, String>> updateBookStatus(@Valid @PathVariable(name = "isbn")
+  @Range(min = 1000000000000L, max = 9999999999999L, message = Message.INVALID_ISBN_DIGITS) Long isbn,
+      @Valid @RequestBody BookUpdateStatusRequestDto bookUpdateStatusRequestDto) {
+    bookService.updateStatus(isbn, bookUpdateStatusRequestDto);
     return ResponseEntity.ok().body(Map.of("message", Message.UPDATE_APPROVAL_STATUS));
   }
 
