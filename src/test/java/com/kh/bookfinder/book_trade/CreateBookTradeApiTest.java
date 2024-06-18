@@ -1,6 +1,7 @@
 package com.kh.bookfinder.book_trade;
 
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
+import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 import static org.hamcrest.core.Is.is;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.bookfinder.auth.jwt.service.JwtService;
+import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.enums.ApprovalStatus;
 import com.kh.bookfinder.book.repository.BookRepository;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
@@ -90,12 +92,14 @@ public class CreateBookTradeApiTest {
   public void success_onValidBookTradeRequestDto_withAuthorization() throws Exception {
     // Given: 유효한 BookTradeRequestDto가 주어진다.
     BookTradeRequestDto requestDto = RequestDto.baseBookTradeRequestDto();
+    // And: mockBook이 주어진다.
+    Book mockBook = MockBook.getMockBook(ApprovalStatus.APPROVE);
+    requestDto.setIsbn(mockBook.getIsbn());
 
     // Mocking: JwtAuthenticationFilter User 정보는 mockUser
     mockJwtAuthenticationFilter(MockUser.getMockUser(UserRole.ROLE_USER));
-    // And: BookRepository가 mockBookTrade의 Book을 반환
-    when(bookRepository.findByIsbnAndApprovalStatus(requestDto.getIsbn(), ApprovalStatus.APPROVE))
-        .thenReturn(Optional.of(MockBook.getMockBook(ApprovalStatus.APPROVE)));
+    // And: BookRepository가 mockBook을 반환
+    when(bookRepository.findByIsbn(requestDto.getIsbn())).thenReturn(Optional.of(mockBook));
 
     // When: Create BookTrade API를 호출한다.
     ResultActions resultActions = callApiWithAuthorization(requestDto);
@@ -148,21 +152,24 @@ public class CreateBookTradeApiTest {
   public void fail_onNotApporvedBook_WithIsbn() throws Exception {
     // Given: 유효한 BookTradeRequestDto가 주어진다.
     BookTradeRequestDto validRequestDto = RequestDto.baseBookTradeRequestDto();
+    // And: mockBook이 주어진다.
+    Book mockBook = MockBook.getMockBook(ApprovalStatus.WAIT);
+    validRequestDto.setIsbn(mockBook.getIsbn());
 
     // Mocking: JwtAuthenticationFilter User 정보는 mockUser
-    mockJwtAuthenticationFilter(MockUser.getMockUser(UserRole.ROLE_ADMIN));
+    mockJwtAuthenticationFilter(MockUser.getMockUser(UserRole.ROLE_USER));
     // And: BookRepository가 mockBook을 반환
     when(bookRepository.findByIsbn(validRequestDto.getIsbn()))
-        .thenReturn(Optional.of(MockBook.getMockBook(ApprovalStatus.WAIT)));
+        .thenReturn(Optional.of(mockBook));
 
     // When: Create BookTrade API를 호출한다.
     ResultActions resultActions = callApiWithAuthorization(validRequestDto);
 
-    // Then: Status는 Not Found이다.
-    resultActions.andExpect(status().isNotFound());
+    // Then: Status는 Forbidden이다.
+    resultActions.andExpect(status().isForbidden());
     // And: Response Body로 message와 detail을 반환한다.
-    resultActions.andExpect(jsonPath("$.message", is(NOT_FOUND.getMessage())));
-    resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_FOUND_BOOK)));
+    resultActions.andExpect(jsonPath("$.message", is(FORBIDDEN.getMessage())));
+    resultActions.andExpect(jsonPath("$.detail", is(Message.NOT_APPROVED_BOOK)));
   }
 
   @Test

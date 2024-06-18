@@ -181,7 +181,7 @@ public class ListBookTradeApiTest {
 
   @Test
   @DisplayName("관리자 권한이고 사용자의 boroughId와 요청 boroughId가 다른 경우")
-  public void fail_OnAuthorization_WithRoleAdmin_WithDifferentBoroughId_OnUserAndRequest() throws Exception {
+  public void success_OnAuthorization_WithRoleAdmin_WithDifferentBoroughId_OnUserAndRequest() throws Exception {
     // Given: 권한이 "ROLE_ADMIN"인 User가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
