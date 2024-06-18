@@ -67,13 +67,13 @@ public class BookTradeController {
   }
 
   @PostMapping
-  public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
+  public ResponseEntity<Map<String, String>> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
     SecurityUserDetails principal = (SecurityUserDetails)
         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User serviceUser = principal.getServiceUser();
 
     bookTradeService.saveBookTrade(serviceUser, tradeDto);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", Message.SUCCESS_CREATE));
   }
 
   @PutMapping("/{tradeId}")
