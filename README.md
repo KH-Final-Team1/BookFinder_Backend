@@ -1,3 +1,8 @@
+# Notion 링크
+- https://tin-digit-d17.notion.site/Backend-README-md-fbf898f7551e4da582369aa3790a7946
+
+------
+
 ![Untitled](https://github.com/KH-Final-Team1/BookFinder_Frontend/assets/45187382/f2fc6c74-ec83-4727-b521-eb522ee3f928)
 
 # 💡 Topic
