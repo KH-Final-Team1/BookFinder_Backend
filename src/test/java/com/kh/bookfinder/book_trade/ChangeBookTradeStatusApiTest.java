@@ -4,7 +4,6 @@ import static com.kh.bookfinder.global.constants.HttpErrorMessage.BAD_REQUEST;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.FORBIDDEN;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -18,7 +17,6 @@ import com.kh.bookfinder.book.entity.Book;
 import com.kh.bookfinder.book.enums.ApprovalStatus;
 import com.kh.bookfinder.book_trade.dto.BookTradeYnDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
-import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.helper.MockBook;
@@ -88,7 +86,7 @@ public class ChangeBookTradeStatusApiTest {
   @DisplayName("Auth의 User와 BookTrade의 User가 같고, 유효한 TradeYnDto와 유효한 TradeId가 주어졌을 때")
   public void success_onValidTradeYnDto_andValidTradeId_andSameUserAuthWithBookTrade() throws Exception {
     // Given: 유효한 BookTradeYnDto가 주어진다.
-    BookTradeYnDto validRequestDto = new BookTradeYnDto(Status.Y);
+    BookTradeYnDto validRequestDto = new BookTradeYnDto("y");
     // And: 유효한 mockBookTrade가 주어진다.
     BookTrade mockBookTrade = MockBookTrade.getMockBookTrade();
 
@@ -116,7 +114,7 @@ public class ChangeBookTradeStatusApiTest {
   @DisplayName("유효하지 않은 TradeId가 주어졌을 때")
   public void fail_onInvalidTradeId() throws Exception {
     // Given: 유효한 BookTradeYnDto가 주어진다.
-    BookTradeYnDto validRequestDto = new BookTradeYnDto(Status.Y);
+    BookTradeYnDto validRequestDto = new BookTradeYnDto("y");
     // And: 유효하지 않은 tradeId가 주어진다.
     Long invalidTradeId = 123472L;
     // And: 유효한 mockBookTrade가 주어진다.
@@ -170,14 +168,14 @@ public class ChangeBookTradeStatusApiTest {
     resultActions.andExpect(status().isBadRequest());
     // And: Response Body로 message와 details를 반환한다.
     resultActions.andExpect(jsonPath("$.message", is(BAD_REQUEST.getMessage())));
-    resultActions.andExpect(jsonPath("$.details.tradeYn", containsString("null")));
+    resultActions.andExpect(jsonPath("$.details.tradeYn", is(Message.INVALID_STATUS)));
   }
 
   @Test
   @DisplayName("Auth와 BookTrade의 User가 다를 때")
   public void fail_onDifferentUserAuthWithBookTrade() throws Exception {
     // Given: 유효한 않은 BookTradeYnDto가 주어진다.
-    BookTradeYnDto validRequestDto = new BookTradeYnDto(Status.Y);
+    BookTradeYnDto validRequestDto = new BookTradeYnDto("y");
     // And: 유효한 mockBookTrade가 주어진다.
     BookTrade mockBookTrade = MockBookTrade.getMockBookTrade();
 
@@ -208,7 +206,7 @@ public class ChangeBookTradeStatusApiTest {
   @DisplayName("권한 없이 요청할 때")
   public void fail_onNoAuth() throws Exception {
     // Given: 유효한 않은 BookTradeYnDto가 주어진다.
-    BookTradeYnDto validRequestDto = new BookTradeYnDto(Status.Y);
+    BookTradeYnDto validRequestDto = new BookTradeYnDto("y");
     // And: 유효한 mockBookTrade가 주어진다.
     BookTrade mockBookTrade = MockBookTrade.getMockBookTrade();
 

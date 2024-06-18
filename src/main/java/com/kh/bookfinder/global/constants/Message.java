@@ -36,12 +36,14 @@ public interface Message {
   String EXPIRED_ACCESS_TOKEN = "만료된 토큰입니다.";
 
   String INVALID_ISBN_DIGITS = "ISBN 번호는 13자리의 숫자만 입력 가능합니다.";
-  String UNSAVED_ISBN = "유효하지 않은 ISBN 번호 입니다.";
   String INVALID_COST = "금액은 0부터 100000까지의 정수값만 입력 가능합니다.";
   String INVALID_LIMITED_DATE = "오늘 날짜 이후로 설정해주세요.";
+  String INVALID_TRADE_TYPE = "trade type은 borrow, lend만 가능합니다.";
+  String INVALID_STATUS = "status는 y, n만 가능합니다.";
   String INVALID_BOROUGH = "지역 번호는 1부터 25까지의 숫자만 입력 가능합니다.";
   String NOT_FOUND_TRADE = "거래 번호를 찾을 수 없습니다.";
   String DELETED_TRADE = "삭제된 게시물 입니다.";
+  String SUCCESS_CREATE = "거래글이 등록되었습니다.";
   String SUCCESS_CHANGE = "거래 상태가 변경되었습니다.";
   String SUCCESS_UPDATE = "수정을 성공했습니다.";
   String SUCCESS_DELETE = "삭제를 성공했습니다.";

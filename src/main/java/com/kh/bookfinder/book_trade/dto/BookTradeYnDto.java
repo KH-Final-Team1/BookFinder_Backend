@@ -1,7 +1,8 @@
 package com.kh.bookfinder.book_trade.dto;
 
 import com.kh.bookfinder.book_trade.entity.Status;
-import jakarta.validation.constraints.NotNull;
+import com.kh.bookfinder.global.constants.Message;
+import com.kh.bookfinder.global.validation.ValidEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookTradeYnDto {
 
-  @NotNull
-  private Status tradeYn;
+  @ValidEnum(enumClass = Status.class, message = Message.INVALID_STATUS)
+  private String tradeYn;
 }
