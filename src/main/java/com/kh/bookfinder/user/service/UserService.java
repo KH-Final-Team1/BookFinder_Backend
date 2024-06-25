@@ -2,7 +2,6 @@ package com.kh.bookfinder.user.service;
 
 import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.auth.oauth2.dto.OAuth2SignUpDto;
-import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.borough.repository.BoroughRepository;
 import com.kh.bookfinder.global.constants.Message;
@@ -25,7 +24,6 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final BoroughRepository boroughRepository;
-  private final BookTradeRepository bookTradeRepository;
   private final PasswordEncoder passwordEncoder;
 
   public void createNewUser(SignUpDto signUpDto) {
