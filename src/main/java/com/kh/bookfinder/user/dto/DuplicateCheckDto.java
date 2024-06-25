@@ -3,8 +3,9 @@ package com.kh.bookfinder.user.dto;
 import com.kh.bookfinder.global.constants.Message;
 import com.kh.bookfinder.global.constants.Regexp;
 import com.kh.bookfinder.global.exception.InvalidFieldException;
+import com.kh.bookfinder.global.validation.ValidEnum;
+import com.kh.bookfinder.user.enums.DuplicateCheckField;
 import jakarta.validation.constraints.AssertTrue;
-import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,14 +17,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DuplicateCheckDto {
 
+  @ValidEnum(enumClass = DuplicateCheckField.class)
   private String field;
   private String value;
 
   @AssertTrue
   public boolean isValid() {
-    if (!Arrays.asList("nickname", "email").contains(field)) {
-      throw new InvalidFieldException("field", Message.INVALID_FIELD);
-    }
     if (field.equals("email") && !isValidEmail()) {
       throw new InvalidFieldException("email", Message.INVALID_EMAIL);
     }
