@@ -7,11 +7,13 @@ build/
 
 ## properties
 application-db.yml
-application-test*.properties
+application-test*.yml
 application-mail.yml
 application-jwt.yml
 application-oauth.yml
 
+# QueryDsl
+/src/main/generated/querydsl
 
 ### STS ###
 .apt_generated

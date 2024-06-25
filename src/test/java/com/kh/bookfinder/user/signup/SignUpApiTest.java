@@ -83,7 +83,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("유효한 SignUpDto가 주어지는 경우")
-  public void success_OnValidSignUpDto() throws Exception {
+  public void success_onValidSignUpDto() throws Exception {
     // Given: 유효한 SignUpDto가 주어진다.
     SignUpDto validSignUpDto = getBaseSingUpDto();
     String requestBody = objectMapper.writeValueAsString(validSignUpDto);
@@ -101,7 +101,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 email이 유효하지 않은 경우")
-  public void fail_OnInvalidSignUpDto_WithEmail() throws Exception {
+  public void fail_onInvalidSignUpDto_withEmail() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (email)
     SignUpDto invalidSignUpDto = getBaseSingUpDto();
     invalidSignUpDto.setEmail("jinhokhkr");
@@ -119,7 +119,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 email이 이미 가입한 email인 경우")
-  public void fail_OnAlreadyExistInDB_WithEmailInSignupDto() throws Exception {
+  public void fail_onAlreadyExistInDB_withEmailInSignupDto() throws Exception {
     // Given: 유효한 SignUpDto가 주어진다.
     SignUpDto validSignUpDto = getBaseSingUpDto();
     String requestBody = objectMapper.writeValueAsString(validSignUpDto);
@@ -141,7 +141,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 password가 유효하지 않은 경우")
-  public void fail_OnInvalidSignUpDto_WithPassword() throws Exception {
+  public void fail_onInvalidSignUpDto_withPassword() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (password)
     SignUpDto invalidSignUpDto = getBaseSingUpDto();
     invalidSignUpDto.setPassword("1234");
@@ -159,7 +159,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 password와 passwordConfirm이 일치하지 않는 경우")
-  public void fail_OnInvalidSignUpDto_WithPasswordConfirm() throws Exception {
+  public void fail_onInvalidSignUpDto_withPasswordConfirm() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (passwordConfirm)
     SignUpDto invalidSignUpDto = getBaseSingUpDto();
     invalidSignUpDto.setPasswordConfirm("q1w2e3r42@");
@@ -177,7 +177,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 nickname이 유효하지 않은 경우")
-  public void fail_OnInvalidSignUpDto_WithNickname() throws Exception {
+  public void fail_onInvalidSignUpDto_withNickname() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (nickname)
     SignUpDto invalidSignUpDto = getBaseSingUpDto();
     invalidSignUpDto.setNickname("ㅂㅈㄷㄱ");
@@ -195,7 +195,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 nickname이 이미 가입한 nickname인 경우")
-  public void fail_OnAlreadyExistInDB_WithNicknameInSignupDto() throws Exception {
+  public void fail_onAlreadyExistInDB_withNicknameInSignupDto() throws Exception {
     // Given: 유효한 SignUpDto가 주어진다.
     SignUpDto validSignUpDto = getBaseSingUpDto();
     String requestBody = objectMapper.writeValueAsString(validSignUpDto);
@@ -216,7 +216,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 address가 유효하지 않은 경우")
-  public void fail_OnInvalidSignUpDto_WithAddress() throws Exception {
+  public void fail_onInvalidSignUpDto_withAddress() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (address)
     SignUpDto invalidSignUpDto = getBaseSingUpDto();
     invalidSignUpDto.setAddress("invalidAddress");
@@ -234,7 +234,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("SignUpDto의 phone이 유효하지 않은 경우")
-  public void fail_OnInvalidSignUpDto_WithPhone() throws Exception {
+  public void fail_onInvalidSignUpDto_withPhone() throws Exception {
     // Given: 유효하지 않은 SignUpDto가 주어진다. (phone)
     SignUpDto invalidSignUpDto = getBaseSingUpDto();
     invalidSignUpDto.setPhone("12345678912345");
@@ -252,7 +252,7 @@ public class SignUpApiTest {
 
   @Test
   @DisplayName("Header에 유효한 Authorization이 포함된 경우")
-  public void fail_OnValidAuthorization_InHeader() throws Exception {
+  public void fail_onValidAuthorization_inHeader() throws Exception {
     // Given: 유효한 SignUpDto가 주어진다.
     SignUpDto validSignUpDto = getBaseSingUpDto();
     String requestBody = objectMapper.writeValueAsString(validSignUpDto);

@@ -7,6 +7,8 @@ import static com.kh.bookfinder.global.constants.HttpErrorMessage.NOT_FOUND;
 import static com.kh.bookfinder.global.constants.HttpErrorMessage.UNAUTHORIZED;
 
 import com.kh.bookfinder.global.dto.ErrorResponseBody;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -45,6 +47,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
         .message(BAD_REQUEST)
         .detail(ex.getLocalizedMessage())
+        .build();
+
+    return ResponseEntity.badRequest()
+        .body(errorResponseBody);
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+    ErrorResponseBody errorResponseBody = ErrorResponseBody.builder()
+        .message(BAD_REQUEST)
+        .details(extractDetailsForField(ex))
         .build();
 
     return ResponseEntity.badRequest()
@@ -126,6 +139,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private Map<String, String> extractDetailsForField(InvalidFieldException e) {
     Map<String, String> details = new HashMap<>();
     details.put(e.getField(), e.getLocalizedMessage());
+    return details;
+  }
+
+  private Map<String, String> extractDetailsForField(ConstraintViolationException ex) {
+    Map<String, String> details = new HashMap<>();
+    for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+      String field = violation.getPropertyPath().toString().split("\\.")[1];
+      details.putIfAbsent(field, violation.getMessage());
+    }
+
     return details;
   }
 

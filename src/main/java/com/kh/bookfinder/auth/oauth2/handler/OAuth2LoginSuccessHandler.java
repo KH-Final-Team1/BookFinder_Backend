@@ -3,7 +3,6 @@ package com.kh.bookfinder.auth.oauth2.handler;
 import com.kh.bookfinder.auth.jwt.service.JwtService;
 import com.kh.bookfinder.auth.oauth2.dto.CustomOAuth2User;
 import com.kh.bookfinder.user.entity.UserRole;
-import com.kh.bookfinder.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
   private final JwtService jwtService;
-  private final UserRepository userRepository;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,

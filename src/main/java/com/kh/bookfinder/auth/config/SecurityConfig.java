@@ -18,12 +18,14 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,6 +68,9 @@ public class SecurityConfig {
         .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+    httpSecurity.headers(frame ->
+        frame.frameOptions(FrameOptionsConfig::sameOrigin));
+
     // Test에 대한 권한 설정
     httpSecurity
         .authorizeHttpRequests(authorize -> authorize
@@ -75,19 +80,20 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/test/v1/admin").hasRole("ADMIN"))
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/test/v1/user").hasAnyRole("ADMIN", "USER"));
+            .requestMatchers("/test/v1/user").hasAnyRole("ADMIN", "USER"))
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/h2-console/**").permitAll());
 
     // API들에 대한 권한 설정
     httpSecurity
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/login", "/api/v1/signup/**").anonymous())
-        .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/books/list", "/api/v1/books/{isbn}").permitAll())
-        .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/trades/**", "/api/v1/comments/**", "/api/v1/users/my-info").authenticated())
-        .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/api/v1/oauth2/signup").hasRole("SOCIAL_GUEST"))
-        .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
+            .requestMatchers("/api/v1/login", "/api/v1/signup/**").anonymous()
+            .requestMatchers("/api/v1/trades/**", "/api/v1/comments/**", "/api/v1/users/my-info").authenticated()
+            .requestMatchers(HttpMethod.POST, "/api/v1/books").authenticated()
+            .requestMatchers(HttpMethod.PATCH, "/api/v1/books/{isbn}").hasRole("ADMIN")
+            .requestMatchers("/api/v1/oauth2/signup").hasRole("SOCIAL_GUEST")
+            .anyRequest().permitAll()
+        );
 
     // OAuth2 로그인 설정
     httpSecurity.oauth2Login(oauth2 -> oauth2

@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class GetBookTradeOneApiTest {
+public class DetailBookTradeApiTest {
 
   // 유저 간 책 대출 API, Detail
   private static final String VALID_ACCESS_TOKEN = "validAccessToken";

@@ -7,11 +7,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.kh.bookfinder.auth.jwt.service.JwtService;
-import com.kh.bookfinder.auth.login.dto.SecurityUserDetails;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
 import com.kh.bookfinder.book_trade.repository.BookTradeRepository;
 import com.kh.bookfinder.global.constants.Message;
@@ -44,6 +44,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class GetMyUserInfoApiTest {
 
+  private static final String VALID_ACCESS_TOKEN = "validAccessToken";
   // 내 정보 가져오기 API
   @Autowired
   private MockMvc mockMvc;
@@ -54,35 +55,36 @@ public class GetMyUserInfoApiTest {
   @MockBean
   private BookTradeRepository bookTradeRepository;
 
-  private ResultActions callApiWithUser(User user) throws Exception {
-    SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
-    return mockMvc.perform(get("/api/v1/users/my-info")
-        .with(user(securityUserDetails)));
+  private void mockJwtAuthenticationFilter(User mockUser) {
+    // JwtAuthenticationFilter Mocking
+    // extractAccessToken() -> "validAccessToken"
+    // validateToken() -> true
+    // extractEmail() -> mockUser's email;
+    when(jwtService.extractAccessToken(any())).thenReturn(VALID_ACCESS_TOKEN);
+    when(jwtService.validateToken(VALID_ACCESS_TOKEN)).thenReturn(true);
+    when(jwtService.extractEmail(VALID_ACCESS_TOKEN)).thenReturn(mockUser.getEmail());
+    // And: UserRepository가 mockUser를 반환
+    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
   }
 
-  private ResultActions callApiWithAuthorization(String accessToken) throws Exception {
-    return mockMvc.perform(get("/api/v1/users/my-info").header("Authorization", "Bearer " + accessToken));
+  private ResultActions callApiWithAuth() throws Exception {
+    return mockMvc.perform(get("/api/v1/users/my-info")
+        .header("Authorization", "Bearer " + VALID_ACCESS_TOKEN)
+    ).andDo(print());
   }
 
   @Test
   @DisplayName("관리자 권한으로 요청하는 경우")
-  public void success_OnAuthorization_WithRoleAdmin() throws Exception {
-    // Given: 유효한 access token이 주어진다.
-    String validAccessToken = "validAccessToken";
-    // And: 권한이 "ROLE_ADMIN"인 사용자가 주어진다.
+  public void success_onAuthorization_withRoleAdmin() throws Exception {
+    // Given: 권한이 "ROLE_ADMIN"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
 
-    // Mocking: JwtService가 validAccessToken를 반환
-    when(jwtService.extractAccessToken(any())).thenReturn(validAccessToken);
-    when(jwtService.validateToken(validAccessToken)).thenReturn(true);
-    // And: JwtService가 mockUser의 email을 반환
-    when(jwtService.extractEmail(validAccessToken)).thenReturn(mockUser.getEmail());
-    // And: UserRepository가 mockUser를 반환
-    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+    // Mocking: JwtAuthenticationFilter
+    mockJwtAuthenticationFilter(mockUser);
 
     // When: User List API를 호출한다.
-    ResultActions resultActions = callApiWithAuthorization(validAccessToken);
+    ResultActions resultActions = callApiWithAuth();
 
     // Then: Status는 OK이다.
     resultActions.andExpect(status().isOk());
@@ -94,27 +96,20 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("관리자 권한이고 BookTrades를 갖고 있는 경우")
-  public void success_OnAuthorization_WithRoleAdmin_WithHavingBookTrades() throws Exception {
-    // Given: 유효한 access token이 주어진다.
-    String validAccessToken = "validAccessToken";
-    // And: 권한이 "ROLE_ADMIN"인 사용자가 주어진다.
+  public void success_onAuthorization_withRoleAdmin_withHavingBookTrades() throws Exception {
+    // Given: 권한이 "ROLE_ADMIN"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_ADMIN);
     // And: User가 mockUser인 BookTrades가 10개 주어진다.
     List<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
 
-    // Mocking: JwtService가 validAccessToken를 반환
-    when(jwtService.extractAccessToken(any())).thenReturn(validAccessToken);
-    when(jwtService.validateToken(validAccessToken)).thenReturn(true);
-    // And: JwtService가 mockUser의 email을 반환
-    when(jwtService.extractEmail(validAccessToken)).thenReturn(mockUser.getEmail());
-    // Andg: UserRepository가 mockUser를 반환
-    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+    // Mocking: JwtAuthenticationFilter
+    mockJwtAuthenticationFilter(mockUser);
     // And: BookTradesRepository가 mockBookTrades를 반환
     when(bookTradeRepository.findByUserId(mockUser.getId())).thenReturn(mockBookTrades);
 
     // When: User List API를 호출한다.
-    ResultActions resultActions = callApiWithAuthorization(validAccessToken);
+    ResultActions resultActions = callApiWithAuth();
 
     // Then: Status는 OK이다.
     resultActions.andExpect(status().isOk());
@@ -126,23 +121,16 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("일반 사용자 권한으로 요청하는 경우")
-  public void success_OnAuthorization_WithRoleUser() throws Exception {
-    // Given: 유효한 access token이 주어진다.
-    String validAccessToken = "validAccessToken";
-    // And: 권한이 "ROLE_USER"인 사용자가 주어진다.
+  public void success_onAuthorization_withRoleUser() throws Exception {
+    // Given: 권한이 "ROLE_USER"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
 
-    // Mocking: JwtService가 validAccessToken를 반환
-    when(jwtService.extractAccessToken(any())).thenReturn(validAccessToken);
-    when(jwtService.validateToken(validAccessToken)).thenReturn(true);
-    // And: JwtService가 mockUser의 email을 반환
-    when(jwtService.extractEmail(validAccessToken)).thenReturn(mockUser.getEmail());
-    // And: UserRepository가 mockUser를 반환
-    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+    // Mocking: JwtAuthenticationFilter
+    mockJwtAuthenticationFilter(mockUser);
 
     // When: User List API를 호출한다.
-    ResultActions resultActions = callApiWithAuthorization(validAccessToken);
+    ResultActions resultActions = callApiWithAuth();
 
     // Then: Status는 OK이다.
     resultActions.andExpect(status().isOk());
@@ -154,27 +142,20 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("일반 사용자 권한이고 BookTrades를 갖고 있는 경우")
-  public void success_OnAuthorization_WithRoleUser_WithHavingBookTrades() throws Exception {
-    // Given: 유효한 access token이 주어진다.
-    String validAccessToken = "validAccessToken";
-    // And: 권한이 "ROLE_USER"인 사용자가 주어진다.
+  public void success_onAuthorization_withRoleUser_withHavingBookTrades() throws Exception {
+    // Given: 권한이 "ROLE_USER"인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
     // And: User가 mockUser인 BookTrades가 10개 주어진다.
     List<BookTrade> mockBookTrades = MockBookTrade.getMockBookTradeListOnUser(mockUser, 10);
 
-    // Mocking: JwtService가 validAccessToken를 반환
-    when(jwtService.extractAccessToken(any())).thenReturn(validAccessToken);
-    when(jwtService.validateToken(validAccessToken)).thenReturn(true);
-    // And: JwtService가 mockUser의 email을 반환
-    when(jwtService.extractEmail(validAccessToken)).thenReturn(mockUser.getEmail());
-    // Andg: UserRepository가 mockUser를 반환
-    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+    // Mocking: JwtAuthenticationFilter
+    mockJwtAuthenticationFilter(mockUser);
     // And: BookTradesRepository가 mockBookTrades를 반환
     when(bookTradeRepository.findByUserId(mockUser.getId())).thenReturn(mockBookTrades);
 
     // When: User List API를 호출한다.
-    ResultActions resultActions = callApiWithAuthorization(validAccessToken);
+    ResultActions resultActions = callApiWithAuth();
 
     // Then: Status는 OK이다.
     resultActions.andExpect(status().isOk());
@@ -186,24 +167,17 @@ public class GetMyUserInfoApiTest {
 
   @Test
   @DisplayName("일반 사용자 권한이고 소셜 로그인에 해당하는 경우")
-  public void success_OnAuthorization_WithRoleUser_AndSocialLoginUser() throws Exception {
-    // Given: 유효한 access token이 주어진다.
-    String validAccessToken = "validAccessToken";
-    // And: 권한이 "ROLE_USER"이고 이메일이 카카오 로그인인 사용자가 주어진다.
+  public void success_onAuthorization_withRoleUser_andSocialLoginUser() throws Exception {
+    // Given: 권한이 "ROLE_USER"이고 이메일이 카카오 로그인인 사용자가 주어진다.
     User mockUser = MockUser.getMockUser();
     mockUser.setRole(UserRole.ROLE_USER);
     mockUser.setEmail("test@kakaoUser.com");
 
-    // Mocking: JwtService가 validAccessToken를 반환
-    when(jwtService.extractAccessToken(any())).thenReturn(validAccessToken);
-    when(jwtService.validateToken(validAccessToken)).thenReturn(true);
-    // And: JwtService가 mockUser의 email을 반환
-    when(jwtService.extractEmail(validAccessToken)).thenReturn(mockUser.getEmail());
-    // And: UserRepository가 mockUser를 반환
-    when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+    // Mocking: JwtAuthenticationFilter
+    mockJwtAuthenticationFilter(mockUser);
 
     // When: User List API를 호출한다.
-    ResultActions resultActions = callApiWithAuthorization(validAccessToken);
+    ResultActions resultActions = callApiWithAuth();
 
     // Then: Status는 OK이다.
     resultActions.andExpect(status().isOk());

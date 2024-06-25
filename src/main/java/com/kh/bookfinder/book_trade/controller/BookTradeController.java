@@ -6,6 +6,7 @@ import com.kh.bookfinder.book_trade.dto.BookTradeListResponseDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeRequestDto;
 import com.kh.bookfinder.book_trade.dto.BookTradeYnDto;
 import com.kh.bookfinder.book_trade.entity.BookTrade;
+import com.kh.bookfinder.book_trade.entity.Status;
 import com.kh.bookfinder.book_trade.service.BookTradeService;
 import com.kh.bookfinder.borough.entity.Borough;
 import com.kh.bookfinder.global.constants.Message;
@@ -67,13 +68,13 @@ public class BookTradeController {
   }
 
   @PostMapping
-  public ResponseEntity<BookTrade> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
+  public ResponseEntity<Map<String, String>> createBookTrade(@RequestBody @Valid BookTradeRequestDto tradeDto) {
     SecurityUserDetails principal = (SecurityUserDetails)
         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User serviceUser = principal.getServiceUser();
 
     bookTradeService.saveBookTrade(serviceUser, tradeDto);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", Message.SUCCESS_CREATE));
   }
 
   @PutMapping("/{tradeId}")
@@ -104,7 +105,7 @@ public class BookTradeController {
         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User serviceUser = principal.getServiceUser();
 
-    bookTradeService.changeTrade(serviceUser, tradeId, tradeYn.getTradeYn());
+    bookTradeService.changeTrade(serviceUser, tradeId, Status.fromStringIgnoreCase(tradeYn.getTradeYn()));
     return ResponseEntity.ok().body(Map.of("message", Message.SUCCESS_CHANGE));
   }
 }
